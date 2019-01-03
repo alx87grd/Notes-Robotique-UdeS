@@ -1,0 +1,37 @@
+\chapter{Commande optimale et programmation dynamique}
+
+
+\section{Bellman equation}
+
+%%%%%%%%%%%%%%%%
+\begin{align}
+J^*_k(\col{x}_k) = 
+\operatornamewithlimits{min}\limits_{\col{u}_k}
+%\mathbb{E}
+\left[
+g_k(\col{x}_k , \col{u}_k ) + J^*_{k+1}( 
+\underbrace{
+f_k(\col{x}_k , \col{u}_k ) 
+}_{\col{x}_{k+1}}
+)
+\right]
+\label{eq:bellamn}
+\end{align} 
+%%%%%%%%%%%%%%%%%
+
+\section{Hamilton–Jacobi–Bellman equation}
+
+%%%%%%%%%%%%%%%%
+\begin{align}
+0 =
+\operatornamewithlimits{min}\limits_{\col{u}}
+%\mathbb{E}
+\left[
+g(\col{x} , \col{u} ) + \frac{\partial	J^*(\col{x},t)}{\partial \col{x} }
+\underbrace{
+f(\col{x} , \col{u} , t) )
+}_{\dot{\col{x}}}
+\right]
+\label{eq:hjb}
+\end{align} 
+%%%%%%%%%%%%%%%%%

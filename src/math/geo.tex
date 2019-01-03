@@ -1,0 +1,365 @@
+\chapter{Notions de calcul vectoriel}
+
+
+À venir!
+
+\section{Les Vecteurs}
+\label{sec:veccomrep}
+
+Un vecteur est une quantité physique représentée par une amplitude et une direction. Lorsqu'une base vectorielle est spécifiée, un vecteur peut alors être représenté par des composantes scalaires selon chaque vecteur unitaire de la base. Il est important de distinguer la notion de vecteur ($\vec{v}$) et de ses composantes ($\col{v}=\left[v_{1}, v_{2}, v_{3}\right]^T $), surtout lorsque plusieurs bases sont utilisés. 
+
+
+
+\section{Opérations vectorielles en termes de composantes}
+
+\begin{table}[H]
+%\caption{ Basic Vectorial Operations }
+\label{basic}
+ \begin{tabular}{ | c | c | c |}
+ \hline
+ Vector and Tensors & Matrix, Row and Columns & Components and index \\
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ \hline
+ \multicolumn{3}{| c |}{Definitions} \\
+ \hline
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ Vector $\vec{v}$ and Tensor $\vec{\vec{T}}$ 
+ &
+ Column $\underline{c}$, Row $\underline{r}$ and Matrix $M$ 
+ &
+ Scalar components $x_i$ and  $x_{ij}$ 
+ \\ & & \\
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %  1-D
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ $\vec{v} = x_1 \vec{i} + x_2 \vec{j} + x_3 \vec{k}$ 
+ &
+ $\underline{c} = \left[ \begin{array}{c} x_1 \\ x_2 \\x_3 \end{array} \right] $
+ $\underline{r} = \left[ \begin{array}{c c c } x_1 & x_2 & x_3 \end{array} \right] $
+ &
+ $x_i \quad i \in \{ 1,2,3\}$
+ \\ && \\
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %  2-D
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ $\vec{\vec{T}} = x_{11} \vec{i}\vec{i} +  x_{12} \vec{i}\vec{j} + ... + x_{33}  \vec{k}\vec{k}$
+ &
+ $ M = \left[ \begin{array}{c c c } 
+ x_{11} & x_{12} & x_{13} \\  
+ x_{21} & x_{22} & x_{23} \\  
+ x_{31} & x_{32} & x_{33} \\  
+ \end{array} \right] $
+ &
+ $x_{ij} \quad i \in \{ 1,2,3\} \; j \in \{ 1,2,3\}$
+ \\ && \\
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ \hline 
+ \multicolumn{3}{| c |}{Dot or inner product} \\
+ \hline && \\
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ $z = \vec{x} \bullet \vec{y}$ 
+ &
+ $z = \underline{x}^T \underline{y} = \left[ \begin{array}{c c c } x_1 & x_2 & x_3 \end{array} \right] \left[ \begin{array}{c} y_1 \\ y_2 \\ y_3 \end{array} \right] $
+ &
+ $z = \sum_{ij}{ x_i y_j \delta_{ij}} = \sum_{i}{x_i y_i} $
+ \\ && \\
+ $\vec{z} = \vec{\vec{A}} \bullet \vec{x}$ 
+ &
+ $\underline{z}  = A \underline{x} = \left[ \begin{array}{c c c } 
+ a_{11} & a_{12} & a_{13} \\
+ a_{21} & a_{22} & a_{23} \\
+ a_{31} & a_{32} & a_{33} 
+ \end{array} \right] \left[ \begin{array}{c} x_1 \\ x_2 \\ x_3 \end{array} \right] $
+ &
+ $z_i = \sum_{jk}{ a_{ij} x_k \delta_{jk}} = \sum_{j}{a_{ij} x_j} $
+ \\ && \\
+ $\vec{z} = \vec{x} \bullet \vec{\vec{A}}$ 
+ &
+ $\underline{z}  = \underline{x}^T A $
+ &
+ $z_j = \sum_{ik}{ x_k a_{ij} \delta_{ki}} = \sum_{i}{x_i a_{ij}} $
+ \\ && \\
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ \hline
+ \multicolumn{3}{| c |}{Dyadic or outer product} \\
+ \hline && \\
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ $\vec{\vec{Z}} = \vec{x} \otimes \vec{y}$ 
+ &
+ $Z = \underline{x} \, \underline{y}^T = \left[ \begin{array}{c } x_1 \\ x_2 \\ x_3 \end{array} \right] \left[ \begin{array}{c c c} y_1 & y_2 & y_3 \end{array} \right] $
+ &
+ $z_{ij} = x_i \, y_j $
+ \\ && \\
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ \hline
+ \multicolumn{3}{| c |}{Cross product} \\
+ \hline && \\
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ $\vec{z} = \vec{x} \times \vec{y}$ 
+ &
+ $\underline{z} = \underline{x}^{\times} \underline{y} = \left[ \begin{array}{c c c } 
+  0   & -x_3 & x_2 \\
+  x_3 & 0    & -x_1 \\
+ -x_2 & x_1  & 0 
+ \end{array} \right] \left[ \begin{array}{c} y_1 \\ y_2 \\ y_3 \end{array} \right] $
+ &
+ $z_i = \sum_{jk}{ \epsilon_{ijk} x_j y_k } $
+ \\ && \\
+\hline
+ \end{tabular}
+\end{table}
+
+\subsection{Index notation special symbols}
+
+\subsubsection{ Kronecker delta }
+\begin{align}
+\delta_{ij} = \left\lbrace \begin{array}{c}
+1 \quad\text{if}\quad i=j\\
+0 \quad\text{if}\quad i\neq j
+\end{array}
+\right.
+\end{align}
+
+
+\subsubsection{ Levi-Civita permutation symbol }
+\begin{align}
+\epsilon_{ijk} = \left\lbrace \begin{array}{l}
++1  \quad\text{if}\quad ijk=(123),(231) \;\text{or}\; (312)\\
+-1   \quad\text{if}\quad ijk=(321),(213) \;\text{or}\; (132)\\
+\,0  \quad\text{if an index is repeated}
+\end{array}
+\right.
+\end{align}
+
+
+
+\section{Vector and matrix differentiation}
+
+Note that the shape of vector/matrix resulting from a multi-axis differentiation is a question of layout convention. The numerator layout convention is used here. Identities presented need to be transposed if using a denominator layout instead. There is no ambiguity with the index representation.
+
+\subsubsection{Scalar by Scalar}
+
+For a scalar function $y = f(x)$: 
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+%y = f(x) \quad \quad 
+z = \frac{\partial y}{\partial x}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsubsection{Vector by Scalar}
+
+For the derivation of a vector function $\underline{y} = f(x)$ where $\underline{y} \in \mathbb{R}^n$ with respect to a scalar $x$, by convention if the numerator $\underline{y}$ is a $n \times 1$ column vector, the result is a $n \times 1$ column vector too:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\underline{z} = \frac{\partial \underline{y}}{\partial x} =  
+ \left[ \begin{array}{c } 
+  \frac{\partial y_1}{\partial x}   \\ \vdots \\ \frac{\partial y_n}{\partial x}
+ \end{array} \right]
+ \quad\Leftrightarrow\quad
+ z_{i} = \frac{\partial y_i}{\partial x}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsubsection{Scalar by Vector}
+
+For the gradient of a multi-inputs scalar function $y = f(\underline{x})$ where $\underline{x} \in \mathbb{R}^n$, by convention if the denominator $\underline{x}$ is a $n \times 1$ column vector, the result is a $1 \times n$ row vector:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\underline{z} = \frac{\partial y}{\partial \underline{x}} &= 
+ \left[ \begin{array}{c c c } 
+  \frac{\partial y}{\partial x_1}   & ... & \frac{\partial y}{\partial x_n}
+ \end{array} \right]
+ \quad \Leftrightarrow\quad
+ z_i = \frac{\partial y}{\partial x_i}
+\end{align}
+%%%%%%%%%%%%%%%%%%%
+%\begin{align}
+%\frac{\partial y}{\partial \underline{x}^T} &= \underline{z}^T = 
+%\left[ \begin{array}{c } 
+%  \frac{\partial y}{\partial x_1}   \\ \vdots \\ \frac{\partial y}{\partial x_n}
+% \end{array} \right]
+% & \quad \Leftrightarrow\quad
+% z_j = \frac{\partial y}{\partial x_j}
+%\end{align}
+
+\begin{table}[H]
+\centering
+\caption{ Scalar by a vector: Identities}
+\label{scavec}
+ \begin{tabular}{ | c | c | c |}
+ \hline \hline & & \\
+ Scalar $y = f(\underline{x})$ expression & Gradient Vector $\frac{\partial y}{\partial \underline{x}}$  & Notes \\ & & \\
+ \hline \hline & & \\
+ $ \underline{a}^T \underline{x} = \underline{x}^T \underline{a} $ & 
+ $\underline{a}^T$ &   If $\underline{a}$ is not a function of $\underline{x}$
+ \\ & & \\
+  \hline & & \\
+ $ \underline{x}^T \underline{x} $ & 
+ $ 2 \, \underline{x}^T $ &   
+ \\ & & \\
+ \hline & & \\
+ $ \underline{x}^T A \underline{x} $ & 
+ $\underline{x}^T ( A + A^T )$ &   If $A$ is not a function of $\underline{x}$
+ \\ & & \\
+ \hline & & \\
+ $ \underline{x}^T A \underline{x} $ & 
+ $ 2\, \underline{x}^T A$ &   If $A$ is symmetric and not a function of $\underline{x}$
+ \\ & & \\
+ \hline
+ \end{tabular}
+\end{table}
+
+\subsubsection{Vector by Vector}
+For the gradient of a multi-inputs vector function $\underline{y} = f(\underline{x})$ where $\underline{x} \in \mathbb{R}^n$ and $\underline{y} \in \mathbb{R}^m$, by convention if the numerator $\underline{y}$ is a $m \times 1$ column vector and the denominator a $n \times 1$ column vector, the result is a $m \times n$ matrix, often called the Jacobian matrix:
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+Z = \frac{\partial \underline{y}}{\partial \underline{x}} =  
+\left[ \begin{array}{c c c } 
+  \frac{\partial y_1}{\partial x_{1}}   & ... & \frac{\partial y_1}{\partial x_{n}} \\
+  \vdots                             & ... & \vdots                          \\
+  \frac{\partial y_m}{\partial x_{1}}   & ... & \frac{\partial y_m}{\partial x_{n}} \\
+ \end{array} \right]
+ \quad\Leftrightarrow\quad
+  z_{ij} = \frac{\partial y_i}{\partial x_j}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{table}[H]
+\centering
+\caption{ Vector by a vector: Identities}
+\label{scavec}
+ \begin{tabular}{ | c | c | c |}
+ \hline \hline & & \\
+ Vector $\underline{y} = f(\underline{x})$ expression &Jacobian Matrix $\frac{\partial \underline{y}}{\partial \underline{x}}$  & Notes \\ & & \\
+ \hline \hline & & \\
+ $ \underline{x} $ & 
+ $I$ &   Identity Matrix
+ \\ & & \\
+ \hline & & \\
+ $ A \underline{x} $ & 
+ $A$ &   If $A$ is not a function of $\underline{x}$
+ \\ & & \\
+ \hline & & \\
+ $ \underline{x}^T A $ & 
+ $A^T$ &   If $A$ is not a function of $\underline{x}$
+ \\ & & \\
+ \hline
+ \end{tabular}
+\end{table}
+
+%\subsubsection{Vector by Matrix}
+%3rd order tensor..
+
+\subsubsection{Matrix by Scalar}
+
+For the gradient of a matrix function $\underline{A} = f(x)$ where $x$ is a scalar and $A$ is a $n \times m$ matrix, the result is also a $n \times m$ matrix:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+Z = \frac{\partial A}{\partial x} =  
+\left[ \begin{array}{c c c } 
+  \frac{\partial a_{11}}{\partial x}   & ... & \frac{\partial a_{1m}}{\partial x} \\
+  \vdots                             & ... & \vdots                          \\
+  \frac{\partial a_{n1}}{\partial x}   & ... & \frac{\partial a_{nm}}{\partial x} \\
+ \end{array} \right]
+ \quad\Leftrightarrow\quad
+  z_{ij} = \frac{\partial a_{ij}}{\partial x}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{table}[H]
+\centering
+\caption{ Matrix by scalar: Identities}
+\label{scavec}
+ \begin{tabular}{ | c | c | c |}
+ \hline \hline & & \\
+ Matrix $A$ expression & Differential Matrix $\frac{\partial A}{\partial x}$  & Notes \\ & & \\
+ \hline \hline & & \\
+ $ M^{-1} $ & 
+ $ -M^{-1} \frac{\partial M}{\partial x} M^{-1} $ &   
+ \\ & & \\
+ \hline
+ \end{tabular}
+\end{table}
+
+
+
+\subsubsection{Scalar by Matrix}
+
+For the gradient of a multi-inputs scalar function $y = f( A )$ where $A$ is an $n \times m$ matrix, by convention the result is a $m \times n$ matrix:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+Z = \frac{\partial y}{\partial A} =  
+\left[ \begin{array}{c c c } 
+  \frac{\partial y}{\partial a_{11}}   & ... & \frac{\partial y}{\partial a_{1n}} \\
+  \vdots                             & ... & \vdots                          \\
+  \frac{\partial y}{\partial a_{m1}}   & ... & \frac{\partial y}{\partial a_{mn}} \\
+ \end{array} \right]
+ \quad\Leftrightarrow\quad
+ z_{ji} = \frac{\partial y}{\partial a_{ij}}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{table}[H]
+\centering
+\caption{ Scalar by Matrix: Identities}
+\label{scavec}
+ \begin{tabular}{ | c | c | c |}
+ \hline \hline & & \\
+ Scalar $y$ expression & Differential Matrix $\frac{\partial y}{\partial A}$  & Notes \\ & & \\
+ \hline \hline & & \\
+ $ \underline{a}^T A \, \underline{b} $ & 
+ $ \underline{b} \, \underline{a}^T   $ &    $\underline{a}$ and  $\underline{b}$ are not function of $A$
+ \\ & & \\
+ $ \underline{a}^T A^T A \, \underline{b} $ & 
+ $ \underline{a} \, \underline{b}^T A^T + \underline{b} \, \underline{a}^T  A^T  $ &    $\underline{a}$ and  $\underline{b}$ are not function of $A$
+ \\ & & \\
+ \hline
+ \end{tabular}
+\end{table}
+
+%Note that while the numerator layout is generally preferred, the denominator layout is used for scalar by matrix differentiation, because more natural in this situation. However, this would be conflicting with the typical gradient layout when $m=1$.
+
+%\subsubsection{Matrix by Vector}
+%3rd order tensor..
+
+%\subsubsection{Matrix by Matrix}
+%4rd order tensor..
+
+\newpage
+
+\subsection{Examples}
+
+\subsubsection{Gradient of Quadratic Function}
+
+Finding the gradient $\frac{\partial f}{\partial \underline{x}}$ of the quadratic function $f=\underline{x}^T A \underline{x}$. First converting to index notations:
+\begin{align}
+f = \sum_{ij}{x_i A_{ij} x_j}
+\end{align}
+Then differentiating per $x_k$ components:
+\begin{align}
+\frac{\partial f}{\partial x_k} &= \sum_{ij}{  \frac{\partial}{\partial x_k} \left(x_i A_{ij} x_j \right)} \\
+\frac{\partial f}{\partial x_k} &= \sum_{ij}{\left( \underbrace{ \frac{\partial x_i}{\partial x_k}}_{\delta_{ik}}  A_{ij} x_j + x_i \underbrace{\frac{\partial A_{ij} }{\partial x_k}}_{0} x_j + x_i A_{ij} \underbrace{\frac{\partial x_j}{\partial x_k}}_{\delta_{jk}} \right)} \\
+\frac{\partial f}{\partial x_k} &= \sum_{ij}{  \delta_{ik}  A_{ij} x_j } + \sum_{ij}{  \delta_{jk} x_i A_{ij} }\\
+\frac{\partial f}{\partial x_k} &= \sum_{j}{  A_{kj} x_j } + \sum_{i}{ x_i A_{ik} }\\
+\frac{\partial f}{\partial x_k} &= \sum_{i}{\left(  A_{ki} x_i  + x_i A_{ik} \right)}\\
+%\frac{\partial f}{\partial x_k} &= \sum_{i}{ x_i \left(  A_{ik} + A_{ki} \right)  }\\
+\end{align}
+Which correspond in matrix form, with the numerator layout convention, to:
+\begin{align}
+\frac{\partial f}{\partial \underline{x}} = \underline{x}^T ( A + A^T )
+\end{align}
+
+\subsubsection{Least square solution derivation in vector form}
+
+Minimizing the error norm $\|\underline{e}\|^2$ of the estimation problem $\underline{e} = A \underline{\hat{x}} - \underline{b}$ by selecting the parameters $\underline{\hat{x}}$. If the gradient of the error norm with respect to the parameter vector is set to zero:
+\begin{align}
+\underline{0} &= \frac{\partial \|\underline{e}\|^2 }{\partial \underline{\hat{x}}} = \frac{\partial (\underline{e}^T \underline{e} )}{\partial \underline{\hat{x}}} = 2 \, \underline{e}^T \frac{\partial \underline{e} }{\partial \underline{\hat{x}}} = 2\, (A \underline{\hat{x}} - \underline{b})^T A 
+\end{align}
+For which the solution is
+\begin{align}
+\underline{\hat{x}} = \left[ A^T A \right]^{-1} A^T \underline{b}
+\end{align}
