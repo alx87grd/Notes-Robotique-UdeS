@@ -604,12 +604,14 @@ Given an $N$ samples of input-output data:
 \end{align}
 
 Column of matrix $\Phi^T$ span a $N$ dimension hyperplane:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \Phi^T = 
 \left[ \begin{array}{c@{}c@{}c}  
 \left[  \begin{array}{c}  \\ \underline{c_1} \\ \\ \end{array} \right] &  \ldots & \left[  \begin{array}{c} \\ \underline{c_m} \\ \\ \end{array} \right]
 \end{array} \right]
 \end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Exact solution does not exist when $\underline{y} \notin col( \Phi^T )$, instead we look for an approximation:
 \begin{align}
@@ -708,10 +710,345 @@ Il est à noté que pour chaque valeur propre, le vecteur propre n'est pas uniqu
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.95\textwidth]{linalgebra_eigen_exemple.png}
+	\caption{Exemple de vecteurs et valeurs propres dans un contexte de transformations géométriques}
+	\label{fig:linalgebra_eigen_exemple}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Diagonalisation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Si une matrice a $n$ vecteurs propres indépendants, alors la matrice peut être diagonalisée, c'est à dire décomposée sous la forme:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+A = V \Lambda V^{-1}
+\label{eq:diagmatrix}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+où la matrice $V$ regroupe tous les vecteurs propres de $A$, et la matrice diagonale $\Lambda$ toutes les valeurs propres  de $A$:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+V = 
+\left[ \begin{array}{c@{}c@{}c}  
+\left[  \begin{array}{c}  \\ \underline{v}_1 \\ \\ \end{array} \right] &  \ldots & \left[  \begin{array}{c} \\ \underline{v}_n \\ \\ \end{array} \right]
+\end{array} \right]
+\quad \quad
+\Lambda = 
+\left[ \begin{array}{c c c c}  
+\lambda_1 &  0          & 0 & 0 \\
+0         &  \lambda_2  & 0      & 0 \\
+0         &  0          &\ddots  & 0 \\
+0         &  0          & 0  & \lambda_n
+\end{array} \right]
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Lorsqu'une matrice a plusieurs vecteur propres associés à la même valeur propre alors la matrice n'est pas diagonalisable. Il est toutefois possible de faire appelle à une méthode alternative appelée la réduction de Jordan. 
+%
+La diagonalisation d'une matrice peut être interprété comme un changement de base, vers des coordonnées dites propres, pour lesquelles l'effet de la multiplication de cette matrice est indépendant pour chaque axes. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Preuve}
+\label{sec:preuvediag}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Par définition, si les vecteurs propres $\col{v}_i$ sont multipliés leur matrice $A$, la multiplication est équivalente à les multiplier par les valeurs propres associées $\lambda_i$:
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+A V = 
+\left[ \begin{array}{c@{}c@{}c}  
+A \left[   \begin{array}{c}  \\ \underline{v}_1 \\ \\ \end{array} \right] &  \ldots & \; A \left[  \begin{array}{c} \\ \underline{v}_n \\ \\ \end{array} \right]
+\end{array} \right]
+= 
+\left[ \begin{array}{c@{}c@{}c}  
+\lambda_1 \left[   \begin{array}{c}  \\ \underline{v}_1 \\ \\ \end{array} \right] &  \ldots & \;\lambda_n \left[  \begin{array}{c} \\  \underline{v}_n \\ \\ \end{array} \right]
+\end{array} \right]
+= V \Lambda
+\end{align}
+\label{eq:diagproof}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Ensuite, si la matrice $V$ est inversible (ce qui explique la condition d'indépendance des vecteurs propres pour que la matrice soit diagonalisable), il suffit de multiplier l'équation \eqref{eq:diagmatrix} par $V^{-1}$ par la droite pour obtenir l'équation \eqref{eq:diagmatrix}. 
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Exemple de diagonalisation pour une dillatation en 2D}
+\label{sec:ExempleDeDiagonalisationPourUneDillatationEn2D}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.55\textwidth]{linalgebra_diag_exemple.png}
+	\caption{Exemple de diagonalisation pour une transformation géométrique}
+	\label{fig:linalgebra_diag_exemple}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+A =
+\left[ \begin{array}{c c}  
+c\theta^2+1     & c\theta s\theta \\
+c\theta s\theta & s\theta^2+1
+\end{array} \right]
+=
+\underbrace{
+\left[ \begin{array}{c c}  
+c\theta & - s\theta \\ 
+s\theta &   c\theta 
+\end{array} \right]
+}_{V}
+\;
+\underbrace{
+\left[ \begin{array}{c c}  
+2 & 0 \\
+0 & 1 
+\end{array} \right]
+}_{\Lambda}
+\;
+\underbrace{
+\left[ \begin{array}{c c}  
+c\theta &   s\theta \\ 
+- s\theta &   c\theta 
+\end{array} \right]
+}_{V^{-1}}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Puissance d'une matrice}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+La puissance $p$ d'une matrice est définie comme la multiplication répété de $p$ copie de cette matrice. Si la matrice est diagonalisable, la puissance de la matrice $A$ est égale à
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+A^p = V \Lambda^p V^{-1}
+\label{eq:matrixpower}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+avec:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\Lambda^p = 
+\left[ \begin{array}{c c c c}  
+\lambda_1^p t &  0          & 0 & 0 \\
+0         &  \lambda_2^p  & 0      & 0 \\
+0         &  0          &\ddots  & 0 \\
+0         &  0          & 0  & \lambda_n^p
+\end{array} \right]
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Cette propriété découle de la diagonalisation:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+A^p = A \; A \; \hdots \; A = V \Lambda V^{-1} \; V \Lambda V^{-1} \;  \hdots \; V \Lambda V^{-1} = V \Lambda \Lambda   \hdots \Lambda V^{-1} = V \Lambda^p V^{-1}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Exemple de calcul de l'évolution d'un système discret}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+La suite de Fibonacci est définie par une séquence de chiffre pour lequel le prochain est la somme des deux précédents:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+0 \; 1\;1\;2\;3\;5\;8\;13\;21\;34\;55
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Le chiffre suivant est calculé en fonction des deux précédents:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+f_{k+1} = f_{k} + f_{k-1}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+il faut donc un vecteur d'état $\col{x}$ de deux variable ($f_{k}$ et $f_{k-1}$ ) pour prédire le prochain chiffre. L'évolution du vecteur d'état peut être décrite par l'équation matricielle suivante:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\underbrace{
+\left[ \begin{array}{c}  
+f_{k+1} \\ f_{k}
+\end{array} \right]
+}_{\col{x}_{k+1}}
+=
+\underbrace{
+\left[ \begin{array}{c c}  
+1 & 1 \\ 1 & 0 
+\end{array} \right]
+}_{A}
+\underbrace{
+\left[ \begin{array}{c}  
+f_{k} \\ f_{k-1}
+\end{array} \right]
+}_{\col{x}_{k}}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Il est possible de calculer la valeur future d'une évolution discrète comme celle-ci sans calculer toute la séquence grâce la propriété \eqref{eq:matrixpower}:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{x}_{k+1} &= A \col{x}_{k} \\
+\col{x}_{k+2} &= A \col{x}_{k+1} = A A \col{x}_{k} \\
+\col{x}_{k+3} &= A \col{x}_{k+2} = A A A \col{x}_{k} \\
+\col{x}_{k+p} &= A^p \col{x}_{k} = V \Lambda^p V^{-1} \col{x}_{k}
+\label{eq:discretevolutionpower}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Pour la suite de Fibonacci, la matrice $A$ qui décrit l'évolution peut être diagonalisée. Premièrement on détermine les valeurs propres:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+0
+=
+det(A - \lambda I) 
+=
+det\left(
+\left[ \begin{array}{c c}  
+1-\lambda & 1 \\ 1 & -\lambda  
+\end{array} \right]
+\right)
+= 
+\lambda^2 - \lambda -1 
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Il y a donc deux solutions:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\lambda_1 = \frac{1 + \sqrt{5}}{2} = 1.61803399 \quad\quad \lambda_2 = \frac{1 - \sqrt{5}}{2} = -0.61803399
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ou la première valeur propre est égale au très fameux nombre d'or. Il est possible de déterminer les vecteurs propres associé en substituant dans l'équation $A \col{v} = \lambda \col{v}$, on trouve alors:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{v}_1 = 
+\left[ \begin{array}{c}  
+\lambda_1 \\ 1
+\end{array} \right]
+\quad\quad 
+\col{v}_2 = 
+\left[ \begin{array}{c}  
+\lambda_2 \\ 1 
+\end{array} \right]
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Il est donc maintenant possible de calculer n'importe quel position future dans la séquence directement grâce à l'équation \eqref{eq:discretevolutionpower}. Si on cherche la position $p=1E9$ à partir du début de la suite de Fibonacci:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{x}_{p} &= V \Lambda^p V^{-1} \col{x}_{0} \\
+\left[ \begin{array}{c}  
+f_p \\ f_{p-1}
+\end{array} \right]
+&= 
+\left[ \begin{array}{c c }  
+\lambda_1 & \lambda_2 \\
+1         & 1 \\
+\end{array} \right]
+\left[ \begin{array}{c c }  
+\lambda_1^p & 0 \\
+0         & \lambda_2^p \\
+\end{array} \right]
+\left[ \begin{array}{c c }  
+\lambda_1 & \lambda_2 \\
+1         & 1 \\
+\end{array} \right]^{-1} 
+\left[ \begin{array}{c}  
+1 \\ 0
+\end{array} \right]
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+lorsque $p$ est très grand il est possible de simplifier le calcul en négligeant la contribution $\lambda_2^p \approx 0$ puisque lorsque que la valeur absolue de la base est inférieur à l'unité, la puissance tend vers zéro lorsque $p$ tend vers l'infini. Il est donc possible de simplifier:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\left[ \begin{array}{c}  
+f_p \\ f_{p-1}
+\end{array} \right]
+&= 
+\left[ \begin{array}{c c }  
+\lambda_1 & \lambda_2 \\
+1         & 1 \\
+\end{array} \right]
+\left[ \begin{array}{c c }  
+\lambda_1^p & 0 \\
+0         & 0 \\
+\end{array} \right]
+\frac{1}{\lambda_1 - \lambda_2}
+\left[ \begin{array}{c c }  
+1 & -\lambda_2 \\
+-1         & \lambda_1 \\
+\end{array} \right] 
+\left[ \begin{array}{c}  
+1 \\ 0
+\end{array} \right]
+\\
+\left[ \begin{array}{c}  
+f_p \\ f_{p-1}
+\end{array} \right]
+&= 
+\left[ \begin{array}{c c}  
+\lambda_1^{p+1} & 0 \\
+\lambda_1^{p}  & 0\\
+\end{array} \right]
+\frac{1}{\lambda_1 - \lambda_2}
+\left[ \begin{array}{c }  
+1  \\
+-1   \\
+\end{array} \right] 
+\\
+\left[ \begin{array}{c}  
+f_p \\ f_{p-1}
+\end{array} \right]
+&= 
+\frac{1}{\lambda_1 - \lambda_2}
+\left[ \begin{array}{c}  
+\lambda_1^{p+1}\\
+\lambda_1^{p} \\
+\end{array} \right] 
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Il est donc possible de calculer directement la valeur dans la suite pour une positon $p$ lorsque $p$ est très grand:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+f_p = \frac{\lambda_1^{p+1}}{\lambda_1 - \lambda_2} = \frac{1.618^{(p+1)}}{\sqrt{5}}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Exponentiel de matrice}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+e^{At} = V e^{\Lambda t} V^{-1}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+e^{\Lambda t} = 
+\left[ \begin{array}{c c c c}  
+e^{\lambda_1 t} &  0          & 0 & 0 \\
+0         &  e^{\lambda_2 t}  & 0      & 0 \\
+0         &  0          &\ddots  & 0 \\
+0         &  0          & 0  & e^{\lambda_n t}
+\end{array} \right]
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
