@@ -3,49 +3,146 @@
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Cinématique différentielle des robots manipulateurs}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-Cinématique:
-
+La cinématique différentielle c'est l'étude de la relation entre le mouvement des joints et le mouvement associé de l'effecteur. Dans le chapitre \ref{sec:cine1}, les fonctions reliant la position de l'effecteur $\col{r}$ et la configuration du robot dans l'espace des joints $\col{q}$ ont été étudiées:
 %%%%%%%%%%%%%%%%
 \begin{equation}
 \text{Cinématique directe:}  \quad \col{r} = f\left( \, \col{q} \, \right)  \quad  \text{inverse:} \quad \col{q} = f^{-1}\left( \, \col{r}  \, \right) 
 \end{equation}
 %%%%%%%%%%%%%%%
 
-
-
-Cinématique différentielle:
-
-
+Plusieurs méthodes en robotique sont plutôt basées sur les fonctions qui relient la vitesse de l'effecteur $\col{\dot{r}}$ à la vitesse des joints $\col{\dot{q}}$. Ces fonctions prennent la forme suivante:
 %%%%%%%%%%%%%%%%
 \begin{equation}
 \text{Cinématique différentielle directe:} \quad \col{\dot{r}} = J\left( \, \col{q} \, \right) \, \col{\dot{q}}   \quad \text{inverse:} \quad \col{\dot{q}} = J^{-1}\left( \, \col{q} \, \right) \, \col{\dot{r}}
 \end{equation}
 %%%%%%%%%%%%%%%
-
+Les fonctions de cinématique différentielle implique une matrice Jacobienne qui relit des déplacements infinitésimales des joints aux déplacements infinitésimales de l'effecteur:
 %%%%%%%%%%%%%%%%
 \begin{equation}
 \text{Matrice Jacobienne:} \quad J\left( \col{q} \right) = \frac{\partial \col{r}}{\partial \col{q}}
 \end{equation}
 %%%%%%%%%%%%%%%%
-
+La composante $J_{ij}$ de la matrice correspond à la variation de la coordonnée $r_i$ de l'effecteur, due à un déplacement unitaire du joint $q_j$. D'un point de vue mathématique, la matrice Jacobienne $J$ correspond au gradient de la fonction multi-variable $\col{r} = f\left( \, \col{q} \, \right)$. Ensuite, la relation qui relit les vitesses est relié à la relation entre les déplacements infinitésimals par le principe des dérivées en chaînes:
 %%%%%%%%%%%%%%%%
 \begin{equation}
 \text{Dérivées en chaînes:} \frac{d \col{r}}{dt} = \left( \frac{\partial \col{r}}{\partial \col{q}} \right) \frac{d \col{q}}{dt} 
 \end{equation}
 %%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{La matrice Jacobienne}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Exemple: Cinématique différentielle d'un robot à deux joints}
+\paragraph{Unités} Typiquement pour les analyse de cinématique différentielle, les variables de sortie sont les DDL de translation de l'effecteur, la pose complète de l'effecteur ou bien des variables qui décrivent les DDL de l'espace de la tâche; et les variables d'entrée sont les vitesse angulaire des joints du robot. Les unités des composantes $J_{ij}$ de la matrice Jacobienne associée sont donc typiquement soit des unités de distance qui correspondent à des \textit{bras de levier}, ou bien des ratios adimensionnels de vitesses angulaires. 
+
+\paragraph{Non-linéarité} Il est important de noté que généralement la matrice Jacobienne est une fonction de la configuration $\col{q}$ du robot. Comme la fonction de cinématique directe est généralement hautement non-linéaire, l'effet d'un déplacement infinitésimal d'un joint sur l'effecteur dépend considérablement de la configuration initiale. 
+
+\paragraph{Colonnes} Comme illustré à la Figure \ref{fig:jaco_graph}, dans le contexte de cinématique différentiel, la colonne $j$ de la matrice Jacobienne correspond à un vecteur déplacement de l'effecteur due au mouvement du joint $j$. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{figure}[H]
+	%\centering
+		%\includegraphics[width=0.75\textwidth]{diff_kin.jpg}
+	%\caption{Cinématique différentielle}
+	%\label{fig:diff_kin}
+%\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+\vspace{-5pt}
+	\centering
+		\includegraphics[width=0.55\textwidth]{jaco_graph.jpg}
+	\caption{Illustration vectorielle du Jacobian du manipulateur}
+	\vspace{-5pt}
+	\label{fig:jaco_graph}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Exemples de cinématique différentielle pour des robots manipulateurs}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Cinématique différentielle d'un robot cartésien}
+
+La Figure \ref{fig:jaco_robot_cart} illustre un robot planaire constitué de deux actionneurs linéaires basé sur des vis à billes qui sont assemblés à 90 degrées. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\vspace{-5pt}
+	\centering
+		\includegraphics[width=0.65\textwidth]{jaco_robot_cart.jpg}
+	\caption{Jacobien pour un robot cartésien}
+	\vspace{-5pt}
+	\label{fig:jaco_robot_cart}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Pour ce robot, chaque actionneur linéaire contrôle de façon indépendante la translation $x$ et $y$ de l'effecteur, la fonction de cinématique directe est donnée par :
+%%%%%%%%%%%%%%%%
+\begin{align}
+\quad \col{r} &= f\left( \, \col{q} \, \right)  \\
+\left[ \begin{array}{c} x \\ y  \end{array} \right]  &= \left[ \begin{array}{c} a_1 q_1 \\ a_2 q_2  \end{array} \right]
+\label{eq:fwdkinlin}
+\end{align}
+%%%%%%%%%%%%%%%
+ou les variables $a_i$ sont des constantes qui relient la rotation angulaire des vis aux déplacements linéaires. La relation différentielle peut alors être calculée:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\underbrace{ \left[ \begin{array}{c} \dot{x} \\ \dot{y}  \end{array} \right] }_{\dot{\col{r}}}
+ &= 
+\underbrace{ \left[ \begin{array}{c c } 
+\frac{\partial x }{\partial q_1}   & \frac{\partial x }{\partial q_2} \\ 
+\frac{\partial y }{\partial q_1}   & \frac{\partial y }{\partial q_2}
+\end{array} \right]  }_{ J } 
+\underbrace{ \left[ \begin{array}{c} 
+\dot{q}_1 \\ 
+\dot{q}_2 
+\end{array} \right]}_{ \dot{\col{q}} } \\
+%%%%%%%%%%%%%
+\underbrace{ \left[ \begin{array}{c} \dot{x} \\ \dot{y}  \end{array} \right] }_{\dot{\col{r}}}
+ &= 
+\underbrace{ \left[ \begin{array}{c c } 
+a_1 & 0 \\ 
+0   & a_2
+\end{array} \right]  }_{ J } 
+\underbrace{ \left[ \begin{array}{c} 
+\dot{q}_1 \\ 
+\dot{q}_2 
+\end{array} \right]}_{ \dot{\col{q}} } \\
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Il est a noter ici que: \textbf{1)} la matrice Jacobienne est diagonale car chaque joint influence indépendamment un seul DDL de l'effecteur. \textbf{2)} la matrice Jacobienne est constante et indépendante de $\col{q}$ car la relation de cinématique directe (\eqref{eq:fwdkinlin}) est linéaire. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Cinématique différentielle d'un robot à deux joints}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.65\textwidth]{robot_2dof.png}
+	\caption{Robot à deux joints}
+	\label{fig:robot_2dof}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Pour un robot manipulateur planaire à deux DDL, comme illustré à la Figure \ref{fig:robot_2dof}, la fonction de cinématique directe est données par:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \col{r} &= \left[ \begin{array}{c} x \\ y  \end{array} \right]  = \left[ \begin{array}{c} 
 -l_1 c_1 + l_2 c_{12} \\ 
  l_1 s_1 + l_2 s_{12}  
 \end{array} \right] 
+\label{eq:kinfwd2dof}
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 avec
@@ -57,7 +154,8 @@ c_{12} &= \cos( q_1 + q_2 ) \\
 s_{12} &= \sin( q_1 + q_2 )
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Dérivation:
+
+On peut alors trouver la relation différentielle en dérivant par rapport au temps:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \dot{\col{r}} &= \frac{d\col{r}}{dt} = \left[ \begin{array}{c} \dot{x} \\ \dot{y}  \end{array} \right]  = \left[ \begin{array}{c} 
@@ -79,18 +177,26 @@ Dérivation:
 
 
 
-\subsection{Robot hyper-redondant}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Cinématique différentielle d'un robot à trois joints}
+
+À venir!
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Cinématique différentielle d'un robot redondant}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-m > n
+n > m
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-m &= dim(\col{q}) = \quad\text{Nombre de DDL du robot} \\
-n &= dim(\col{r}) = \quad\text{Coordonnées de l'espace de la tâche} 
+n &= dim(\col{q}) = \quad\text{Nombre de DDL du robot} \\
+m &= dim(\col{r}) = \quad\text{Coordonnées de l'espace de la tâche} 
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
