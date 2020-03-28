@@ -21,18 +21,75 @@ Plusieurs méthodes en robotique sont plutôt basées sur les fonctions qui reli
 \text{Cinématique différentielle directe:} \quad \col{\dot{r}} = J\left( \, \col{q} \, \right) \, \col{\dot{q}}   \quad \text{inverse:} \quad \col{\dot{q}} = J^{-1}\left( \, \col{q} \, \right) \, \col{\dot{r}}
 \end{equation}
 %%%%%%%%%%%%%%%
-Les fonctions de cinématique différentielle implique une matrice Jacobienne qui relit des déplacements infinitésimales des joints aux déplacements infinitésimales de l'effecteur:
+Les fonctions de cinématique différentielle impliquent une matrice Jacobienne qui relit des déplacements infinitésimales des joints aux déplacements infinitésimales de l'effecteur:
 %%%%%%%%%%%%%%%%
 \begin{equation}
-\text{Matrice Jacobienne:} \quad J\left( \col{q} \right) = \frac{\partial \col{r}}{\partial \col{q}}
+\text{Matrice Jacobienne:} \quad J\left( \col{q} \right) = \frac{\partial \col{r}}{\partial \col{q}} = 
+\left[ \begin{array}{c c c} 
+\frac{\partial r_1 }{\partial q_1}   &  \hdots & \frac{\partial r_1 }{\partial q_n} \\ 
+\vdots                               &  \ddots & \vdots                             \\
+\frac{\partial r_m }{\partial q_1}   &  \hdots & \frac{\partial r_m }{\partial q_n}
+\end{array} \right]_{m \times n}
 \end{equation}
 %%%%%%%%%%%%%%%%
-La composante $J_{ij}$ de la matrice correspond à la variation de la coordonnée $r_i$ de l'effecteur, due à un déplacement unitaire du joint $q_j$. D'un point de vue mathématique, la matrice Jacobienne $J$ correspond au gradient de la fonction multi-variable $\col{r} = f\left( \, \col{q} \, \right)$. Ensuite, la relation qui relit les vitesses est relié à la relation entre les déplacements infinitésimals par le principe des dérivées en chaînes:
+ou $n$ est le nombre de joints, i.e. le nombre de DDL du robot, et $m$ est le nombre de coordonnées de l'espace sortie, par exemple la pose de l'effecteur.  D'un point de vue mathématique, la matrice Jacobienne $J$ correspond au gradient de la fonction multi-variable $\col{r} = f\left( \, \col{q} \, \right)$. Plus de détails sur la dérivation dans un contexte multi-variable sont disponibles à la section \ref{sec:vecmatdifferentiation}.
+
+La composante $J_{ij}$ de la matrice correspond à la variation de la coordonnée $r_i$ de l'effecteur, due à un déplacement unitaire du joint $q_j$. La relation entre les déplacements infinitésimales est données par:
+%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+%%%%%%%%%%%%%%%%%%%%
+%d\col{r}  = J(\col{q}) d\col{q}
+\left[ \begin{array}{c}  \\ d\col{r} \\ \\
+\end{array} \right]_{m \times 1}
+&= 
+\left[ \begin{array}{c c c} 
+&&\\
+& J(\col{q}) &\\
+&&
+\end{array} \right]_{m \times n}
+\left[ \begin{array}{c} 
+\\ d\col{q} \\ \\
+\end{array} \right]_{n \times 1}
+%%%%%%%%%%%%%%%%%%%%
+\quad \Leftrightarrow \quad
+%%%%%%%%%%%%%%%%%%%%
+%\underbrace{
+dr_j
+%}_{mouvement de l'effecteur selon l'axe $j$}
+%\underbrace{
+= \sum_i^n{
+%}_{somme des contributions des joints}
+%\underbrace{
+J_{ji} 
+%}_{bras de levier}
+%\underbrace{
+dq_i
+%}_{mouvement du joint $i$}
+}
+\quad \quad j \in \left\{ 1 , ... , m \right\}
+\label{eq:diffkin1}
+%%%%%%%%%%%%%%%%%%%%
+\end{align}
+%%%%%%%%%%%%%%%%%%%%
+
+
+La relation qui relit les vitesses est relié à la relation entre les déplacements infinitésimales par le principe des dérivées en chaînes:
 %%%%%%%%%%%%%%%%
 \begin{equation}
-\text{Dérivées en chaînes:} \frac{d \col{r}}{dt} = \left( \frac{\partial \col{r}}{\partial \col{q}} \right) \frac{d \col{q}}{dt} 
+\text{Dérivées en chaînes:} 
+\underbrace{
+\frac{d \col{r}}{dt}
+}_{\col{\dot{r}}}
+= 
+\underbrace{
+\left( \frac{\partial \col{r}}{\partial \col{q}} \right)
+}_{J(\col{q})}
+\underbrace{
+\frac{d \col{q}}{dt}
+}_{\col{\dot{q}}}
 \end{equation}
 %%%%%%%%%%%%%%%%
+autrement dit, il suffit de diviser l'équation \eqref{eq:diffkin1} par $dt$ pour obtenir la relation entres les vitesses. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{La matrice Jacobienne}
@@ -40,7 +97,7 @@ La composante $J_{ij}$ de la matrice correspond à la variation de la coordonné
 
 \paragraph{Unités} Typiquement pour les analyse de cinématique différentielle, les variables de sortie sont les DDL de translation de l'effecteur, la pose complète de l'effecteur ou bien des variables qui décrivent les DDL de l'espace de la tâche; et les variables d'entrée sont les vitesse angulaire des joints du robot. Les unités des composantes $J_{ij}$ de la matrice Jacobienne associée sont donc typiquement soit des unités de distance qui correspondent à des \textit{bras de levier}, ou bien des ratios adimensionnels de vitesses angulaires. 
 
-\paragraph{Non-linéarité} Il est important de noté que généralement la matrice Jacobienne est une fonction de la configuration $\col{q}$ du robot. Comme la fonction de cinématique directe est généralement hautement non-linéaire, l'effet d'un déplacement infinitésimal d'un joint sur l'effecteur dépend considérablement de la configuration initiale. 
+\paragraph{Non-linéarité} Il est important de noter que généralement la matrice Jacobienne est une fonction de la configuration $\col{q}$ du robot. Comme la fonction de cinématique directe est généralement hautement non-linéaire, l'effet d'un déplacement infinitésimal d'un joint sur l'effecteur dépend considérablement de la configuration initiale. La matrice Jacobienne est donc seulement valide pour décrire des petites variation déplacement autour de la configuration pour laquelle elle a été évaluée, ou bien pour la relation entre les vitesses momentanément à cette configuration. 
 
 \paragraph{Colonnes} Comme illustré à la Figure \ref{fig:jaco_graph}, dans le contexte de cinématique différentiel, la colonne $j$ de la matrice Jacobienne correspond à un vecteur déplacement de l'effecteur due au mouvement du joint $j$. 
 
@@ -67,6 +124,7 @@ La composante $J_{ij}$ de la matrice correspond à la variation de la coordonné
 
 
 
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Exemples de cinématique différentielle pour des robots manipulateurs}
 
@@ -120,11 +178,12 @@ a_1 & 0 \\
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Il est a noter ici que: \textbf{1)} la matrice Jacobienne est diagonale car chaque joint influence indépendamment un seul DDL de l'effecteur. \textbf{2)} la matrice Jacobienne est constante et indépendante de $\col{q}$ car la relation de cinématique directe (\eqref{eq:fwdkinlin}) est linéaire. 
+Il est a noter ici que: \textbf{1)} la matrice Jacobienne est diagonale car chaque joint influence indépendamment un seul DDL de l'effecteur. \textbf{2)} la matrice Jacobienne est constante et indépendante de $\col{q}$ car la relation de cinématique directe, voir équation \eqref{eq:fwdkinlin}, est linéaire. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Cinématique différentielle d'un robot à deux joints}
+\label{sec:kindiff_2dof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
@@ -139,7 +198,7 @@ Pour un robot manipulateur planaire à deux DDL, comme illustré à la Figure \r
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \col{r} &= \left[ \begin{array}{c} x \\ y  \end{array} \right]  = \left[ \begin{array}{c} 
--l_1 c_1 + l_2 c_{12} \\ 
+ l_1 c_1 + l_2 c_{12} \\ 
  l_1 s_1 + l_2 s_{12}  
 \end{array} \right] 
 \label{eq:kinfwd2dof}
@@ -177,30 +236,121 @@ On peut alors trouver la relation différentielle en dérivant par rapport au te
 
 
 
-
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Cinématique différentielle d'un robot à trois joints}
+\label{sec:diffkinrobot3dofex}
 
-À venir!
+Les Figures \pageref{fig:jaco_3dof_a} et \ref{fig:jaco_3dof_b} illustre la cinématique différentielle d'un robot à trois joints dans une configuration qui permet de bien visualiser indépendamment les effets du mouvement de chaque joint. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.75\textwidth]{jaco_3dof_a.jpg}
+	\caption{Jacobien d'un robot à trois joints - partie a)}
+	\label{fig:jaco_3dof_a}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.85\textwidth]{jaco_3dof_b.jpg}
+	\caption{Jacobien d'un robot à trois joints - partie b)}
+	\label{fig:jaco_3dof_b}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Cinématique différentielle d'un robot redondant}
+\subsection{Cinématique différentielle inverse}
 
+Lorsque le problème de cinématique différentielle est inversé, c'est-à-dire lorsqu'on cherche un vecteur de vitesse aux joints $\col{\dot{q}}$ qui va produire une vitesse de l'effecteur spécifiée $\col{\dot{r}}$, il faut inverser la relation mathématique. Lorsque la matrice Jacobienne est carré et non-singulière, il suffit de multiplier la relation $\col{\dot{r}} = J\left( \, \col{q} \, \right) \, \col{\dot{q}}$ par l'inverse du Jacobien des deux côtés de l'équation pour obtenir la relation:
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{\dot{q}} = J^{-1}\left( \, \col{q} \, \right) \, \col{\dot{r}}
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+Toutefois, cette opération est impossible si le robot a une configuration singulière (voir section \ref{sec:singu}). De plus, si les dimensions de $\col{q}$ et $\col{r}$ sont différentes, la matrice Jacobienne est rectangulaire et d'autres techniques doivent être utilisée (voir sections \ref{sec:redondant} et \ref{sec:overconstraintrobot})
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Les singularités}
+\label{sec:singu}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Certaine configuration $\col{q}$ d'un robot manipulateur peuvent être singulière, c'est-à-dire des configuration pour lesquelles il est impossible d'inverser la matrice Jacobienne. Les configurations singulière sont l'ensemble des configurations pour lesquelles le déterminant de la matrice Jacobienne est nul:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\text{Singularités :} \quad \{  \col{q} \; | \; det(J(\col{q})) = 0 \}
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Ces situations correspondent aussi à lorsque les colonnes de $J$ sont co-linéaires, et qu'aucune combinaison linéaire ne permet de déplacer l'effecteur dans au moins une direction impossible (la matrice Jacobienne a un left-nullspace, voir section \ref{sec:leftnullspace} pour les notions d'algèbre linéaire associées). 
+
+
+\subsubsection{Singularités pour un robot manipulateur 2 DDL}
+
+Pour un robot manipulateur à deux DDl comme décrit à l'exemple \ref{sec:kindiff_2dof}, le Jacobien est donné par:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+J = \left[ \begin{array}{c c} 
+-(l_1 s_1 + l_2 s_{12}) & - l_2 s_{12} \\
+ (l_1 c_1 + l_2 c_{12}) &   l_2 c_{12}
+\end{array} \right]
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Le déterminant de la matrice est donnée par:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+det(J) &= l_2 s_{12} (l_1 c_1 + l_2 c_{12}) - l_2 c_{12} (l_1 s_1 + l_2 s_{12}) \\
+       &= l_1 l_2 s_{12} c_1 + l_2^2 s_{12} c_{12} - l_1 l_2 s_1 c_{12} - l_2^2 s_{12} c_{12} \\
+			 &= l_1 l_2 ( s_1 c_{12} - c_1 s_{12} ) \\
+			 &= l_1 l_2 s_2
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Donc les singularités sont les configurations avec un angle $q_2$ égale à 0 ou 180 degrés. Comme illustré à la Figure \ref{fig:sigularite_2dof}, ces configurations correspondent à lorsque les deux liens rigides du robot sont alignés. Dans ces configurations, il est seulement possible de faire bouger l'effecteur dans une direction perpendiculaire aux liens rigides. Comme illustré à la Figure \ref{fig:sigularite_2dof_b}, la direction pour laquelle le mouvement est possible correspond à l'espace colonne de la matrice Jacobienne, et la direction orthogonale pour laquelle il est impossible de déplacer l'effecteur correspond au left-nullspace de la matrice Jacobienne, voir section \ref{sec:4espfond} pour les notions d'algèbre linéaire associées.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.75\textwidth]{sigularite_2dof.png}
+	\caption{Singularités pour un robot manipulateur à deux DDL}
+	\label{fig:sigularite_2dof}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.95\textwidth]{sigularite_2dof_b.png}
+	\caption{Co-linéarité des colonnes du Jacobien pour une singularité}
+	\label{fig:sigularite_2dof_b}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Cinématique différentielle inverse d'un robot redondant / situations sous-contraintes}
+\label{sec:redondant}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Si le nombre d'entrées $n$ est plus grand que le nombre de sorties $m$ : 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 n > m
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+avec 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 n &= dim(\col{q}) = \quad\text{Nombre de DDL du robot} \\
 m &= dim(\col{r}) = \quad\text{Coordonnées de l'espace de la tâche} 
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-Cinématique différentielle:
+le robot est dit redondant, et le problème de cinématique différentiel inverse est sous-contraint: il y a plusieurs solutions possible de déplacement des joints qui produisent un même déplacement de l'effecteur. Le Jacobien d'une telle situation est rectangulaire, il a plus de colonnes que de rangées:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \left[ \begin{array}{c}  \\ \dot{\col{r}} \\ \\
@@ -214,42 +364,152 @@ Cinématique différentielle:
 \left[ \begin{array}{c} 
 \\ \\ \dot{\col{q}} \\ \\ \\
 \end{array} \right]_{n \times 1}
+\label{eq:underconstraintdiffkin}
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Cette situation nous même à un problème d'algèbre linéaire sous-contraint qui peu être résolu avec une méthode qui utilise une matrice pseudo inverse, voir section \ref{sec:pseudoinverse} pour les notions d'algèbre linéaire. Cette situation est aussi caractérisée par la présence d'un nullspace: une combinaison de déplacement des joints peut avoir un effet net nul sur l'effecteur, voir section \ref{sec:nullspace} pour les notions d'algèbre linéaire et l'exemple \ref{fig:4spaces_ex1}. 
 
-
-Cinématique inverse:
+Une méthode pour travailler avec ce genre de situation consiste à utiliser l'équation de cinématique inverse suivante:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \left[ \begin{array}{c}  \\ \\ \dot{\col{q}} \\ \\ \\
 \end{array} \right]_{n \times 1}
 &= 
+\underbrace{
 \left[ \begin{array}{c c c} 
 &&\\ &&\\ & J^{\#} & \\&& \\ &&
 \end{array} \right]_{n \times m}
+}_{\text{Pseudo-inverse}}
 \left[ \begin{array}{c} 
 \\ \dot{\col{r}} \\ \\
 \end{array} \right]_{m \times 1} + 
+\underbrace{
 \left[ \begin{array}{c c c c c} 
 &&&&\\ &&&&\\ && I - J^{\#}J && \\&&&& \\ &&&&
 \end{array} \right]_{n \times n}
+}_{\text{Projection sur le Nullspace}}
 \left[ \begin{array}{c} 
-\\ \\ \col{\Psi} \\ \\ \\
+\\ \\ \col{\psi} \\ \\ \\
 \end{array} \right]_{n \times 1}
+\label{eq:pseudoinversediffkin}
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-avec
+avec $J^{\#}$ qui est la matrice pseudo-inverse droite de Moore–Penrose, définie par:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 J^{\#} = J^T\, (JJ^T)^{-1}
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Le premier terme $J^{\#} \col{\dot{r}}$ produit un vecteur $\col{\dot{q}}$ qui produit une solution exacte pour le système d'équations \eqref{eq:underconstraintdiffkin}
+et minimise la norme du vecteur-colonne $\col{\dot{q}}$. Le second terme produit une variation pour le vecteur $\col{\dot{q}}$ qui réside dans le nullspace de la matrice $J$, donc cette variation n'a aucun influence sur la sortie et n’affectera pas l'objectif principal d'obtenir un vecteur $\col{\dot{q}}$ qui produit un mouvement de l'effecteur donné par $\col{\dot{r}}$. Le vecteur $\col{\psi}$ dans le second terme est arbitraire et peut être utilisé pour prioriser certaine solutions sans influencer la justesse de la solution. 
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Exemple de cinématique différentielle inverse pour une situation sous-contrainte}
+
+
+Le robot de l'exemple \ref{sec:diffkinrobot3dofex} est ici analysé en termes de cinématique différentielle, la Figure \ref{fig:robot_redo_a} illustre la présence de plusieurs solutions possibles et la Figure \ref{fig:robot_redo_c} illustre l'utilisation de la matrice pseudo-inverse pour obtenir la solution optimale ainsi que le nullspace. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.65\textwidth]{robot_redo_a.png}
+	\caption{Cinématique différentielle inverse d'un robot redondant ($n=3>m=2$)}
+	\label{fig:robot_redo_a}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{figure}[H]
+	%\centering
+		%\includegraphics[width=0.55\textwidth]{robot_redo_b.png}
+	%%\caption{Co-linéarité des colonnes du Jacobien pour une singularité}
+	%\label{fig:robot_redo_b}
+%\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.55\textwidth]{robot_redo_b.png}
+		\includegraphics[width=0.95\textwidth]{robot_redo_c.png}
+	\caption{Cinématique différentielle inverse d'un robot redondant: solution optimale et nullspace}
+	\label{fig:robot_redo_c}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Cinématique différentielle inverse pour une situation sur-contrainte}
+\label{sec:overconstraintrobot}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Si le nombre d'entrées $n$ est plus petit que le nombre de sorties $m$ : 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+n < m
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+avec 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+n &= dim(\col{q}) = \quad\text{Nombre de DDL du robot} \\
+m &= dim(\col{r}) = \quad\text{Coordonnées de l'espace de la tâche} 
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+le problème de cinématique différentiel inverse est sur-contraint: il n'y a pas de solutions exactes possibles sauf pour un sous-ensemble de déplacements de l'effecteur. Le Jacobien d'une telle situation est rectangulaire, il a plus de rangées que de colonnes:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\left[ \begin{array}{c}  \\ \\ \dot{\col{r}} \\ \\ \\ 
+\end{array} \right]_{m \times 1}
+&= 
+\left[ \begin{array}{c c c} 
+&&\\
+&&\\
+& J(\col{q}) &\\
+&&\\
+&&
+\end{array} \right]_{m \times n}
+\left[ \begin{array}{c} 
+\\ \dot{\col{q}} \\ \\
+\end{array} \right]_{n \times 1}
+\label{eq:uoverconstraintdiffkin}
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Un méthode pratique pour la cinématique inverse dans ce contexte est la méthode des moindres-carré, voir la section \ref{sec:moindrecarre} pour les notions d'algèbre linéaire. L'utilisation de cette méthode permet de calculer explicitement un vecteur solution approximé $\col{\hat{\dot{q}}}$ qui minimise la norme de l'erreur entre une vitesse à l'effecteur désiré et celle obtenue avec la solution approximée. La solution moindre-carrée est calculée ainsi:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{\hat{\dot{q}}} = \left( J^T J\right)^{-1} J^T \, \dot{\col{r}}
+\label{eq:overconstraintdiffkinleastsquare}
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+qui dans ce contexte donne la solution optimale pour le problème : 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{\hat{\dot{q}}} =  \operatornamewithlimits{argmin}\limits_{\col{\dot{q}}} \left\| J \col{\dot{q}} - \col{\dot{r}} \right\|
+\label{eq:overconstraintdiffkinleastsquare}
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Exemple de cinématique différentielle inverse pour une situation sur-contrainte}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.55\textwidth]{robot_under.png}
+	\caption{Cinématique différentielle inverse pour une situation sur-contrainte ($n=1<m=2$)}
+	\label{fig:robot_under}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

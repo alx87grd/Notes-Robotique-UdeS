@@ -2669,11 +2669,105 @@ Avec la dernière colonne de la matrice ${}^AT^D$, il est possible d'extraire le
 %%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
 \subsection{Les paramètres \textit{Denavit–Hartenberg}}
 
-Les paramètres \textit{Denavit–Hartenberg} consistent en quatre paramètres associés à une convention particulière pour attacher des repères aux liens rigides d'un robot manipulateur. Plutôt que de définir arbitrairement les bases vectorielles et les points d'origine des repères, la convention impose une méthodologie standardisée pour définir les repères et les matrices de transformations associées. 
+Les paramètres DH (\textit{Denavit–Hartenberg}) consistent en quatre paramètres associés à une convention particulière pour attacher des repères aux liens rigides d'un robot manipulateur. Plutôt que de définir arbitrairement les bases vectorielles et les points d'origine des repères, la convention impose une méthodologie standardisée pour définir les repères et les matrices de transformations associées. Plusieurs librairies de cinématique de robot utilise cette convention, qui permet aussi de décrire la cinématique d'un robot avec un nombre de paramètre minimum.
 
-Détails à venir!
+\subsubsection{ Positionnement relatif des repères }
+
+Avec la convention DH, il faut placer les axes 3 (ou Z) des repères sur les axe de rotation des joints révolus et sur les axes de translation des joints prismatiques. Ensuite les axes 1 (ou X) d'un joint sont positionnés relativement à la position du joint précédent (parallèle à la normale commune des axes 3), et ensuite les axes 2 sont placés selon la règle de la main droite. L'axe 1 du premier repère est un choix arbitraire. Il y a aussi plusieurs options lorsque les axes 3 de deux joints consécutifs sont parallèles. La Figure \ref{fig:dh1} illustre cette convention de définition des repères d'un robot.
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.90\textwidth]{fig/dh1.jpg}
+	\caption{Positionnement des repères selon la convention des paramètres DH}
+	\label{fig:dh1}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{ Quatre paramètres }
+
+Avec la convention de positionnement des repères, seuls quatre scalaires (deux distance et deux angles) sont suffisants pour décrire la pose relative des deux repères sur deux joints adjacents. Les quatre paramètres sont illustrés à la Figure \ref{fig:dh2}. Le paramètre $d$ représente la distance entre le point d'origine du premier repère $A_o$ et l'intersection de l'axe $\hat{a}_3$ avec la normale commune (noté $A'_o$).  Le paramètre $\theta$ est l'angle entre le vecteur unitaire $\hat{a}_1$ et la normale commune. Le paramètre $r$ est la longueur de la normale commune. Le paramètre $\alpha$ est l'angle de rotation autour de la normale pour aligner les deux axes des joints $\hat{a}_3$ et $\hat{b}_3$.
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.90\textwidth]{fig/dh2.jpg}
+	\caption{Les quatre paramètres DH}
+	\label{fig:dh2}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Matrice de transformation}
+
+La matrice de rotation qui relie la pose des deux repère associés à deux joints successifs peut être paramétrée par les quatre paramètres $d$, $\theta$, $r$ et $\alpha$. Le vecteur position qui relie les origines est:
+%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\vec{r}_{B_o/A_o} &=  d \hat{a}_3 + r \hat{b}_1
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%
+L'orientation relative peut être exprimée comme la combinaison de deux rotation selon les axes $\hat{a}_3$ et $\hat{b}_1$:
+%%%%%%%%%%%%%%%%%%%
+\begin{align}
+{}^aR^b &= {}^aR^{a'}(\theta) {}^{a'}R^b(\alpha) \\
+{}^aR^{a'}(\theta)  &=
+\left[ \begin{array}{c c c}
+	c\theta & -s\theta & 0 \\
+	s\theta & c\theta & 0 \\
+	0 & 0 & 1 
+\end{array}  \right]  \\
+{}^{a'}R^b(\alpha)  &=
+\left[ \begin{array}{c c c}
+	1 & 0 & 0 \\
+	0 & c\alpha & -s\alpha \\
+	0 & s\alpha & c\alpha 
+\end{array}  \right]  
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%
+Les composantes du vecteur position dans la base $a$ sont donc:
+%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{r}_{B_o/A_o}^a &=  
+\left[ \begin{array}{c}
+0 \\
+0 \\
+d
+\end{array}  \right]  + {}^aR^{a'} \left[ \begin{array}{c}
+r \\
+0 \\
+0
+\end{array}  \right]  = \left[ \begin{array}{c}
+r c\theta \\
+r s\theta \\
+d
+\end{array}  \right] 
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%
+La matrice de transformation peut alors être assemblée:
+%%%%%%%%%%%%%%%%%%%
+\begin{align}
+{}^AT^{B} &=
+\left[ \begin{array}{c c c c }
+c\theta & -s\theta c\alpha & s\theta s\alpha & r c\theta\\
+s\theta & c\theta c\alpha  & -c\theta s\alpha  & r s\theta\\
+0 & s\alpha & c\alpha  &  d\\
+0 & 0 & 0 & 1 
+\end{array}  \right]  
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%
+Donc lorsque la convention est utilisée, la matrice de transformation entre deux repères successifs a toujours la forme ci-dessus, et il suffit d'identifier les quatre paramètres DH de chaque joints. 
+
+\subsubsection{Matrice de transformation}
+
+À venir!
+
+
+
+
+
+
+
+
 
 
 \newpage

@@ -328,7 +328,7 @@ Inversement, un ensemble de vecteurs $\left\{ \col{v}_1, \col{v}_2, \hdots, \col
 \label{sec:base}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Un ensemble $\{ \col{v}_1 \; \col{v}_2 \; \hdots \; \col{v}_n \}$ de vecteurs de dimensions $m$ dans un espace vectoriel appartenant à $\re^m$, forme une base de cet espace si: \textbf{1)} les vecteurs $\col{v}_1 \; \col{v}_2 \; \hdots \; \col{v}_n$ sont linéairement indépendants et \textbf{2)} tout vecteur $\col{w}$ de cet espace peut être exprimer comme une combinaison linéaire de ces vecteurs:
+Un ensemble $\{ \col{v}_1 \; \col{v}_2 \; \hdots \; \col{v}_n \}$ de vecteurs de dimensions $m$ dans un espace vectoriel appartenant à $\re^m$, forme une base de cet espace si: \textbf{1)} les vecteurs $\col{v}_1 \; \col{v}_2 \; \hdots \; \col{v}_n$ sont linéairement indépendants et \textbf{2)} tout vecteur $\col{w}$ de cet espace peut être exprimé comme une combinaison linéaire de ces vecteurs:
 %%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \col{w} = x_1 \col{v}_1 + x_2 \col{v}_2 + ... + x_n \col{v}_n
@@ -378,6 +378,8 @@ r \leq m &= \#\, colonnes
 
 Dans le cas d'une matrice carré ($m=n$), il est possible de déterminer si la matrice à une rang dit plein, i.e. si $r=m=n$, en calculant le déterminant de la matrice $A$. Si le déterminant est non-nul alors la matrice à un rang plein.  
 
+
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Rang plein vs. Trop de variables vs. Trop d’équations}
 \label{sec:rangpleinvstrop}
@@ -498,10 +500,11 @@ Tous les vecteur-colonnes sorties $\col{y}$ appartiennent soit à l'espace colon
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \textbf{Les vecteur-colonnes $\col{y}$ appartenant à l'espace colonne ont une solution $\col{x}$ possible, tandis que ceux appartenant au \textit{Left-Nullspace} n'ont aucune solution exacte $\col{x}$ possible}.
+%
+Une matrice $A$ va avoir un \textit{Left-Nullspace} seulement lorsqu'elle a une rang déficient. La présence d'un \textit{Left-Nullspace} indique un système sur-contraint, i.e. un surplus d'équations. Il y aura donc plusieurs sorties $\col{y}$ pour lesquelles il n'y a pas de solutions $\col{x}$.
 
-Une matrice $A$ va avoir un \textit{Left-Nullspace} seulement lorsqu'elle a une rang déficient. La présence d'un \textit{Left-Nullspace} indique un système sur-contraint ou il y a un surplus d'équations, donc plusieurs sortie $\col{y}$ pour lesquels il n'y a pas de solutions $\col{x}$.
 
-
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Les quatre espaces fondamentaux}
 \label{sec:4espfond}
@@ -512,7 +515,7 @@ La figure \ref{fig:4spaces} résume les quatre espaces fondamentaux d'une matric
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.85\textwidth]{linalgebra_4spaces.png}
+		\includegraphics[width=0.80\textwidth]{linalgebra_4spaces.png}
 	\caption{Quatres espaces fondamentaux d'une matrice}
 	\label{fig:4spaces}
 \end{figure}
@@ -548,26 +551,136 @@ La figure \ref{fig:4spaces} résume les quatre espaces fondamentaux d'une matric
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Projection}
+\label{sec:projectionmatrix}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 À venir!
 
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Moindres carrés}
+\label{sec:moindrecarre}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-À venir!
+Lorsqu'un système d'équation linéaire $\col{y} = A \col{x}$ est sur-contraint, c'est-à-dire que le vecteur $\col{y}$ n'est pas dans l'espace colonne de la matrice $A$, il n'y a pas de solution exacte possible. Il est toutefois possible de calculer une solution approximée qui minimise la norme de l'erreur avec une expression explicite:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{\hat{x}}^* &= \operatornamewithlimits{argmin}\limits_{\col{\hat{x}}} \left\| A \col{\hat{x}} - \col{y} \right\|^2
+= (A^T A)^{-1} A^T \, \col{y}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.5\textwidth]{leastsquare.png}
+	\caption{Système sur-contraint: solution des moindres-carrés}
+	\label{fig:leastsquare}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+La matrice $(A^T A)^{-1} A^T$ est souvent appelée inverse gauche de Moore–Penrose et notée:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+A^{+} &= (A^T A)^{-1} A^T  \quad \Rightarrow \quad A^{+} A = I
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Il est à noter que la matrice $A$ doit avoir des colonnes indépendantes pour que la matrice $A^T A$ soit inversible et donc pour que la méthode des moindres-carrés fonctionne.
+
+
+\subsection{Application à des problèmes d'identification de paramètres}
+
+
+La méthode des moindres-carrés est très utile pour identifier des paramètres inconnus dans une relation linéaire. Lorsqu'on a un modèle linéaire qui implique des signaux connus et des paramètres inconnus qui peut être exprimé sous la forme:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\underline{\varphi}^T \underline{\theta}
+= b
+\quad\quad\Rightarrow\quad\quad
+\underbrace{ 
+\left[ \begin{array}{c c c } 
+\varphi_1 & ... & \varphi_m
+\end{array} \right] }_{ m \text{ signaux connus} }
+\underbrace{ \left[ \begin{array}{c} 
+\theta_1 \\ \vdots \\ \theta_m
+\end{array} \right] }_{ m \text{ paramètre inconnus} } = 
+\underbrace{b}_{\text{signal connu} }
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Il est possible de regrouper plusieurs mesures expérimentales dans un système matricielle:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+A \underline{\theta}
+= \underline{b}
+\quad\quad\Rightarrow\quad\quad
+\underbrace{ 
+\left[ \begin{array}{c c c c c } 
+&& \underline{\varphi}^T(1) && \\
+&& \vdots & \\
+&& \underline{\varphi}^T(N) && \\
+\end{array} \right] }_{\text{ $A$ : $N \times m$  known samples} }
+\left[ \begin{array}{c} 
+\theta_1 \\ \vdots \\ \theta_m
+\end{array} \right]
+ = \underbrace{ \left[ \begin{array}{c}  
+b(1) \\ \vdots \\ b(N)\\ 
+ \end{array} \right] }_{ \text{ $\underline{b}$: $N$ known samples} } 
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Pour ensuite utiliser la méthode des moindres-carrés pour obtenir un estimé des paramètres inconnus qui minimise l'erreur avec les mesures expérimentales:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{\hat{\theta}}^* &= \operatornamewithlimits{argmin}\limits_{\col{\hat{\theta}}} \left\| A \col{\hat{\theta}} - \col{b} \right\|^2
+= (A^T A)^{-1} A^T \, \col{b}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\subsection{Exemple de régression linéaire avec les moindres-carrés}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Pseudo-Inverse}
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.5\textwidth]{regression_ex1.png}
+		\includegraphics[width=0.5\textwidth]{regression_ex2.png}
+	\caption{Régression linéaire avec les moindres-carrés pour identifier les paramètres d'une ligne}
+	\label{fig:regression-ex1}
+\end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-À venir!
 
+\subsection{Preuve}
+
+La solution des moindres-carrés minimise une fonction coût qui est défini comme le carré de la norme du vecteur d'erreur, qui correspond à la somme des carrés des erreurs individuelles pour chaque sortie du système:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+J = \left\| \col{e} \right\|^2  = \col{e}^T\col{e} = \sum{ e_i^2}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+L'erreur est définie comme la différence entre les sorties $\col{y}$ et le résultat du calcul $A \col{\hat{x}}$:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{e} = A \col{\hat{x}} - \col{y}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Il est ensuite possible de trouver le minimum de la fonction coût $J$ en trouvant le point pour lequel toutes les dérivées par rapport à $\col{\hat{x}}$ sont nulles:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{0} &= \frac{\partial J}{\partial \col{\hat{x}}} \\
+\col{0} &= \frac{\partial \col{e}^T\col{e}}{\partial \col{\hat{x}}} \\
+\col{0} &= 2 \col{e}^T \frac{\partial e }{\partial \col{\hat{x}}} \\
+\col{0} &= 2 ( A \col{\hat{x}} -\col{y} )^T \frac{\partial (A \col{\hat{x}} -\col{y}) }{\partial \col{\hat{x}}} \\
+\col{0} &= 2 ( A \col{\hat{x}} -\col{y}  )^T A  \\
+\col{0} &=  \col{\hat{x}}^T A^T A  - \col{y}^T A   \\
+A^T \col{y} &= A^T A \col{\hat{x}} \\
+(A^T A)^{-1} A^T \col{y} &= \col{\hat{x}} 
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-\section{Graphical Interpretation of the Least Square Solution}
+\subsection{Graphical Interpretation of the Least Square Solution}
 
 Given an input-output model with linearly involved parameters:
 \begin{align}
@@ -639,6 +752,67 @@ The distance between the approximation $\underline{p}$ and $\underline{y}$ is mi
 \end{figure}
 
 
+
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Pseudo-Inverse}
+\label{sec:pseudoinverse}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Lorsqu'un système d'équation linéaire $\col{y} = A \col{x}$ est sous-contraint, c'est-à-dire que plusieurs vecteurs $\col{x}$ sont des solutions, il est possible d'utiliser une matrice pseudo-inverse pour obtenir une solution qui optimise une fonction coût quadratique:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{x}^* &= \operatornamewithlimits{argmin}\limits_{\col{x}} \left( \col{x}^T Q \col{x} \right) \quad \text{subject to} \quad \col{y} = A \col{x}  \\
+\col{x}^* &= Q^{-1} A^T (A Q^{-1} A^T)^{-1} \, \col{y}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Dans un cas simplifié ou la matrice de poids $Q$ est réduite à une matrice identité on a:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{x}^* &= \operatornamewithlimits{argmin}\limits_{\col{x}} \left\| \col{x} \right\|^2 \quad \text{subject to} \quad \col{y} = A \col{x}  \\
+\col{x}^* &= A^T (A A^T)^{-1} \, \col{y}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+La matrice $A^T (A A^T)^{-1}$ est souvent appelée inverse droit de Moore–Penrose et notée:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+A^{\#} &= A^T (A A^T)^{-1}  \quad \Rightarrow \quad A A^{\#} = I
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Il est à noter que la matrice $A$ doit avoir des rangés indépendantes pour que la matrice $A A^T$ soit inversible et donc pour pouvoir utiliser la pseudo-inverse droite.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.75\textwidth]{pseudo-inverse.png}
+	\caption{Système sous-contraint - solution avec matrice pseudo-inverse}
+	\label{fig:pseudo-inverse}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\newpage
+\subsection{Exemple d'utilisation d'un matrice pseudo-inverse}
+
+Pour cet exemple, un robot doit produire un force de 14 N sur un mur. Pour y parvenir le courant électrique dans les trois moteurs doit être ajusté. La relation entre la force et le courant dans les moteurs est linéaire et illustrée ci-dessous. On cherche ici une solution qui minimise les pertes joules $ri^2$ dans les moteurs. Comme il y a plusieurs solutions possible pour atteindre le niveau de force désiré, et que la fonction coût à minimiser est quadratique, une matrice pseudo-inverse droite peut être utilisée pour calculer la solution optimale directement, voir Figure \ref{fig:pseudo-inverse-ex1}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.7\textwidth]{pseudo-inverse-ex1.png}
+		\includegraphics[width=0.5\textwidth]{pseudo-inverse-ex2.png}
+	\caption{Exemple d'utilisation d'une matrice pseudo-inverse}
+	\label{fig:pseudo-inverse-ex1}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Base orthonormale}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -649,7 +823,7 @@ The distance between the approximation $\underline{p}$ and $\underline{y}$ is mi
 \section{Déterminants}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+À venir!
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
@@ -677,7 +851,7 @@ A \col{x} = \lambda  \col{x}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Un matrice $n \times n$ va avoir $n$ paires de vecteur et valeurs propres (qui peuvent être répété et aussi des nombres complexes). Si une ou plusieurs valeurs propres de la matrice est égale à zéro alors la matrice est singulière et les vecteurs propres associés forme une base du nullspace de la matrice. 
+Une matrice $n \times n$ va avoir $n$ paires de vecteur et valeurs propres (qui peuvent être répété et aussi des nombres complexes). Si une ou plusieurs valeurs propres de la matrice est égale à zéro alors la matrice est singulière et les vecteurs propres associés forme une base du nullspace de la matrice. 
 
 La trace d'un matrice est égale à la somme des valeurs propres et le déterminant d'une matrice est égale à la multiplication de toutes les valeurs propres:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -787,7 +961,7 @@ Ensuite, si la matrice $V$ est inversible (ce qui explique la condition d'indép
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.55\textwidth]{linalgebra_diag_exemple.png}
+		\includegraphics[width=0.35\textwidth]{linalgebra_diag_exemple.png}
 	\caption{Exemple de diagonalisation pour une transformation géométrique}
 	\label{fig:linalgebra_diag_exemple}
 \end{figure}
@@ -1031,6 +1205,9 @@ f_p = \frac{\lambda_1^{p+1}}{\lambda_1 - \lambda_2} = \frac{1.618^{(p+1)}}{\sqrt
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Exponentiel de matrice}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+À venir!
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
