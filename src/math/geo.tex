@@ -1,16 +1,314 @@
 \chapter{Notions de calcul vectoriel}
 
 
-À venir!
+Chapitre en construction!
 
 \section{Les Vecteurs}
 \label{sec:veccomrep}
 
-Un vecteur est une quantité physique représentée par une amplitude et une direction. Lorsqu'une base vectorielle est spécifiée, un vecteur peut alors être représenté par des composantes scalaires selon chaque vecteur unitaire de la base. Il est important de distinguer la notion de vecteur ($\vec{v}$) et de ses composantes ($\col{v}=\left[v_{1}, v_{2}, v_{3}\right]^T $), surtout lorsque plusieurs bases sont utilisés. 
+Un vecteur géométrique est une quantité physique représentée par \textbf{une amplitude et une direction}. Lorsqu'une base vectorielle est spécifiée, un vecteur peut alors être représenté par des composantes scalaires selon chaque vecteur unitaire de la base. Il est important de distinguer la notion de vecteur-géométrique $\vec{v}$ et de ses composantes regroupées dans un vecteur colonne $\col{v}$, surtout lorsque plusieurs bases sont utilisés. 
+
+La notation suivant est utilisée dans ces notes:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\text{\textbf{Vecteur-géométrique:}}&\quad
+\vec{v} = v_1 \, \hat{a}_{1} + v_2 \, \hat{a}_{2} + v_3 \, \hat{a}_{3}
+\\
+\text{\textbf{Vecteur-colonne des composantes:}}&\quad
+\col{v}^{a} = \left[ \begin{array}{c} v_1 \\ v_2 \\ v_3  \end{array} \right] 
+\label{eq:veccoldef2}
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+où l'exposant $a$ est utilisé pour spécifier la base vectorielle associée aux composantes scalaires. Selon les domaines, le terme vecteur réfère soit à la quantité avec une amplitude et une direction (physique, géométrie, etc) soit à une colonne de scalaire (algèbre linéaire, programmation, etc). Comme tous ces domaines sont utilisés en robotique on fera toujours la distinction 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Propriété des vecteurs}
+
+À venir
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Les bases vectorielles}
+\label{vectorbasis}
+Une base vectorielle correspond à trois vecteurs unitaires (en 3D) orthogonaux qui déterminent l'orientation de trois axes dans l'espace et forment une base qui permet de décrire n'importe quel vecteur $\vec{v}$ sous la forme:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\vec{v} = v_1^a \, \hat{a}_{1} + v_2^a \, \hat{a}_{2} + v_3^a \, \hat{a}_{3}
+\label{eq:vecbasis}
+\end{equation} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+On appellera \textit{base vectorielle} $a$, une base formée par l'ensemble des vecteurs unitaires $\{\hat{a}_{1},\hat{a}_{2},\hat{a}_{3}\}$.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htpb]
+				%\vspace{-10pt}
+        \centering
+				\subfloat[Base $a$]{
+				\includegraphics[width=0.20\textwidth]{base}
+				\label{fig:base}}
+				%%%%
+				\hspace{10pt}
+				%%%%
+        \subfloat[Exemple]{
+				\includegraphics[width=0.25\textwidth]{baseex}
+				\label{fig:baseex}}
+				%%%%
+				\hspace{10pt}
+				%%%%
+				\subfloat[Convention de la main droite]{
+				\includegraphics[width=0.25\textwidth]{righthand}
+				\label{fig:righthand}}
+        \caption{Les bases vectorielles}
+				\label{fig:vecbasis}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Mathématiquement, les critères de dimensions unitaires et d'orthogonalités sont donnés par les équations:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\hat{a}_{1} \bullet \hat{a}_{1} = 1 \quad\quad \hat{a}_{2} \bullet \hat{a}_{2} = 1 \quad\quad \hat{a}_{3} \bullet \hat{a}_{3} = 1 
+\label{eq:unit} \\
+\hat{a}_{1} \bullet \hat{a}_{2} = 0 \quad\quad \hat{a}_{2} \bullet \hat{a}_{3} = 0 \quad\quad \hat{a}_{3} \bullet \hat{a}_{1} = 0
+\label{eq:ortho}
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Normalement, par convention, les bases vectorielles suivent la règle de main droite (voir figure \ref{fig:righthand}) pour spécifier la direction du troisième vecteur unitaire. La convention de la main droite permet aussi de spécifier des relations en termes de produits vectoriels entre les vecteurs unitaires:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\hat{a}_{1} = \hat{a}_{2} \times \hat{a}_{3} \quad\quad \hat{a}_{2} = \hat{a}_{3} \times \hat{a}_{1} \quad\quad \hat{a}_{3} = \hat{a}_{1} \times \hat{a}_{2} 
+\label{eq:righthand}
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Les bases vectorielles permettent de faire des opérations et combiner des vecteurs en les exprimant avec une base commune de vecteurs unitaires. Dans la littérature, la notation $(\hat{i},\hat{j},\hat{k})$ ou $(\hat{x},\hat{y},\hat{z})$ est parfois utilisée. Dans ces notes, on utilisera des lettres ($a$,$b$,$c$,...) pour identifier des bases, ainsi que des indices (1,2,3) pour spécifier les trois axes (voir figure \ref{fig:base}). Cette approche simplifie la notation lorsqu'un grand nombre de bases sont utilisées simultanément, comme c'est souvent le cas en robotique.
+
+\paragraph{Note:} Les bases vectorielles représentent seulement des orientations, la position d'une base est donc sans signification. Dans les dessins et schémas, on dessine une base vectorielle sur un corps rigide pour signifier que celle-ci est attachée au corps rigide et tourne avec celui-ci, toutefois la position de la base vectorielle sur le corps est arbitraire. On parlera de repère, voir section \ref{sec:repere}, lorsqu'un point d'origine est associé à une base vectorielle dans le contexte des vecteurs de position. 
 
 
 
-\section{Opérations vectorielles en termes de composantes}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Relation entre un vecteur et ses composantes dans une base}
+
+Comme illustré à la figure \ref{fig:vecpospro2}, il est possible de calculer les composantes d'un vecteur exprimé dans une base par un produit scalaire du vecteur géométrique avec chacun des vecteurs unitaires de la base:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+v_i^a = \vec{v} \bullet \hat{a}_i  \quad \Rightarrow \quad 
+\col{v}^{a} = \left[ \begin{array}{c} \vec{v} \bullet \hat{a}_1 \\ \vec{v} \bullet \hat{a}_2 \\ \vec{v} \bullet \hat{a}_3  \end{array} \right] 
+\end{equation} 
+Inversement, comme illustré à la figure \ref{fig:vecpospro3}, le vecteur position géométrique peut être reconstruit en effectuant la somme des composantes multipliées avec leurs vecteurs unitaires respectifs:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\vec{v} = \sum_{i} v_i^a \hat{a}_i = v_1^a \hat{a}_1 + v_2^a \hat{a}_2 + v_3^a \hat{a}_3%= \left[ \begin{array}{c c c} p_1^a & p_2^a & p_3^a  \end{array} \right]  \left[ \begin{array}{c} \hat{a}_1 \\ \hat{a}_2 \\ \hat{a}_3  \end{array} \right] 
+\end{equation} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+				%\vspace{-10pt}
+        \centering
+        \subfloat[Projection sur une base vectorielle]{
+				\includegraphics[width=0.50\textwidth]{vecpospro2.png}
+				\label{fig:vecpospro2}}
+				\hspace{+20pt}
+				\subfloat[Décomposition selon les directions de la base]{
+				\includegraphics[width=0.40\textwidth]{vecpospro3.png}
+				\label{fig:vecpospro3}}
+				%\vspace{+30pt}
+        \caption{Relations entre le vecteur géométrique de position et les composantes du vecteur-colonne}
+				\label{fig:vecpospro23}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Transfert d'une équation vectorielle vers une équation matricielle} 
+%
+Lorsque les composantes de plusieurs vecteurs sont exprimées avec la même base, il est possible de faire des opérations directement avec les vecteur-colonnes de composantes. Cela permet de traiter simultanément les calculs de plusieurs axes, et aussi de faire des calculs numériques efficaces en utilisant les outils de l'algèbre linéaire. Par exemple, les additions et soustractions de vecteurs géométriques peuvent être calculées directement en termes des vecteur-colonnes dans une base:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\vec{u}   = \vec{v} + \vec{w}   \quad \Rightarrow \quad
+\col{u}^a = \col{v}^a + \col{w}^a
+\end{equation} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Ce transfert d'une seule équation vectorielle à une équation matricielle (équivalent à un système de trois équations scalaires) correspond à une projection de l'équation vectorielle sur chacun des axes de la base:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\vec{u}   = \vec{v} + \vec{w}   
+\quad \Rightarrow \quad
+\left[ \begin{array}{c} (\vec{u}   = \vec{v} + \vec{w}  ) \bullet \hat{a}_1 \\ (\vec{u}   = \vec{v} + \vec{w}  ) \bullet \hat{a}_2 \\ (\vec{u}   = \vec{v} + \vec{w}  ) \bullet \hat{a}_3  \end{array} \right] 
+\quad \Rightarrow \quad
+\left[ \begin{array}{c}  u_1^a   = v_1^a + w_1^a   \\  u_2^a   = v_2^a + w_2^a   \\ u_3^a   = v_3^a + w_3^a   \end{array} \right] 
+\quad \Rightarrow \quad
+\col{u}^a = \col{v}^a + \col{w}^a
+\end{equation} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Les équations vectorielles avec des vecteurs de position peuvent donc être substituées par des équations matricielles équivalentes avec les vecteur-colonnes,\textbf{ à condition que tous les vecteur-colonnes soient exprimés dans une base commune}. 
+
+%Voici quelques exemples de substitution d'équation de vecteurs de position vers des équations matricielles:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{align}
+%\vec{v}_{B/C}   = \vec{v}_{B/A} - \vec{v}_{C/A}   
+%\quad &\Rightarrow \quad  \col{r}_{B/C}^a   = \col{r}_{B/A}^a - \col{r}_{C/A}^a 
+%\\
+%\vec{v}_{B/C}   = \vec{v}_{B/A} - \vec{v}_{C/A} \quad &\Rightarrow \quad \col{r}_{B/C}^b   = \col{r}_{B/A}^b - \col{r}_{C/A}^b 
+%\\
+%2  \vec{v}_{D/A} = 3 \vec{v}_{B/A} + \vec{v}_{C/A} \quad &\Rightarrow \quad  2  \col{r}_{D/A}^a = 3 \col{r}_{B/A}^a + \col{r}_{C/A}^a
+%\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\textbf{Note:} Lors de l'écriture d'un programme informatique pour effectuer des calculs de cinématique, les calculs numériques doivent être fait en termes de composantes. En effet, les ordinateurs sont adaptés à manipuler des chiffres, des vecteur-colonnes de chiffres, des matrices de chiffres, etc. Toutefois, un ordinateur ne peut manipuler directement des éléments conceptuels comme les vecteurs unitaires.  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Opérations vectorielles avec les vecteur-colonnes} 
+%
+Les opérations vectorielles ont des équivalents en termes d'opérations matricielle avec les vecteur-colonnes qui sont très utiles pour les calculs numériques. Cette section introduit les opérations principales utiles pour la cinématique.
+
+\subsection{Produit scalaire}
+Un produit scalaire peut être calculé directement par une opération matricielle avec les vecteur-colonnes appelée produit intérieur (\textit{inner product}):
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\vec{u} \bullet \vec{v} = \col{u}^T \col{v} = \left[ \begin{array}{c c c} u_1 & u_2 & u_3  \end{array} \right]  \left[ \begin{array}{c} v_1 \\ v_2 \\ v_3  \end{array} \right]
+= u_1 v_1 + u_2 v_2 + u_3 v_3
+\end{equation} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+si $\col{u}$ et $\col{v}$ sont les composantes exprimées dans une base vectorielle commune, par exemple:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\vec{u} \bullet \vec{v} &= (\col{u}^a)^T \col{v}^a = (\col{u}^b)^T \col{v}^b
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+mais attention car: 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\vec{u} \bullet \vec{v} &\ne (\col{u}^a)^T \col{v}^b \\
+\vec{u} \bullet \vec{v} &\ne (\col{u}^b)^T \col{v}^a 
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Il est à noter que l'ordre de multiplication ne change pas le résultat pour le produit scalaire:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\vec{u} \bullet \vec{v} = \vec{v} \bullet \vec{u} = \col{u}^T \col{v} = \col{v}^T \col{u} 
+\end{equation} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Produit vectoriel}
+%
+Un produit vectoriel (\textit{cross product}) peut être calculé directement par une opération matricielle définie avec les vecteur-colonnes:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\vec{u} = \vec{v} \times \vec{w} \quad \Rightarrow \quad  \col{u} = \col{v}^{\times}\col{w} \quad \Rightarrow \quad 
+ \left[ \begin{array}{c} u_1 \\ u_2 \\ u_3  \end{array} \right] = 
+\left[ \begin{array}{c c c}
+	0 & -v_3 & v_2  \\ v_3 & 0 & -v_1 \\ -v_2 & v_1 & 0
+\end{array}  \right]
+ \left[ \begin{array}{c} w_1 \\ w_2 \\ w_3  \end{array} \right]
+\end{equation} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+L'ordre de multiplication est important pour le produit vectoriel, il change la direction du vecteur résultant:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\vec{u} = \vec{v} \times \vec{w} =  -\vec{w} \times \vec{v} \quad \Rightarrow \quad  \col{u} = \col{v}^{\times}\col{w} = - \col{w}^{\times}\col{v}
+\end{equation} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\paragraph{Vecteurs unitaires d'une base vectorielle:}
+Il est possible de calculer les composantes d'un vecteur unitaire qui complète une base vectorielle avec une opération de produit vectorielle, connaissant les composantes de deux vecteurs unitaires orthogonaux: 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\hat{b}_3 = \hat{b}_1 \times \hat{b}_2  \quad \Rightarrow \quad   \col{b}_3 = \col{b}_1^{\times}\col{b}_2
+\end{equation} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\paragraph{Note:}
+Pour alléger la présentation, les exposants qui spécifient les bases vectorielles associées aux vecteur-colonnes sont parfois omis dans les équations, on considère alors que tous les vecteur-colonnes impliqués dans l'équation sont exprimés dans une base vectorielle commune.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Changement de base}
+%
+Les composantes d'un vecteur géométrique $\vec{v}$ dans une base $a$ peuvent être directement reliées aux composantes du même vecteur géométrique $\vec{v}$ dans une autre base $b$, par une équation matricielle qui implique les vecteur-colonnes et une matrice 3$\times$3 appelée une \textit{matrice de rotation}. On va noter une matrice $^bR^a$ lorsqu'une multiplication par la gauche de cette matrice avec un vecteur colonne $\col{v}^a$ donne le vecteur-colonne $\col{v}^b$:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\col{v}^b &= {}^bR^a \col{v}^a  \quad \Rightarrow \quad
+ \left[ \begin{array}{c} v_1^b \\ v_2^b \\ v_3^b  \end{array} \right]
+=
+\left[ \begin{array}{c c c}
+	{}^bR^a_{11} & {}^bR^a_{12} & {}^bR^a_{13} \\ 
+	{}^bR^a_{21} & {}^bR^a_{22} & {}^bR^a_{23} \\
+	{}^bR^a_{31} & {}^bR^a_{32} & {}^bR^a_{33}
+\end{array}  \right]
+ \left[ \begin{array}{c} v_1^a \\ v_2^a \\ v_3^a  \end{array} \right]
+\label{eq:basechange1}
+\end{align} 
+%%%%%%%%%%%%%%%%%
+Les propriétés et le calcul des matrices de rotation seront traités en détails à la section \ref{sec:changematrice}.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Calculs appliqués dans un contexte de cinématique} 
+%%
+%\paragraph{Normes, projections et calcul d'angles:}
+%Lorsque qu'on connait les composantes de vecteurs dans une base commune, le produit intérieur peut être utilisé pour calculer la longueur d'un vecteur position:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{align}
+%\|\vec{r}\|^2 &= \vec{r} \bullet \vec{r} = \col{r}^T \col{r} = r_1^2 + r_2^2 + r_3^2
+%\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%pour calculer une distance projeté selon un axe décrit par un vecteur unitaire $\hat{n}$:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{align}
+%d_n &= \vec{r} \bullet \hat{n} = \col{r}^T \col{n} = r_1 n_1 + r_2 n_2 + r_3 n_3
+%\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%et pour calculer un angle entre deux vecteurs unitaires $\hat{x}$ et $\hat{y}$:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{align}
+%\cos \angle (\hat{x},\hat{y}) = \hat{x} \bullet \hat{y} = \col{x}^T \col{y} = x_1 y_1 + x_2 y_2 + x_3 y_3
+%\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\paragraph{Vecteurs unitaires:}
+%Il est possible de calculer les composantes d'un vecteur unitaire qui complète une base vectorielle avec une opération de produit vectorielle, connaissant les composantes de deux vecteurs unitaires orthogonaux: 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{equation}
+%\hat{b}_3 = \hat{b}_1 \times \hat{b}_2  \quad \Rightarrow \quad   \col{b}_3 = \col{b}_1^{\times}\col{b}_2
+%\end{equation} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Invariants} 
+%
+Le vecteur géométrique $\vec{v}$ est une quantité constante peu importe la base vectorielle utilisée: 
+%%%%%%%%%%%%%%%
+\begin{equation}
+\vec{v} = \sum_{i} v_i^a \hat{a}_i = \sum_{i} v_i^b \hat{b}_i = \sum_{i} v_i^c \hat{c}_i
+\end{equation}
+%%%%%%%%%%%%%%%
+mais le vecteur-colonne dépend de la base vectorielle. Les vecteur-colonnes sont en générale différents sauf dans le cas particulier de bases vectorielles coïncidentes:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\col{v}^{a} \ne \col{v}^{b} \quad\quad \text{sauf dans le cas particulier:} \quad \hat{a}_1 = \hat{b}_1 \;,\; \hat{a}_2 = \hat{b}_2  \;\text{et}\; \hat{a}_3 = \hat{b}_3 
+\end{equation} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+La longueur du vecteur-géométrique étant une constante peut importe la base vectorielle utilisée, il est possible d'établir la relation suivante entre les vecteur-colonnes utilisant différentes bases:
+%%%%%%%%%%%%%%%
+\begin{equation}
+\|\vec{v}\|^2 = \vec{v} \bullet \vec{v} = (\col{v}^{a})^T \col{v}^{a} = (\col{v}^{b})^T \col{v}^{b} = (\col{v}^{c})^T \col{v}^{c}
+\end{equation}
+%%%%%%%%%%%%%%%
+La norme des vecteur-colonnes est donc invariante par rapport au choix de la base. 
+
+
+
+
+
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Summary of vector operations in terms of components}
 
 \begin{table}[H]
 %\caption{ Basic Vectorial Operations }
