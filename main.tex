@@ -17,12 +17,22 @@
 \usepackage{float}
 \usepackage[caption=false,font=footnotesize]{subfig}
 \usepackage{xcolor}
+ \usepackage[b]{esvect}
+ 
+ 
 
 \newcommand{\col}[1]{\underline{#1}}
 \DeclareMathOperator{\sgn}{sgn}
 \renewcommand{\bullet}{\boldsymbol{\cdot}}
 \DeclareMathOperator{\re}{\mathbb{R}}
-
+\newcommand{\tensor}[1] {\vv{\vv{#1}}}
+\newcommand{\note}[2] {
+\newline
+\noindent
+\rule{\linewidth}{0.3mm}
+\textbf{#1} #2 \\
+\rule{\linewidth}{0.3mm}
+}
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -67,6 +77,13 @@
 \include{src/manip/static}
 \include{src/manip/dynamic}
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \part{Conception des systèmes robotisés}
+% \label{sec:design}
+% \chapter{Architecture}
+% \chapter{Éléments de machine}
+% \chapter{Actionneurs}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \part{Commande des systèmes robotisés}
 \label{sec:control}
@@ -77,12 +94,7 @@
 \include{src/control/planif}
 \include{src/control/actuatorcontrol}
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \part{Conception des systèmes robotisés}
-% \label{sec:design}
-% \chapter{Architecture}
-% \chapter{Éléments de machine}
-% \chapter{Actionneurs}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \part{Mathématiques pour la robotique}
@@ -93,7 +105,10 @@
 \section{Gradient}
 \section{Lagrange multiplier}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \appendix
 \include{src/appendix/trigo}
+
+\include{src/exer}
 
 \end{document}

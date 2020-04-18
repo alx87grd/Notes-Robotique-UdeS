@@ -144,12 +144,11 @@ c'est-à-dire l'erreur (sur la position de l'effecteur) doit converger vers zér
 Si on dérive cette équation dans le temps, on obtient une relation différentielle. On peut alors substituer le modèle de cinématique différentiel et les lois de commandes pour obtenir:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
-\dot{\col{r}}_e 
-&= \dot{\col{r}}_d - \dot{\col{r}} \\
-&= \dot{\col{r}}_d - J(\col{q}) \dot{\col{q}} \\
-&= \dot{\col{r}}_d - \underbrace{J(\col{q}) J(\col{q})^{\#} }_{1} \dot{\col{r}}_r \\
-&= \dot{\col{r}}_d - \underbrace{J(\col{q}) J(\col{q})^{\#} }_{1}  \left( \dot{\col{r}}_d - \lambda \, \col{r}_e \right) \\
-&= - \lambda \, \col{r}_e  
+\dot{\col{r}}_e  &= \dot{\col{r}}_d - \dot{\col{r}} \\
+\dot{\col{r}}_e  &= \dot{\col{r}}_d - J(\col{q}) \dot{\col{q}} \\
+\dot{\col{r}}_e  &= \dot{\col{r}}_d - \underbrace{J(\col{q}) J(\col{q})^{\#} }_{1} \dot{\col{r}}_r \\
+\dot{\col{r}}_e  &= \dot{\col{r}}_d - \underbrace{J(\col{q}) J(\col{q})^{\#} }_{1}  \left( \dot{\col{r}}_d - \lambda \, \col{r}_e \right) \\
+\dot{\col{r}}_e  &= - \lambda \, \col{r}_e  
 \end{align}
 %%%%%%%%%%%%%%%%
 La dynamique de l'erreur est donc stable et converge exponentiellement vers zéro si $\lambda>0$, avec une constante de temps égale à $\lambda$:
@@ -580,12 +579,7 @@ Ce qui démontre que le système va nécessairement converger vers le point mini
 
 \section{Commande en admittance}
 
-\subsection{Commande en admittance aux joints}
-\label{sec:jointadmcontrol}
-
-Pour un contrôle en admittance dans l'espace des joints, des capteurs de forces vont mesurée la force actuelle à chaque joint et commander un déplacement à l'actionneur relié. 
-
-Si les actionneurs sont asservis en position à bas niveau, la relation générique est:
+Pour un contrôle en admittance, dans l'espace des joints ou de la tâche, des capteurs mesurent des forces et le déplacement du robot est contrôlé à bas niveau, soit en position ou en vitesse. Si les actionneurs sont asservis en position, la relation générique est:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 q_i = \frac{1}{Z_i(s)} \tau_i
@@ -625,9 +619,12 @@ La fonction de transfert a deux pôles donc l'implémentation inclurait deux int
 \dot{q}_i = \frac{s}{ms^2+bs+k} \tau_i
 \end{align}
 %%%%%%%%%%%%%%%%%
-une fonction de transfert qui a en plus un zéro, donc demanderait de dériver un signal en plus des deux intégrales. En ordre de préférence, l'idéal est une relation algébrique. Si on doit avoir une relation différentielle il est préférable d'avoir seulement des intégrales. Les opérations de dérivations sont à éviter dans les implémentations de contrôleur. 
+une fonction de transfert qui a en plus un zéro, donc demanderait de dériver un signal en plus des deux intégrales. Pour l'implémentation d'une loi de commande, l'idéal lorsque possible est une relation algébrique. Si on doit avoir une relation différentielle il est préférable d'avoir seulement des intégrales. Les opérations de dérivations sont à éviter. 
 
-Les lois en admittance peuvent aussi être exprimées en format matricielle pour décrire le comportement de tous les joints en une seule équation. La Figure \ref{fig:admitancecontroljointspace1} présente un contrôleur en admittance avec comme comportement cible la relation:
+\subsection{Commande en admittance aux joints}
+\label{sec:jointadmcontrol}
+
+Pour un contrôle en admittance dans l'espace des joints, des capteurs de forces vont mesurée la force actuelle à chaque joint et commander un déplacement à l'actionneur relié. Les lois en admittance peuvent aussi être exprimées en format matricielle pour décrire le comportement de tous les joints en une seule équation. La Figure \ref{fig:admitancecontroljointspace1} présente un contrôleur en admittance de type amortisseurs avec comme comportement cible la relation:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 B \col{\dot{q}} = \col{\tau}
@@ -651,9 +648,9 @@ M \col{\ddot{q}} + B \col{\dot{q}} + K \col{q} = \col{\tau}
 %%%%%%%%%%%%%%%%%
 pour un robot contrôlé en position à bas niveau dans l'espace des joints, avec des capteurs qui mesure le couple de chaque joint. Pour ce cas il y a deux intégrale dans la loi de commande. On peut interpréter le bloc "loi de comportement" à la Figure \ref{fig:admitancecontroljointspace} qui est tout simplement la simulation d'un système masse-ressort-amortisseur qui reçoit en entrée une force réelle lue par un capteur. Le résultat de la simulation est ensuite envoyer à un contrôleur en déplacement. Le robot va donc émuler le système virtuel simulé. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[th]
+\begin{figure}[h]
 	\centering
-		\includegraphics[width=0.99\textwidth]{fig/admitancecontroljointspace.jpg}
+		\includegraphics[width=0.85\textwidth]{fig/admitancecontroljointspace.jpg}
 	\caption{Commande de l'admittance au joints d'un robot : schéma bloc}
 	\label{fig:admitancecontroljointspace}
 \end{figure}
@@ -669,7 +666,7 @@ L'approche en admittance dans l'espace de l'effecteur est basée sur une mesure 
 B \col{\dot{r}} = \col{f}_e
 \end{align}
 %%%%%%%%%%%%%%%%%
-Une chose à noter est que généralement la cellule de charge va mesurer les composantes du vecteur force $\Vec{f}_e$ dans une base vectorielle mobile $t$ attachée à l'outil. Il faut donc faire un changement de base avec la matrice de rotation ${}^{w}R^t$ pour avoir les composantes dans la base vectorielle fixe $w$ dans laquelle le reste des autres vecteurs sont exprimés. La loi de commande de la Figure \ref{fig:admittancecontroltaskspace1} est utilisée pour les "teach mode" des robots manipulateur, i.e. le mode ou un opérateur peut déplacer le robot manuellement dans l'espace. Avec cette loi de commande, un humain peut pousser sur l'effecteur du robot et le robot se déplacera alors dans le sens de la poussée avec une vitesse proportionnelle à l'amplitude de la poussée. Si il n'y a aucune poussée le robot reste en place. 
+Une chose à noter est que généralement la cellule de charge va mesurer les composantes du vecteur force $\Vec{f}_e$ dans une base vectorielle mobile $t$ attachée à l'outil. Il faut donc faire un changement de base avec la matrice de rotation ${}^{w}R^t$ pour avoir les composantes dans la base vectorielle fixe $w$ dans laquelle le reste des autres vecteurs sont exprimés. La matrice de rotation ${}^{w}R^t$ doit donc être obtenue basé sur la positon des joints actuels en utilisant la relation de cinématique directe pour l'orientation. La loi de commande de la Figure \ref{fig:admittancecontroltaskspace1} est utilisée pour les "teach mode" des robots manipulateur, i.e. le mode ou un opérateur peut déplacer le robot manuellement dans l'espace. Avec cette loi de commande, un humain peut pousser sur l'effecteur du robot et le robot se déplacera alors dans le sens de la poussée avec une vitesse proportionnelle à l'amplitude de la poussée. Si il n'y a aucune poussée le robot reste en place. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[h]
 	\centering
@@ -693,6 +690,6 @@ M \col{\ddot{r}} + B \col{\dot{r}} + K \col{r}= \col{f}_e
 	\label{fig:admittancecontroltaskspace}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Il est à noté que les Figures \ref{fig:admittancecontroltaskspace1} et \ref{fig:admittancecontroltaskspace} ne montre pas le détail de la boucle interne du contrôleur en vitesse ou position de l'effecteur. Les méthodes présentées aux sections \ref{sec:speedcontrol} et \ref{sec:positioncontrol} peuvent être utilisée. 
+Il est à noté que les Figures \ref{fig:admittancecontroltaskspace1} et \ref{fig:admittancecontroltaskspace} ne montre pas le détail de la boucle interne du contrôleur en vitesse ou position de l'effecteur. Les méthodes présentées aux sections \ref{sec:speedcontrol} et \ref{sec:positioncontrol} peuvent être utilisée. Une différence à noter pour l'approche en admittance basée sur l'utilisation d'une cellule de charge à l'effecteur du robot, par rapport aux autres approches présentés est que seul les forces qui sont appliquées à l'effecteur (en aval de la cellule de charge) vont influencer la position du robot. Si une force est appliqué sur les liens du robot en amont de la cellule de charge, le contrôleur n'aura pas connaissance de cette force externe qui ne sera donc pas pris en compte dans le calcul du déplacement du robot basée sur la loi de comportement désirée.
 
 

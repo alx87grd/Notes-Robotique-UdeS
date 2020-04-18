@@ -1,12 +1,13 @@
 \chapter{Notions de calcul vectoriel}
-
+\label{sec:calcvec}
 
 Chapitre en construction!
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Les Vecteurs}
-\label{sec:veccomrep}
+\label{sec:vec}
 
-Un vecteur géométrique est une quantité physique représentée par \textbf{une amplitude et une direction}. Lorsqu'une base vectorielle est spécifiée, un vecteur peut alors être représenté par des composantes scalaires selon chaque vecteur unitaire de la base. Il est important de distinguer la notion de vecteur-géométrique $\vec{v}$ et de ses composantes regroupées dans un vecteur colonne $\col{v}$, surtout lorsque plusieurs bases sont utilisés. 
+Un vecteur-géométrique est une quantité physique représentée par \textbf{une amplitude et une direction}. Lorsqu'une base vectorielle est spécifiée, un vecteur peut alors être représenté par des composantes scalaires selon chaque vecteur unitaire de la base. Il est important de distinguer la notion de vecteur-géométrique $\vec{v}$ et de ses composantes regroupées dans un vecteur colonne $\col{v}$, surtout lorsque plusieurs bases sont utilisés. 
 
 La notation suivant est utilisée dans ces notes:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -25,8 +26,10 @@ où l'exposant $a$ est utilisé pour spécifier la base vectorielle associée au
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Propriété des vecteurs}
 
-À venir
+À venir!
 
+
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Les bases vectorielles}
 \label{vectorbasis}
@@ -80,15 +83,11 @@ Normalement, par convention, les bases vectorielles suivent la règle de main dr
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Les bases vectorielles permettent de faire des opérations et combiner des vecteurs en les exprimant avec une base commune de vecteurs unitaires. Dans la littérature, la notation $(\hat{i},\hat{j},\hat{k})$ ou $(\hat{x},\hat{y},\hat{z})$ est parfois utilisée. Dans ces notes, on utilisera des lettres ($a$,$b$,$c$,...) pour identifier des bases, ainsi que des indices (1,2,3) pour spécifier les trois axes (voir figure \ref{fig:base}). Cette approche simplifie la notation lorsqu'un grand nombre de bases sont utilisées simultanément, comme c'est souvent le cas en robotique.
-
-\paragraph{Note:} Les bases vectorielles représentent seulement des orientations, la position d'une base est donc sans signification. Dans les dessins et schémas, on dessine une base vectorielle sur un corps rigide pour signifier que celle-ci est attachée au corps rigide et tourne avec celui-ci, toutefois la position de la base vectorielle sur le corps est arbitraire. On parlera de repère, voir section \ref{sec:repere}, lorsqu'un point d'origine est associé à une base vectorielle dans le contexte des vecteurs de position. 
-
-
-
+Les bases vectorielles permettent de faire des opérations et combiner des vecteurs en les exprimant avec une base commune de vecteurs unitaires. Dans la littérature, la notation $(\hat{i},\hat{j},\hat{k})$ ou $(\hat{x},\hat{y},\hat{z})$ est parfois utilisée. Dans ces notes, on utilisera des lettres ($a$,$b$,$c$,...) pour identifier des bases, ainsi que des indices (1,2,3) pour spécifier les trois axes (voir figure \ref{fig:base}). 
+ 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Relation entre un vecteur et ses composantes dans une base}
+\subsection{Relation entre un vecteur et ses composantes dans une base}
 
 Comme illustré à la figure \ref{fig:vecpospro2}, il est possible de calculer les composantes d'un vecteur exprimé dans une base par un produit scalaire du vecteur géométrique avec chacun des vecteurs unitaires de la base:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -156,14 +155,18 @@ Les équations vectorielles avec des vecteurs de position peuvent donc être sub
 %2  \vec{v}_{D/A} = 3 \vec{v}_{B/A} + \vec{v}_{C/A} \quad &\Rightarrow \quad  2  \col{r}_{D/A}^a = 3 \col{r}_{B/A}^a + \col{r}_{C/A}^a
 %\end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\textbf{Note:} Lors de l'écriture d'un programme informatique pour effectuer des calculs de cinématique, les calculs numériques doivent être fait en termes de composantes. En effet, les ordinateurs sont adaptés à manipuler des chiffres, des vecteur-colonnes de chiffres, des matrices de chiffres, etc. Toutefois, un ordinateur ne peut manipuler directement des éléments conceptuels comme les vecteurs unitaires.  
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Opérations vectorielles avec les vecteur-colonnes} 
+\label{sec:opeveccol}
 %
 Les opérations vectorielles ont des équivalents en termes d'opérations matricielle avec les vecteur-colonnes qui sont très utiles pour les calculs numériques. Cette section introduit les opérations principales utiles pour la cinématique.
 
-\subsection{Produit scalaire}
+\subsection{Produit scalaire / produit intérieur}
 Un produit scalaire peut être calculé directement par une opération matricielle avec les vecteur-colonnes appelée produit intérieur (\textit{inner product}):
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
@@ -223,6 +226,29 @@ Il est possible de calculer les composantes d'un vecteur unitaire qui complète 
 \paragraph{Note:}
 Pour alléger la présentation, les exposants qui spécifient les bases vectorielles associées aux vecteur-colonnes sont parfois omis dans les équations, on considère alors que tous les vecteur-colonnes impliqués dans l'équation sont exprimés dans une base vectorielle commune.
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Produit tensoriel / produit extérieur}
+%
+Un produit tensoriel (\textit{outer-product}) peut être calculé directement par une opération matricielle définie avec les vecteur-colonnes:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\tensor{T} = \vec{v} \vec{w} \quad \Rightarrow \quad  T = \col{v} \, \col{w}^T = 
+\left[ \begin{array}{c}     v_1 \\ v_2 \\ v_3  \end{array} \right]
+\left[ \begin{array}{c c c} w_1 &  w_2 &  w_3  \end{array} \right] = 
+\left[ \begin{array}{c c c}
+v_1 w_1 & v_1 w_2 & v_1 w_3  \\ 
+v_2 w_1 & v_2 w_2 & v_2 w_3         \\ 
+v_3 w_1 & v_3 w_2 & v_3 w_3 
+\end{array}  \right]
+\end{equation} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+où le matrice $T$ correspond aux composantes du tenseur $\tensor{T}$, avec comme correspondance si toutes les composantes sont relatives à une base $a$ :
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+\tensor{T} = T_{11} \hat{a}_1 \hat{a}_1  + T_{12} \hat{a}_1 \hat{a}_2 + \hdots + T_{23} \hat{a}_2 \hat{a}_3  + T_{33} \hat{a}_3 \hat{a}_3 
+\end{equation} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Changement de base}
@@ -382,7 +408,7 @@ La norme des vecteur-colonnes est donc invariante par rapport au choix de la bas
  \multicolumn{3}{| c |}{Dyadic or outer product} \\
  \hline && \\
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- $\vec{\vec{Z}} = \vec{x} \otimes \vec{y}$ 
+ $\vec{\vec{Z}} = \vec{x}  \vec{y}$ 
  &
  $Z = \underline{x} \, \underline{y}^T = \left[ \begin{array}{c } x_1 \\ x_2 \\ x_3 \end{array} \right] \left[ \begin{array}{c c c} y_1 & y_2 & y_3 \end{array} \right] $
  &
@@ -431,7 +457,7 @@ La norme des vecteur-colonnes est donc invariante par rapport au choix de la bas
 
 
 
-\section{Vector and matrix differentiation}
+\section{Column-vector and matrix differentiation}
 \label{sec:vecmatdifferentiation}
 
 Note that the shape of vector/matrix resulting from a multi-axis differentiation is a question of layout convention. The numerator layout convention is used here. Identities presented need to be transposed if using a denominator layout instead. There is no ambiguity with the index representation.
