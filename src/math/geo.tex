@@ -335,6 +335,7 @@ La norme des vecteur-colonnes est donc invariante par rapport au choix de la bas
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \section{Summary of vector operations in terms of components}
+\label{sec:vectoropindex}
 
 \begin{table}[H]
 %\caption{ Basic Vectorial Operations }
@@ -648,11 +649,31 @@ Z = \frac{\partial y}{\partial A} =
 
 %Note that while the numerator layout is generally preferred, the denominator layout is used for scalar by matrix differentiation, because more natural in this situation. However, this would be conflicting with the typical gradient layout when $m=1$.
 
-%\subsubsection{Matrix by Vector}
+\subsubsection{Matrix by Vector}
 %3rd order tensor..
+
+For the gradient of a matrix function $\underline{A} = f(\col{x})$ where $\col{x}$ is a $p \times 1$ column-vector and $A$ is a $n \times m$ matrix, the result is a $n \times m \times p$ tensor:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+T = \frac{\partial A}{\partial \col{x}} =  
+\left[ \begin{array}{c c c } 
+  \frac{\partial a_{11}}{\partial \col{x}}   & ... & \frac{\partial a_{1m}}{\partial \col{x}} \\
+  \vdots                             & ... & \vdots                          \\
+  \frac{\partial a_{n1}}{\partial \col{x}}   & ... & \frac{\partial a_{nm}}{\partial \col{x}} \\
+ \end{array} \right]
+ \quad\Leftrightarrow\quad
+  z_{ijk} = \frac{\partial a_{ij}}{\partial x_k}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %\subsubsection{Matrix by Matrix}
 %4rd order tensor..
+
+
+
+
+
+
 
 \newpage
 

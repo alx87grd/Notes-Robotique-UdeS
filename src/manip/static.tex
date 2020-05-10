@@ -1,13 +1,20 @@
 \chapter{Statique}
+\label{sec:static}
 
-
+Chapitre en construction!
 
 \section{Relation des efforts des actionneurs et à l'effecteur}
+\label{sec:manipstatic}
 
-À venir!
+%%%%%%%%%%%%%%%%
+\begin{align}
+\col{\tau} &= J\left( \, \col{q} \, \right)^T \, \col{f}_e 
+\end{align}
+%%%%%%%%%%%%%%%
 
 
 \section{Relation de la compliance aux joints et à l'effecteur}
+\label{sec:manipcompliance}
 
 À venir!
 
@@ -16,3 +23,40 @@ t = J K r = J K f(q)
 dt/dq = J K J + H K f(q)
 
 H = Hessien
+
+
+\section{Relation statique incluant les forces conservatrices}
+\label{sec:manipstaticconservative}
+
+%%%%%%%%%%%%%%%%
+\begin{align}
+\col{\tau} &= J\left( \, \col{q} \, \right)^T \, \col{f}_e +  g( \col{q} )
+\quad \quad \text{avec:  }
+\underbrace{ g( \col{q} ) = 
+\frac{ \partial V(\col{q} ) }{\partial \col{q} } 
+}_{\text{Gradient de l'énergie potentielle}}
+\end{align}
+%%%%%%%%%%%%%%%
+
+
+
+\newpage
+\section{Résumé du chapitre}
+
+
+Relation force joints-effecteur:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\col{\tau} &= J\left( \, \col{q} \, \right)^T \, \col{f}_e 
+\end{align}
+%%%%%%%%%%%%%%%
+
+Équilibre statique:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\col{\tau} &= J\left( \, \col{q} \, \right)^T \, \col{f}_e +  g( \col{q} )
+\quad \quad \text{avec:  }
+g( \col{q} ) = 
+\frac{ \partial V(\col{q} ) }{\partial \col{q} } 
+\end{align}
+%%%%%%%%%%%%%%%

@@ -3,13 +3,7 @@
 
 Ce chapitre présente des méthodes pour modéliser et analyser la position de systèmes à plusieurs degrés de liberté, donc bien adaptés aux robots manipulateurs. Dans un contexte de robotique, les problèmes de cinématique consistent premièrement à bien choisir et définir des systèmes de coordonnées pertinents. Par exemple, des coordonnées généralisées pour décrire la configuration des joints, des coordonnées cartésiennes pour décrire la tâche d'un robot en terme de trajectoire de l'effecteur, des coordonnées sphériques pour décrire les mesures d'un système de vision, etc. Ensuite, le défi est de \textbf{calculer les fonctions de transformations pour passer d'un système de coordonnées à un autre}. Par exemple, pour les robots manipulateurs, le principal défi est le calcul de la fonction de la cinématique directe et son inverse, i.e. une fonction avec comme entrées les coordonnées généralisées qui représentent la configuration des joints et comme sortie la pose de l'effecteur. Le calcul de ces transformations dans un contexte de robotique est le sujet principal de ce chapitre. La section \ref{sec:syscoord} introduit aux différents systèmes de coordonnées. Les sections \ref{sec:vecgeopos} et \ref{sec:basevecpos} introduisent les notions de vecteurs de position géométriques, bases vectorielles et vecteur-colonnes de composantes. Les sections \ref{sec:changematrice} et \ref{sec:repere} présentent les changements de base et les changements des repères. Ensuite, la section \ref{sec:corps} présente les méthodes pour représenter mathématiquement la pose d'un corps rigide. Finalement, les sections \ref{sec:fwdkin} et \ref{sec:invkin} traitent de la cinématique des robots manipulateurs, i.e. le calcul des transformations pour passer de l'espace des joints à la pose de l'effecteur et vice-versa. 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\noindent
-\rule{\linewidth}{0.3mm}
-\textbf{Hypothèses de travail:} L'approche utilisée dans ce chapitre considère les robots comme des systèmes de corps rigides reliés par des articulations qui permettent un nombre restreint de mouvements relatifs. Cette approche de modélisation fait l'hypothèse que \textbf{les déformations des sections rigides du robot sont négligeables}, ce qui est par exemple raisonnable pour les robots manipulateurs industriels dans la plupart des applications.
-\\
-\rule{\linewidth}{0.3mm}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 
@@ -213,7 +207,7 @@ La tâche d'un robot peut rarement être spécifiée facilement dans l'espace de
 \section{Vecteurs géométriques de positions}
 \label{sec:vecgeopos}
 
-La notion de vecteur géométrique permet de travailler avec des \textbf{vecteurs de position} qui sont indépendants d'un choix de système de coordonnées. Pour les problèmes de cinématique de robots, il est particulièrement adapté de travailler d'abord avec les vecteurs géométrique, plutôt que directement avec des coordonnées. Cette approche \textbf{1)} simplifie les calculs en 3D et \textbf{2)} permet de faire le saut facilement entre plusieurs systèmes de coordonnées. Un vecteur géométrique est une quantité définie dans l’espace et possédant une grandeur et une direction. Dans ces notes, les vecteurs géométriques, notés $\vec{v}$, seront explicitement distingués des vecteur-colonnes (groupe de plusieurs scalaires) qui seront notés $\col{v}=\left[  \begin{array}{ccc} v_{1} & v_{2} & v_{3} \end{array} \right]^T$. 
+La notion de vecteur géométrique permet de travailler avec des \textbf{vecteurs de position} qui sont indépendants d'un choix de système de coordonnées. Pour les problèmes de cinématique de robots, il est particulièrement adapté de travailler d'abord avec les vecteurs géométrique, plutôt que directement avec des coordonnées. Cette approche \textbf{1)} simplifie les calculs en 3D et \textbf{2)} permet de faire le saut facilement entre plusieurs systèmes de coordonnées. Un vecteur géométrique est une quantité définie dans l’espace et possédant une grandeur et une direction. Dans ces notes, les vecteurs géométriques, notés $\vec{v}$, seront explicitement distingués des vecteur-colonnes (groupe de plusieurs scalaires) qui seront notés $\col{v}=\left[  \begin{array}{ccc} v_{1} & v_{2} & v_{3} \end{array} \right]^T$, voir chapitre \ref{sec:calcvec}.
 
 %La section XXXX présente un rappel sur les propriétés et les opérations possible avec les vecteurs. 
 
@@ -488,11 +482,7 @@ où l'exposant $a$ est utilisé pour spécifier la base vectorielle associée au
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\\ \noindent
-\rule{\linewidth}{0.3mm}
-\textbf{Note sur la séquence de lecture: }Il est suggérer au lecteur de lire les sections \ref{sec:vec}, \ref{vectorbasis} et \ref{sec:opeveccol} dans le chapitre \ref{sec:calcvec} qui couvre le calcul vectoriel de façon plus générique. Ces sections couvrent plus en détails les fondements qui sont ici utilisés dans un contexte de cinématique. 
-\\
-\rule{\linewidth}{0.3mm}
+\note{Note sur la séquence de lecture: }{Il est suggérer au lecteur de lire les sections \ref{sec:vec}, \ref{vectorbasis} et \ref{sec:opeveccol} dans le chapitre \ref{sec:calcvec} qui couvre le calcul vectoriel de façon plus générique. Ces sections couvrent plus en détails les fondements qui sont ici utilisés dans un contexte de cinématique. }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -534,7 +524,7 @@ On appellera \textit{base vectorielle} $a$, une base formée par l'ensemble des 
 
 Les bases vectorielles permettent de faire des opérations et combiner des vecteurs en les exprimant avec une base commune de vecteurs unitaires. Dans la littérature, la notation $(\hat{i},\hat{j},\hat{k})$ ou $(\hat{x},\hat{y},\hat{z})$ est parfois utilisée. Dans ces notes, on utilisera des lettres ($a$,$b$,$c$,...) pour identifier des bases, ainsi que des indices (1,2,3) pour spécifier les trois axes (voir figure \ref{fig:base}). Cette approche simplifie la notation lorsqu'un grand nombre de bases sont utilisées simultanément, comme c'est souvent le cas en robotique.
 
-\paragraph{Base vs. repère:} Les bases vectorielles représentent seulement des orientations, la position d'une base est donc sans signification. Dans les dessins et schémas, on dessine une base vectorielle sur un corps rigide pour signifier que celle-ci est attachée au corps rigide et tourne avec celui-ci, toutefois la position de la base vectorielle sur le corps est arbitraire. On parlera de repère, voir section \ref{sec:repere}, lorsqu'un point d'origine est associé à une base vectorielle. 
+\note{Base vs. repère:}{ Les bases vectorielles représentent seulement des orientations, la position d'une base est donc sans signification. Dans les dessins et schémas, on dessine une base vectorielle sur un corps rigide pour signifier que celle-ci est attachée au corps rigide et tourne avec celui-ci, toutefois la position de la base vectorielle sur le corps est arbitraire. On parlera de repère, voir section \ref{sec:repere}, lorsqu'un point d'origine est associé à une base vectorielle. }
 
 
 
@@ -577,7 +567,7 @@ Inversement, comme illustré à la figure \ref{fig:vecpospro3}, le vecteur posit
 Lorsque les composantes de plusieurs vecteurs-géométrique de position sont exprimées avec la même base, il est possible de faire des opérations directement avec les vecteur-colonnes de composantes. Cela permet de traiter simultanément les calculs de plusieurs axes, et aussi de faire des calculs numériques efficaces en utilisant les outils de l'algèbre linéaire. Par exemple, les additions et soustractions de vecteurs géométriques peuvent être calculées directement en termes des vecteur-colonnes dans une base:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
-\vec{r}_{A/C}   = \vec{r}_{B/C} + \vec{r}_{B/C}   \quad \Rightarrow \quad
+\vec{r}_{A/C}   = \vec{r}_{A/B} + \vec{r}_{B/C}   \quad \Rightarrow \quad
 \col{r}_{A/C}^a = \col{r}_{A/B}^a + \col{r}_{B/C}^a
 \end{equation} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1041,13 +1031,23 @@ Les matrices de rotation élémentaires représentent des rotations relatives d'
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newline
-\noindent
-\rule{\linewidth}{0.3mm}
-\textbf{Notation simplifiée:} Les symboles $c\theta$ et $s\theta$ sont ici introduits pour alléger les équations et représentent les fonctions trigonométriques $\cos(\theta)$ et $\sin(\theta)$ respectivement.
-\\
-\rule{\linewidth}{0.3mm}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\note{Notation simplifiée pour les calculs trigonométriques:}{ Les symboles $c\theta$ et $s\theta$ sont ici introduits pour alléger les équations et représentent les fonctions trigonométriques $\cos(\theta)$ et $\sin(\theta)$ respectivement:
+%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+s\theta &= \sin(\theta)\\
+c\theta &= \cos(\theta)
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%
+Pour les calculs de cinématique qui implique plusieurs angles, une notation encore plus compacte sera utilisée avec seulement les lettres $s$ ou $c$ et des indices qui spécifie les angles:
+%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+s_i &= \sin(\theta_i)\\
+c_i &= \cos(\theta_i) \\
+s_{ijk} &=  \sin( \theta_i + \theta_j + \theta_k)
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Rotation selon l'axe 3}
@@ -1424,7 +1424,7 @@ Cette relation vectorielle peut ensuite être convertie en une équation matrici
 \label{eq:exaddbase}
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Ensuite, comme illustré à la Figure \ref{fig:vecposbase2}, les différents vecteurs positions qui représentent chaque joint ont des composantes connues dans des bases vectorielles locales attachées aux différents liens rigides du robot:
+Ensuite, comme illustré à la Figure \ref{fig:vecposrot}, les différents vecteurs positions qui représentent chaque joint ont des composantes connues dans des bases vectorielles locales attachées aux différents liens rigides du robot:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \col{r}_{B/A}^b = 
@@ -2330,6 +2330,7 @@ Rotatif: \;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Procédure de calcul d'une chaîne cinématique directe}
+\label{sec:cinedirectmethod}
 
 Une procédure pour calculer la cinématique d'un chaîne ouverte arbitraire de $n$ joints et $n+1$ liens rigides, est ici présentée. La notation utilisée est présentée aux figures \ref{fig:serial_kin_1}, \ref{fig:serial_kin_2} et \ref{fig:serial_kin_3}. 
 
@@ -2337,7 +2338,7 @@ Une procédure pour calculer la cinématique d'un chaîne ouverte arbitraire de 
 
 La première étape est de définir des coordonnées généralisées ($q_1$, $q_2$, $q_2$, ..., $q_m$) qui décrive l'état des $m$ DDL des $n$ joints du robot. En générale, pour la plupart des robots manipulateurs, $m=n$ car des joints standards à 1 DDL prismatique ou rotatif sont normalement utilisés. Ensuite, la seconde étape est de définir des points de références ($A_o$, $B_o$, $C_o$, ..., $T_o$) et des bases vectorielles ($a$, $b$, $c$, ..., $t$) sur chaque lien rigide. 
 
-\paragraph{Astuces:} Pour grandement simplifier le calcul des matrices de rotation, les bases vectorielles locales de deux liens rigides adjacents à un joint rotatif devraient être définies avec un vecteurs unitaire parallèle à l'axe de rotation du joint. Ensuite, l'orientation des deux autres vecteurs unitaires devrait être choisie de façon à maximiser le nombre de composantes nulles dans les vecteurs positions.
+\note{Astuces:}{ Pour grandement simplifier le calcul des matrices de rotation, les bases vectorielles locales de deux liens rigides adjacents à un joint rotatif devraient être définies avec un vecteurs unitaire parallèle à l'axe de rotation du joint. Ensuite, l'orientation des deux autres vecteurs unitaires devrait être choisie de façon à maximiser le nombre de composantes nulles dans les vecteurs positions.}
 
 \paragraph{II: Calcul des vecteurs positions locaux}
 
@@ -2702,53 +2703,63 @@ Avec la dernière colonne de la matrice ${}^AT^D$, il est possible d'extraire le
 \newpage
 \subsection{Les paramètres \textit{Denavit–Hartenberg}}
 
-Les paramètres DH (\textit{Denavit–Hartenberg}) consistent en quatre paramètres associés à une convention particulière pour attacher des repères aux liens rigides d'un robot manipulateur. Plutôt que de définir arbitrairement les bases vectorielles et les points d'origine des repères, la convention impose une méthodologie standardisée pour définir les repères et les matrices de transformations associées. Plusieurs librairies de cinématique de robot utilise cette convention, qui permet aussi de décrire la cinématique d'un robot avec un nombre de paramètre minimum.
+Les paramètres \textit{DH} (\textit{Denavit–Hartenberg}) consistent en quatre paramètres associés à une convention particulière pour attacher des repères aux liens rigides d'un robot manipulateur. Plutôt que de définir arbitrairement les bases vectorielles et les points d'origine des repères, la convention impose une méthodologie standardisée pour définir les repères et les matrices de transformations associées. Plusieurs librairies de cinématique de robot utilise cette convention, qui a comme principal avantage de décrire la cinématique d'un robot avec un nombre de paramètres et repères minimum.
 
-\subsubsection{ Positionnement relatif des repères }
-
-Avec la convention DH, il faut placer les axes 3 (ou Z) des repères sur les axe de rotation des joints révolus et sur les axes de translation des joints prismatiques. Ensuite les axes 1 (ou X) d'un joint sont positionnés relativement à la position du joint précédent (parallèle à la normale commune des axes 3), et ensuite les axes 2 sont placés selon la règle de la main droite. L'axe 1 du premier repère est un choix arbitraire. Il y a aussi plusieurs options lorsque les axes 3 de deux joints consécutifs sont parallèles. La Figure \ref{fig:dh1} illustre cette convention de définition des repères d'un robot.
+\subsubsection{Convention de positionnement relatif des repères }
+Avec la convention \textit{DH}, il faut placer les axes 3 (ou $z$) des repères sur les axe de rotation des joints révolus et sur les axes de translation des joints prismatiques. Ensuite les axes 1 (ou X) d'un joint sont positionnés relativement à la position du joint précédent (parallèle à la normale commune des axes 3), et ensuite les axes 2 sont placés selon la règle de la main droite. L'axe 1 du premier repère est un choix arbitraire. Il y a aussi plusieurs options lorsque les axes 3 de deux joints consécutifs sont parallèles ou coïncident, donc la convention de permet pas de standardisé la représentation de la cinématique d'un à 100\%. La Figure \ref{fig:dh1} illustre cette convention de définition des repères d'un robot.
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
 		\includegraphics[width=0.90\textwidth]{fig/dh1.jpg}
-	\caption{Positionnement des repères selon la convention des paramètres DH}
+	\caption{Positionnement des repères selon la convention des paramètres \textit{DH}}
 	\label{fig:dh1}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Il est à noter ici que chaque repère est attaché au joint précédent. Par exemple à la figure \ref{fig:dh1}, le repère $A$ est fixe, le repère $B$ bouge seulement en fonction de la rotation du 1er joint autour de l'axe $\hat{a}_3$.
 
-\subsubsection{ Quatre paramètres }
+\note{Repère attachés au lien rigide précédent}{ Il est à noter que avec cette convention, chaque repère est attaché au lien rigide précédent le joint associé à son axe 3, ce qui diffère de la méthode présentée à la section \ref{sec:cinedirectmethod}. Par exemple à la figure \ref{fig:dh1}, le repère $A$ est fixe et le repère $B$ bouge seulement en fonction de la rotation du 1er joint autour de l'axe $\hat{a}_3$.}
 
-Avec la convention de positionnement des repères, seuls quatre scalaires (deux distance et deux angles) sont suffisants pour décrire la pose relative des deux repères sur deux joints adjacents. Les quatre paramètres sont illustrés à la Figure \ref{fig:dh2}. Le paramètre $d$ représente la distance entre le point d'origine du premier repère $A_o$ et l'intersection de l'axe $\hat{a}_3$ avec la normale commune (noté $A'_o$).  Le paramètre $\theta$ est l'angle entre le vecteur unitaire $\hat{a}_1$ et la normale commune. Le paramètre $r$ est la longueur de la normale commune. Le paramètre $\alpha$ est l'angle de rotation autour de la normale pour aligner les deux axes des joints $\hat{a}_3$ et $\hat{b}_3$.
+\subsubsection{Les quatre paramètres \textit{DH} }
+Avec la convention de positionnement des repères, seuls quatre scalaires (deux distance et deux angles) sont suffisants pour décrire la pose relative des deux repères sur deux joints adjacents. Les quatre paramètres sont illustrés à la Figure \ref{fig:dh2}, pour le premier joint d'un robot ou le repère $A$ est fixe et aligné avec l'axe du joint 1, et le le repère $B$ bouge avec le premier lien rigide et est aligné avec le joint 2. Un repère intermédiaire $A'$ est défini à l'intersection de la normale commune et l'axe 3 du repère $A$ pour bien illustrer le sens des 4 paramètres. Le paramètre $d$ représente la distance entre le point d'origine du premier repère $A_o$ et l'intersection de l'axe $\hat{a}_3$ avec la normale commune ($A'_o$).  Le paramètre $\theta$ est l'angle entre le vecteur unitaire $\hat{a}_1$ et la normale commune. Le paramètre $r$ est la longueur de la normale commune. Le paramètre $\alpha$ est l'angle de rotation autour de la normale entre les deux axes des joints $\hat{a}_3$ et $\hat{b}_3$.
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
 		\includegraphics[width=0.80\textwidth]{fig/dh2.jpg}
-	\caption{Les quatre paramètres DH}
+	\caption{Les quatre paramètres \textit{DH}}
 	\label{fig:dh2}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection{Matrice de transformation}
+% La translation entre les deux origines des repères est donnée par:
+% %%%%%%%%%%%%%%%%%%%
+% \begin{align}
+% \vec{r}_{B_o/A_o} = r \hat{b}_1 + d \hat{a}_3
+% \end{align} 
+% %%%%%%%%%%%%%%%%%%%%
+% et l'orientation relative entre les deux bases vectorielles est donnée par:
+
+\note{Consultez une animation vidéo}{ Les paramètres \textit{DH} sont plus facile à comprendre en visualisant une animation 3D, il est fortement conseillé de consulter un vidéo explicatif pour solidifier vos connaissances.}
+
+
+\subsubsection{Pose relative des repères selon les 4 paramètres}
 
 La matrice de rotation qui relie la pose des deux repère associés à deux joints successifs peut être paramétrée par les quatre paramètres $d$, $\theta$, $r$ et $\alpha$. Le vecteur position qui relie les origines est:
 %%%%%%%%%%%%%%%%%%%
 \begin{align}
-\vec{r}_{B_o/A_o} &=  d \hat{a}_3 + r \hat{b}_1
+\vec{r}_{B_o/A_o} &=  d \, \hat{a}_3 + r \, \hat{b}_1
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%
 L'orientation relative peut être exprimée comme la combinaison de deux rotation selon les axes $\hat{a}_3$ et $\hat{b}_1$:
 %%%%%%%%%%%%%%%%%%%
 \begin{align}
-{}^aR^b &= {}^aR^{a'}(\theta) {}^{a'}R^b(\alpha) \\
-{}^aR^{a'}(\theta)  &=
+{}^aR^b &= {}^aR_3^{a'}(\theta) {}^{a'}R_1^b(\alpha) \\
+{}^aR_3^{a'}(\theta)  &=
 \left[ \begin{array}{c c c}
 	c\theta & -s\theta & 0 \\
 	s\theta & c\theta & 0 \\
 	0 & 0 & 1 
 \end{array}  \right]  \\
-{}^{a'}R^b(\alpha)  &=
+{}^{a'}R_1^b(\alpha)  &=
 \left[ \begin{array}{c c c}
 	1 & 0 & 0 \\
 	0 & c\alpha & -s\alpha \\
@@ -2778,25 +2789,37 @@ d
 La matrice de transformation peut alors être assemblée:
 %%%%%%%%%%%%%%%%%%%
 \begin{align}
-{}^AT^{B} &=
+{}^AT^{B}(d,\theta,r,\alpha) &=
 \left[ \begin{array}{c c c c }
 c\theta & -s\theta c\alpha & s\theta s\alpha & r c\theta\\
 s\theta & c\theta c\alpha  & -c\theta s\alpha  & r s\theta\\
 0 & s\alpha & c\alpha  &  d\\
 0 & 0 & 0 & 1 
 \end{array}  \right]  
+\label{eq:Tdh}
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%
 Donc lorsque la convention est utilisée, la matrice de transformation entre deux repères successifs a toujours la forme ci-dessus, et il suffit d'identifier les quatre paramètres DH de chaque joints. 
 
-\newpage
-\subsubsection{Exemple pour un robot anthropomorphique avec les paramètres DH}
+
+\subsubsection{Exemple pour un robot anthropomorphique avec les paramètres \textit{DH}}
+\label{sec:dhex}
+
+La Figure \ref{fig:dh3} illustre l'utilisation de la convention \textit{DH} pour déterminer la matrice de transformation qui représente la pose de l'effecteur. 
+%
+\textbf{Joint 1} Premièrement l'axe de rotation du 1er joint doit être repéré, et le repère fixe $A$ doit être placé de sorte à aligner sont vecteur unitaire $\hat{a}_3$ avec cet axe. Les autres variables sont arbitraires, ici on a choisi de position l'origine au sol et l'aligner le vecteur unitaire $\hat{a}_1$ avec les autres liens du robot pour la configuration nominale. Ensuite l'axe de rotation du 2e joint doit être repéré et le repère $B$ doit être fixé de sorte à aligner sont vecteur $\hat{b}_3$. L'orientation de $\hat{b}_1$ doit être alignée avec la normale commune entre $\hat{a}_3$ et $\hat{b}_3$, ici comme les axes se croisent la normale est réduite à un seul point et donc l'orientation de $\hat{b}_1$ est arbitraire, il a donc été choisi de l'aligner avec les liens rigides en position neutre. Avec les repères $A$ et $B$ positionnés selon la convention, il est maintenant possible de déterminer les quatre paramètres de la première matrice de transformation. La distance entre l'origine $A_o$ et la normale commune (réduite au point $B_o$) est ici la longueur du premier lien $d= l_1$ et la longueur de la normale commune est nulle $r = 0$. L'angle $\theta$ entre les vecteurs unitaires $\hat{a}_1$ et $\hat{b}_1$ est nul pour la position neutre, mais lorsque le joint 1 va tourner l'angle correspond en fait à la position active $\theta_1$. Finalement l'angle entre $\hat{a}_3$ et $\hat{b}_3$ autour de l'axe $\hat{b}_1$ est égale à $\pi/2$ radians. 
+%
+\textbf{Joint 2 } Pour la prochaine transformation qui caractérise le joint 2, il faut d'abord positionner le repère $C$ selon la convention. Le vecteur unitaire $\hat{c}_3$ est aligné avec l'axe de rotation du 2e joint, et le vecteur unitaire $\hat{c}_1$ est aligné avec la normale commune qui est directement alignée avec $\hat{b}_1$. Donc ici l'orientation de la base $c$ est complètement fixée par la convention. Toutefois comme les axes de rotation du joint 2 et 3 sont parallèle, c'est l'origine $C_o$ qui pourrait être placée n'importe ou sur l'axe de rotation du joint 3 (il y a une infinité de normales communes entre deux axes parallèles). Par simplicité ici on fixe arbitrairement l'origine $C_o$ directement dans l'axe formé par $\hat{b}_1$. Avec le repère $C$ positionné selon la convention il est maintenant possible de déterminer les quatre paramètres \textit{DH}. Le paramètre $d$ est ici nul car le point $B_o$ est coïncident avec la normale commune choisie et le paramètre $r=l_2$ car la normale commune coïncide directement avec le 2e lien rigide. Ensuite, l'angle $\theta$ entre les vecteurs unitaires $\hat{b}_1$ et $\hat{c}_1$ est nul pour la position neutre, mais lorsque le joint 1 va tourner l'angle correspond en fait à la position active du 2e joint $\theta_2$. Finalement l'angle entre $\hat{b}_3$ et $\hat{c}_3$ est nul donc $\alpha=0$. 
+%
+\textbf{Joint 3 } Pour la dernière transformation, il n'y a pas d'axe de rotation de joint puisque que c'est l'effecteur qui reste à localiser, on choisi ici arbitrairement de garder la même orientation que la base précédente. Avec ce choix, la pose du repère $D$ par rapport au repère $C$ a exactement la même structure que celle du repère $C$ par rapport au repère $B$. La seule différence est les variables impliquées qui sont $\theta_3$ et $l_3$. On trouve donc $d=0$, $\theta= \theta_3$, $r=l_3$ et $\alpha=0$ comme paramètres \textit{DH} pour le joint 3.
+%
+Ensuite, il suffit d'utiliser la formule donnée à l'équation \eqref{eq:Tdh} pour calculer les matrices de transformation entre chaque repère, et de les multiplier ensemble pour calculer la matrice de transformation totale. Avec la méthode des paramètres \textit{DH}, le plus long de la démarche est donc de bien positionner et déterminer les paramètres.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.99\textwidth]{fig/dh3.jpg}
-	\caption{Robot manipulateur anthropomorphique avec la convention DH}
+		\includegraphics[width=0.90\textwidth]{fig/dh3.jpg}
+	\caption{Exemple de modélisation de la cinématique d'un robot manipulateur anthropomorphique avec la convention des paramètres \textit{DH}}
 	\label{fig:dh3}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2857,9 +2880,9 @@ La cinématique inverse consiste à calculer des coordonnées de l'espace des jo
 
 \subsection{Chaîne cinématique ouverte}
 
-Pour les chaînes cinématiques ouvertes, comme la plupart des robots manipulateurs, le calcul de la cinématique directe est sans ambiguïté: une configuration $\col{q}$ mène toujours à une seule position de l'effecteur possible. Toutefois, il existe plusieurs configurations $\col{q}$ qui peuvent mener à la même position de l'effecteur, voir figure \ref{fig:invkin2} par exemple. De plus, pour certaines positions de l'effecteur (ceux qui ne sont pas dans l'espace de travail), l'équation \eqref{eq:kininv} n'aura pas de solutions. La cinématique inverse est donc généralement plus compliquée que la cinématique directe, elle consiste à résoudre une fonction hautement non-linéaire qui possède potentiellement aucune ou plusieurs solutions. 
+Pour les chaînes cinématiques ouvertes, comme la plupart des robots manipulateurs, le calcul de la cinématique directe est sans ambiguïté: une configuration $\col{q}$ mène toujours à une seule position de l'effecteur possible. Toutefois, il existe plusieurs configurations $\col{q}$ qui peuvent mener à la même position de l'effecteur, voir figure \ref{fig:invkin2} par exemple. De plus, pour certaines positions de l'effecteur (ceux qui ne sont pas dans l'espace de travail), l'équation \eqref{eq:kininv} n'aura pas de solutions. La cinématique inverse est donc généralement plus compliquée que la cinématique directe, elle consiste à résoudre une fonction hautement non-linéaire qui possède potentiellement aucune ou plusieurs solutions. De plus, même lorsque qu'une ou plusieurs solutions existent, il n'est pas toujours possible de résoudre analytiquement l'équation \eqref{eq:kininv}. Il est alors nécessaire d'utiliser des méthodes numériques pour trouver des solutions, comme la méthode de Newton-Raphson par exemple. Pour la plupart des architectures de robots industriels, la cinématique inverse peut être résolue analytiquement. Pour les bras manipulateurs à 6 DLL, le critère pour que la cinématique inverse puisse être résolue analytiquement est que l'axe de trois joints rotatifs séquentiels se croise en un point. La plupart des robots industriels ont leurs 3 derniers DDL configurés en un poignet (\textit{wrist} en anglais) qui consiste en trois joints rotatifs avec leurs trois axes qui se croisent en un seul point, et ils rencontrent donc ce critère.
 
-De plus, même lorsque qu'une ou plusieurs solutions existent, il n'est pas toujours possible de résoudre analytiquement l'équation \eqref{eq:kininv}. Il est alors nécessaire d'utiliser des méthodes numériques pour trouver des solutions, comme la méthode de Newton-Raphson par exemple. Pour la plupart des architectures de robots industriels, la cinématique inverse peut être résolue analytiquement. Pour les bras manipulateurs à 6 DLL, le critère pour que la cinématique inverse puisse être résolue analytiquement est que l'axe de trois joints rotatifs séquentiels se croise en un point. La plupart des robots industriels ont leurs 3 derniers DDL configurés en un poignet (\textit{wrist} en anglais) qui consiste en trois joints rotatifs avec leurs trois axes qui se croisent en un seul point, et il rencontre donc ce critère.
+En pratique, les contrôleurs de robot trouvent généralement indirectement les solutions à l'équation \eqref{eq:kininv}. Une méthode standard est de contrôler les déplacement locaux de l'effecteur en direction de la position $\col{r}$ désirée, voir section \ref{sec:positioncontrol}, une méthode qui revient à faire une descente du gradient itérative comme avec la méthode de Newton-Raphson mais en temps réel avec le vrai système.
 
 
 \subsection{Exemple: cinématique inverse d'un robot à deux joints rotatifs}
@@ -2996,5 +3019,105 @@ où ${}^wR^t$ et $\col{r}_{T_o/W_o}^w$ sont des fonctions de la pose de l'effect
 \newpage
 \section{Résumé du chapitre}
 
-TODO
+Cinématique des robots manipulateurs:
+%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\underbrace{
+\col{r} 
+}_{\text{Coordonnées dans l'espace de la tâche}}
+= f( 
+\underbrace{
+\col{q} 
+}_{\text{Coordonnées dans l'espace des joints}}
+) 
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%
+
+Vecteurs de position:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\vec{r}_{B/A}  &=  \quad \text{Vecteur position du point $B$ par rapport au point $A$} \\
+\vec{r}_{Z/A}  &=   \vec{r}_{Z/Y} + \vec{r}_{Y/X} + ... + \vec{r}_{C/B} + \vec{r}_{B/A}  \\
+\vec{r}_{B/A}  &= - \vec{r}_{A/B}
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Bases vectorielle:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\text{Base } a = \{ \hat{a}_{1} , \hat{a}_{2} , \hat{a}_{3} \}
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Vecteur géométrique vs. vecteur-colonne de composantes:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\vec{r} = r_1^a \, \hat{a}_{1} + r_2^a \, \hat{a}_{2} + r_3^a \, \hat{a}_{3}
+\quad & \quad
+\col{r}^{a} = \left[ \begin{array}{c} r_1^a \\ r_2^a \\ r_3^a  \end{array} \right]  \\
+\vec{r} = \sum_{i} r_i^a \hat{a}_i 
+\quad & \quad
+r_i^a = \vec{r} \bullet \hat{a}_i
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Matrice de rotation:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+{}^aR^b &= 
+\left[ \begin{array}{c c c} 
+\hat{a}_1 \bullet \hat{b}_1 & \hat{a}_2 \bullet \hat{b}_1 & \hat{a}_3 \bullet \hat{b}_1 \\
+\hat{a}_1 \bullet \hat{b}_2 & \hat{a}_2 \bullet \hat{b}_2 & \hat{a}_3 \bullet \hat{b}_2 \\
+\hat{a}_1 \bullet \hat{b}_3 & \hat{a}_2 \bullet \hat{b}_3 & \hat{a}_3 \bullet \hat{b}_3 
+\end{array} \right] = 
+\left[ \begin{array}{c c c} 
+	\left[ \begin{array}{c} \\ \col{b}_1^a \\  \\ \end{array}  \right] & \left[ \begin{array}{c} \\ \col{b}_2^a \\  \\ \end{array}  \right] & \left[ \begin{array}{c} \\ \col{b}_3^a \\  \\ \end{array}  \right]
+\end{array} \right]
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Propriétés des matrices de rotation:
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{r}^a &= {}^aR^b \, \col{r}^b \\
+{}^aR^c &=  {}^aR^b \, {}^bR^c \\
+{}^aR^b_{ij} &= \hat{a}_i \bullet \hat{b}_j \\
+R(\theta)^{-1} &= R(-\theta) \\
+R^{-1} &= R^T \\
+({}^bR^a)^{-1} &= {}^aR^b
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Repère:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\text{Repère } A  = \text{Base } a + \text{Origine } A_o = \{ A_o , \hat{a}_{1} , \hat{a}_{2} , \hat{a}_{3} \} 
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Matrice de transformation:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+{}^AT^B &= 
+\left[ \begin{array}{c c } 
+^aR^b & \col{r}_{B_o/A_o}^a \\ 0 \; 0 \; 0 & 1
+\end{array} \right] 
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Transformation avec les paramètres DH:
+%%%%%%%%%%%%%%%%%%%
+\begin{align}
+T(d,\theta,r,\alpha) &=
+\left[ \begin{array}{c c c c }
+c\theta & -s\theta c\alpha & s\theta s\alpha & r c\theta\\
+s\theta & c\theta c\alpha  & -c\theta s\alpha  & r s\theta\\
+0 & s\alpha & c\alpha  &  d\\
+0 & 0 & 0 & 1 
+\end{array}  \right]  
+\label{eq:Tdh}
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%
 

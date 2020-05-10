@@ -49,6 +49,12 @@ Finalement, la \textbf{dynamique} est le domaine qui vise à déterminer les éq
 %%%%%%%%%%%%%%%
 où les termes $H(\col{q}) \col{\ddot{q}}$ et $C(\col{q},\col{\dot{q}}) \col{\dot{q}}$ représentent des effets inertiels, le terme $D \col{\dot{q}}$ représente des forces dissipatives (ex.: friction) et le terme $\col{g}(\col{q})$ représente des forces gravitationnelles. Cette équation c'est $\vec{F}=m\vec{a}$ appliquée aux robots manipulateurs. 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\note{Hypothèses de travail:}{L'approche de modélisation pour la cinématique, la statique et la dynamique utilisée dans cette partie (chapitres \ref{sec:cine1}, \ref{sec:cinediff}, \ref{sec:static} et \ref{sec:dynamic}) considère les robots comme des systèmes de corps rigides reliés par des articulations qui permettent un nombre restreint de mouvements relatifs. Cette approche de modélisation fait l'hypothèse que \textbf{les déformations des sections rigides du robot sont négligeables}, ce qui est par exemple raisonnable pour les robots manipulateurs industriels dans la plupart des applications.}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 \section{L'importance de l'algèbre linéaire pour la robotique}
 
 Contrairement à plusieurs machines et systèmes, les robots sont caractérisés par la présence de plusieurs dimensions. Les entrées sont multiples, par exemple les forces/vitesses des multiples moteurs, et les sorties aussi, par exemple la position $(x,y,z)$ de l'outil. Les quantités intéressantes en robotique (entrées et sorties des analyses) peuvent donc être représentées par des vecteur-colonnes, et les relations entre ceux-ci peuvent être représentées par des opérations matricielles qui simplifient grandement les analyses. L'algèbre linéaire est donc un des outils mathématiques les plus importants pour l'ingénieur roboticien. 
@@ -67,18 +73,23 @@ L'approche de modélisation mise de l'avant dans ces notes ce résume à la séq
 
 La Figure \ref{fig:approchemodelisation} donne une aperçu de cette approche pour un problème de cinématique directe.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.7\textwidth]{approchemodelisation.png}
+		\includegraphics[width=0.7\textwidth]{approchemodelisation.jpg}
 	\caption{Aperçu des grandes lignes de l'approche de modélisation présentée dans ces notes}
 	\label{fig:approchemodelisation}
 \end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-\section{Organisation des notes de cours}
+\section{Organisation des notes de cours (partie \ref{sec:manip})}
 
 Le chapitre \ref{sec:robotmanip} introduit la nomenclature et les concepts de base impliqués dans l'analyse et la modélisation des robots manipulateurs. 
 
 Le chapitre \ref{sec:cine1} présente des méthodes mathématiques pour modéliser la cinématique des robots manipulateurs. Premièrement, les systèmes de coordonnées importants pour les robots manipulateurs sont introduits. Ensuite, l'utilisation des vecteurs géométriques, des bases vectorielles et des repères pour représenter la position est présentée. Finalement, ces notions sont appliquées à la résolution des problèmes de cinématique pour les robots manipulateurs. 
 
 Le chapitre \ref{sec:cinediff} présente des méthodes pour analyser la cinématique différentielle des robots manipulateurs. 
+
+Le chapitre \ref{sec:static} présente des méthodes pour analyser la statique des robots manipulateurs. 
+
+Le chapitre \ref{sec:dynamic} présente des méthodes pour analyser la dynamique des robots manipulateurs. 

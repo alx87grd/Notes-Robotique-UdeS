@@ -164,16 +164,74 @@ La dynamique de l'erreur est donc stable et converge exponentiellement vers zér
 Notez ici que cette analyse assume un contrôle parfait et instantané de la vitesse des moteurs. Une autre limite est que la convergence cesse si le robot passe sur une singularité, i.e. mathématiquement l'inverse (ou pseudo-inverse) du Jacobien n'excisera pas. Finalement, comme démontré dans la démarche, pour garantir la convergence exponentielle sur une trajectoire (position cible qui varie dans le temps), le feedforward illustré à la Figure \ref{fig:robotspeedcontroltraj} est nécessaire.
 
 
-\subsection{Utilisation du Nullspace pour éviter les singularités}
 
-À venir!
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Utilisation du Nullspace pour un objectif secondaire}
 
+Comme il a été vu à la section \ref{sec:invdiffkinredondant}, lorsque le nombre de DDL du robot ($dim(\col{q})$) est supérieur à celui de l'espace de la tâche qu'on désire contrôler ($dim(\col{r})$), il y a plusieurs solutions $\col{\dot{q}}$ pour lesquels la vitesse cible pour l'effecteur est parfaitement atteinte. Lorsque la consigne de vitesse de l'effecteur $\col{\dot{r}}_r$ est fixée par la loi de commande qui la fait converger vers $\col{r}_d$,  l'ensemble des solutions pour $\dot{\col{q}}$ peuvent être décrite par l'équation suivante:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
-\dot{\col{q}} = J^{\#} \, \left[ \dot{\col{r}_d} + \lambda \left( \col{r}_d  - \underbrace{f(\col{q})}_{\col{r}}  \right)\right]  + \left[ I - J^{\#}J  \right] \col{v}
+\dot{\col{q}} = J^{\#} \, 
+\underbrace{
+\left[ \dot{\col{r}_d} + \lambda \left( \col{r}_d  - \underbrace{f(\col{q})}_{\col{r}}  \right)\right] 
+}_{\col{\dot{r}}_r}
++ \left[ I - J^{\#}J  \right] \col{v}
+\end{align}
+%%%%%%%%%%%%%%%%%
+où le vecteur-colonne $\col{v}$ contient les variables libres. On peut donc considérer le vecteur $\col{v}$ comme une entrée de contrôle secondaire, qu'il est possible d'utiliser pour faire autre chose avec le robot sans effectuer la convergence de l'effecteur. Par exemple, les bras humains: on peut les utiliser pour attraper un objet avec notre main (objectif principal), tout en utilisant notre bras pour tenir un cahier contre notre corps (objectif secondaire). On peut aussi utiliser l'espace nul pour tenter de garder la configuration du robot le plus loin possible des configurations singulières. 
+
+De façon général, on peut formuler l'objectif secondaire comme une fonction potentielle scalaire $G$ qui dépend de la configuration (un scalaire qui est le plus grand possible le plus on est sur l'objectif). La commande secondaire $\col{v}$ peut alors être déterminée par le gradient de cette fonction évalué à la configuration actuelle du robot:
+%%%%%%%%%%%%%%%%%%
+\begin{align}
+G( \col{q} ) \; \Rightarrow \; \col{v} = \frac{\partial G }{\partial \col{q} }
 \end{align}
 %%%%%%%%%%%%%%%%%
 
+Si l'objectif secondaire est une position cible $\col{q}_d$ dans l'espace des joints. La fonction objectif $G$ pourrait être la norme de l'erreur, et on obtiendrait:
+%%%%%%%%%%%%%%%%%%
+\begin{align}
+G( \col{q} ) &= - \frac{1}{2} \lambda \col{q}_e^T \col{q}_e
+\quad \text{avec: } \; \col{q}_e = \col{q}_d - \col{q} \\
+\col{v} &= \frac{\partial G }{\partial \col{q} } = \lambda \huge( \col{q}_d - \col{q} \huge)
+\end{align}
+%%%%%%%%%%%%%%%%%
+où $\lambda$ est un paramètre de gain de convergence pour cette boucle de commande secondaire avec une cible de configuration $\col{q}_d$ dans l'espace des joints. Notez que la boucle principale a toujours la priorité absolue avec cette formulation, la convergence de l'objectif principal est garantie mais pas celle de l'objectif secondaire. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Formulation avec régulation de la norme du vecteur vitesse}
+
+Dans certaines situation, par exemple lorsque le robot passe proche d'une singularité, les lois de commande présentées dans les sections précédentes peuvent demander des très grande vitesses irréalistes aux joints. Plutôt que d'inverser directement la matrice Jacobienne, il est possible de plutôt trouver une solution au système d'équation suivant qui pénalise aussi la norme du vecteur $\col{\dot{q}}$:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\left[ \begin{array}{c}  \\ \dot{\col{r}}_r \\ \\ \col{0} \\ \\ 
+\end{array} \right]_{(m+n) \times 1}
+&= 
+\left[ \begin{array}{c c c} 
+&&\\
+& J(\col{q}) &\\
+&&\\
+&\lambda I &\\
+&&
+\end{array} \right]_{(m + n)  \times n}
+\left[ \begin{array}{c} 
+\\ \dot{\col{q}} \\ \\
+\end{array} \right]_{n \times 1}
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+où $\lambda$ est un paramètre de poids sur la pénalité d'utiliser des grandes vitesses de joints. Ce système a donc $m+n$ équations et $n$ variables, il est donc sur-contraint. Une méthode standard est d'utiliser la solution des moindres-carrés (voir section \ref{sec:moindrecarre}) pour trouver une solution non-exacte pour $\dot{\col{q}}$ qui minimise la norme de l'erreur au carré, ce qui correspond ici à minimiser:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\| \col{e} \|^2 = \| \col{\dot{r}}_r - J \col{\dot{q}}   \|^2 + \lambda^2 \| \col{\dot{q}} \|^2
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+La solution des moindres carrés a une solution explicite qui correspond à 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{\hat{\dot{q}}} &= \operatornamewithlimits{argmin}\limits_{\col{\dot{q}}} \| \col{e} \|^2 \\
+\col{\hat{\dot{q}}} &= \huge( J^T J + \lambda^2 I \huge)^{-1} J^T  \col{\dot{r}}_r 
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+La convergence de cette méthode n'est toutefois pas garantie, le robot peut dériver de la trajectoire désirée surtout si $\lambda$ est trop grand. Une méthode pour palier à ce problème est d'ajuster dynamiquement $\lambda$ pour lui assigner de grandes valeurs seulement proche des configurations problématiques, i.e. proche des singularités. Dans la littérature, la méthode présentée dans cette section est appelée \textit{damped least-square}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -349,7 +407,7 @@ B = B_{d} - B_{sys}
 %%%%%%%%%%%%%%%%%
 ou $B_{d}$ contient les coefficients d'amortissement que l'on désire émuler et $B_{sys}$ contient les coefficients d'amortissement naturel du robot. Il est toutefois risqué en pratique de tenter de totalement compenser la friction dans les joints d'un robot, car si la compensation est légèrement plus forte que la friction naturelle le système se retrouve instable. De plus le comportement de la friction autour de zéro vitesse est généralement très non-linéaire et avec de l'hystérésis, donc dur à modéliser avec précision. 
 
-\textbf{Note sur l'émulation de l'inertie: } On pourrait être tenté de rajouter un terme de type $M \col{\ddot{q}}_e$ à l'équation \eqref{eq:jointspaceimpe} pour rajouter l'option d'émuler un effet inertiel sur chaque joint. Toutefois il y a un problème de causalité à une telle opération. L'accélération n'est pas un état du système mais résulte de l'application de forces sur le système incluant $\col{\tau}$. Donc les couples dépendraient de l'accélération, qui dépend des couples, qui dépendraient de l'accélération, qui dépend des couples etc. c'est la poule ou bien l'oeuf qui vient en premier? En pratique, l'accélération mesurée serait celle d'un instant passé dû au délai de calcul dans le contrôleur et aux filtres dans les capteurs, et la rétroaction de la mesure de l'accélération risque de déstabiliser le système.
+\note{Note sur l'émulation de l'inertie: }{ On pourrait être tenté de rajouter un terme de type $M \col{\ddot{q}}_e$ à l'équation \eqref{eq:jointspaceimpe} pour rajouter l'option d'émuler un effet inertiel sur chaque joint. Toutefois il y a un problème de causalité à une telle opération. L'accélération n'est pas un état du système mais résulte de l'application de forces sur le système incluant $\col{\tau}$. Donc les couples dépendraient de l'accélération, qui dépend des couples, qui dépendraient de l'accélération, qui dépend des couples etc. c'est la poule ou bien l'oeuf qui vient en premier? En pratique, l'accélération mesurée serait celle d'un instant passé dû au délai de calcul dans le contrôleur et aux filtres dans les capteurs, et la rétroaction de la mesure de l'accélération risque de déstabiliser le système.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -443,7 +501,7 @@ Comme illustré à la Figure \ref{fig:impedancecontroltaskconvergencegeo}, si co
 %%%%%%%%%%%%%%%%%
 où $\col{\hat{g}}$ est l'estimation par le contrôleur (basé sur un modèle) du vecteur des forces gravitationnelles dans l'espace des joints. Finalement, un autre phénomène courant qui pourrait causer une erreur final serait s'il y a de la friction sèche dans les joints du robot. Le robot pourrait rester pris à un point ou la force commandée est égale à la friction sèche dans le système.
 
-Cette analyse qualitative basée sur des principes énergétiques peut être formalisé avec une analyse de la stabilité avec la méthode de \textit{Lyapunov}(voir section XXX). Si on considère les équations génériques de la dynamique du robot manipulateur avec des actionneurs contrôlés en forces:
+Cette analyse qualitative basée sur des principes énergétiques peut être formalisé avec une analyse de la stabilité avec la méthode de \textit{Lyapunov}. Si on considère les équations génériques de la dynamique du robot manipulateur avec des actionneurs contrôlés en forces:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 \underbrace{
@@ -471,18 +529,18 @@ En utilisant comme fonction candidate de \textit{Lyapunov} l'énergie mécanique
 \begin{align}
 V = 
 \underbrace{
-1/2 \dot{\col{q}}^T H \dot{\col{q}} 
+1/2 \, \dot{\col{q}}^T H \dot{\col{q}} 
 }_{\text{ Énergie cinétique réelle du robot }}
 +
 \underbrace{
-1/2 \col{r}_e^T K \col{r}_e
+1/2 \, \col{r}_e^T K \col{r}_e
 }_{\text{ Énergie potentielle virtuelle du ressort }}
 \end{align}
 %%%%%%%%%%%%%%%%%
 Il est possible de démontré que cette fonction est toujours décroissante dans le temps sous certaines conditions:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
-\dot{V} &= \frac{d}{dt} \left[ /2 \dot{\col{q}}^T H \dot{\col{q}}  + 1/2 \col{r}_e^T K \col{r}_e \right]  \\
+\dot{V} &= \frac{d}{dt} \left[ 1/2 \,  \dot{\col{q}}^T H \dot{\col{q}}  + 1/2 \, \col{r}_e^T K \col{r}_e \right]  \\
 \dot{V} &= \dot{\col{q}}^T 
 \left[ 
 H \ddot{\col{q}} + 2 \dot{H} \dot{\col{q}}
@@ -562,7 +620,7 @@ J^T B J + D
 \text{si} \left[ J^T B J + D \right]  > 0
 \quad\quad \Rightarrow \quad\quad
 \lim_{t \rightarrow \infty} \col{r}_e(t) = \col{0} \quad \& \quad
-\lim_{t \rightarrow \infty} \col{q}(t) = \col{0}
+\lim_{t \rightarrow \infty} \col{\dot{q}}(t) = \col{0}
 \end{align} 
 %%%%%%%%%%%%%%%%%
 Ce qui démontre que le système va nécessairement converger vers le point minimum de la fonction $V$, ce qui correspond à $\col{q} = \col{0}$ et $\col{r}_e = \col{0}$. Avec comme condition que les termes d'amortissement total du système (contrôleur + friction naturelle) sont positifs, i.e. l'énergie nette du système est dissipée. Cette analyse peut aussi être faites pour une impédance dans le domaine des joints, et une combinaison des deux, pour obtenir des conclusions équivalentes. 
@@ -574,10 +632,12 @@ Ce qui démontre que le système va nécessairement converger vers le point mini
 % 	\caption{Contrôleur en impédance à l'effecteur: analyse de convergence}
 % 	\label{fig:impedancecontroltaskconvergencemath}
 % \end{figure}
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ¢
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Commande en admittance}
+\label{sec:admcontrol}
 
 Pour un contrôle en admittance, dans l'espace des joints ou de la tâche, des capteurs mesurent des forces et le déplacement du robot est contrôlé à bas niveau, soit en position ou en vitesse. Si les actionneurs sont asservis en position, la relation générique est:
 %%%%%%%%%%%%%%%%%%
@@ -587,7 +647,7 @@ q_i = \frac{1}{Z_i(s)} \tau_i
 \end{align}
 %%%%%%%%%%%%%%%%%
 où $q_i$ est une consigne de position pour le joint $i$, $Z_i$ est une impédance désirée pour le joint $i$ et $\tau_i$ est la force mesurée au joint $i$.
-Si les actionneurs sont asservis en position à bas niveau, la relation générique est:
+Si les actionneurs sont asservis en vitesse à bas niveau, la relation générique est:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 \dot{q}_i = \frac{s}{Z_i(s)} \tau_i
@@ -595,7 +655,7 @@ Si les actionneurs sont asservis en position à bas niveau, la relation généri
 \end{align}
 %%%%%%%%%%%%%%%%%
 
-Lorsqu'on implémente une loi de commande il est préférable d'éviter de dériver des signaux, certaines combinaison de type de consigne bas-niveau (position vs. vitesse) avec un type d'impédance sont préférable. Par exemple, pour émuler une force proportionnelle à une vitesse, $Z_i(s) = b_i s$ donc avec des actionneurs contrôlés en vitesse l'équation \eqref{eq:admispeed} se réduit à 
+Lorsqu'on implémente une loi de commande il est préférable d'éviter de dériver des signaux, donc certaines combinaison de type de consigne bas-niveau (position vs. vitesse) avec un type d'impédance sont préférable. Par exemple, pour émuler une force proportionnelle à une vitesse $Z_i(s) = b_i s$ avec des actionneurs contrôlés en vitesse, l'équation \eqref{eq:admispeed} se réduit à 
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 \dot{q}_i = \frac{1}{b} \tau_i
@@ -670,8 +730,8 @@ Une chose à noter est que généralement la cellule de charge va mesurer les co
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[h]
 	\centering
-		\includegraphics[width=0.70\textwidth]{fig/admittancecontroltaskspace1.jpg}
-	\caption{Commande de l'admittance à l'effecteur d'un robot : schéma bloc}
+		\includegraphics[width=0.80\textwidth]{fig/admittancecontroltaskspace1.jpg}
+	\caption{Commande de l'admittance à l'effecteur d'un robot avec une loi de comportement de type amortisseur: schéma bloc}
 	\label{fig:admittancecontroltaskspace1}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -686,7 +746,7 @@ M \col{\ddot{r}} + B \col{\dot{r}} + K \col{r}= \col{f}_e
 \begin{figure}[h]
 	\centering
 		\includegraphics[width=0.99\textwidth]{fig/admittancecontroltaskspace.jpg}
-	\caption{Commande de l'admittance à l'effecteur d'un robot : schéma bloc}
+	\caption{Commande de l'admittance à l'effecteur d'un robot avec une loi de comportement de type masse-ressort-amortisseur: schéma bloc}
 	\label{fig:admittancecontroltaskspace}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
