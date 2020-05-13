@@ -3,40 +3,194 @@
 
 Chapitre en construction!
 
-\section{Relation des efforts des actionneurs et à l'effecteur}
+\section{Relation entre les forces aux joints et les forces à l'effecteur pour un robot manipulateur}
 \label{sec:manipstatic}
 
+La relation entre les forces/couples dans l'espace des joints $\col{\tau}$ et un vecteur de forces externes $\vec{f}_e$ à l'effecteur d'un robot peut être décrite par la relation suivante:
 %%%%%%%%%%%%%%%%
 \begin{align}
 \col{\tau} &= J\left( \, \col{q} \, \right)^T \, \col{f}_e 
+\label{eq:staticmanipulator}
 \end{align}
 %%%%%%%%%%%%%%%
+où la matrice Jacobienne $J$ est la même matrice de la relation de cinématique différentielle de l'équation \ref{eq:diffkinrel}. Comme illustré à la Figure \ref{fig:controlvolume}, les variables de forces/couples doivent correspondent aux même dégrées de liberté que les variables vitesses associées à la relation de cinématique différentielle. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.75\textwidth]{fig/controlvolume.jpg}
+	\caption{Bilan de puissance mécanique pour un robot manipulateur}
+	\label{fig:controlvolume}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+La relation statique qui implique le Jacobien (eq. \eqref{eq:staticmanipulator} peut être déterminée à partir d'un bilan de puissance. Si on applique la 1ère loi de la thermodynamique au volume de contrôle indiqué à la Figure \ref{fig:controlvolume} pour calculer le bilan d'énergie:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\frac{dE}{dt} = P_{in} - P_{out}
+\end{align}
+%%%%%%%%%%%%%%%
+Les forces internes inertielles et dissipatrices sont ici négligés pour trouver une relation valide dans des conditions quasi-statique. De plus considérons d'abord un cas sans force conservatrice (voir section \ref{sec:manipstaticconservative} pour ce cas) Dans ces conditions, il n'y a aucune accumulation d'énergie interne: les seules entrée/sorties de puissance dans le système sont le travail mécanique fait par les moteurs sur le robot, et le travail mécanique fait par le robot sur l'environnement. L'égalité du travail mécanique en entrée et sortie peut être convertie en relation matricielle:
+%%%%%%%%%%%%%%%%
+\begin{align}
+P_{in} &= P_{out} \\
+\dot{q}_1 \tau_1  + \dot{q}_2 \tau_2 + \hdots  &= \Vec{v} \bullet \Vec{f}_e \\
+\left[ \begin{array}{c c c} 
+\dot{q}_1 & \dot{q}_2 & \hdots 
+\end{array} \right] \,
+\left[ \begin{array}{c} 
+\tau_1 \\ \tau_2 \\ \vdots 
+\end{array} \right] &= \col{\dot{r}}^T \col{f}_e \\
+\col{\dot{q}}^T \col{\tau} &= \col{\dot{r}}^T \col{f}_e \\
+\end{align}
+%%%%%%%%%%%%%%%
+Ensuite, si on substitut les composantes du vecteur vitesse de l'effecteur $\col{\dot{r}}$ par l'équation de cinématique différentielle directe (eq. \eqref{eq:diffkinrel}, on obtient:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\col{\dot{q}}^T \col{\tau} &= \left( J( \col{q}) \,  \col{\dot{q}}  \right)^T \col{f}_e \\
+\col{\dot{q}}^T \col{\tau} &= \col{\dot{q}}^T  J( \col{q})^T \col{f}_e    \\
+\col{\dot{q}}^T \Big( \col{\tau} \Big) &= \col{\dot{q}}^T  \Big( J( \col{q})^T \col{f}_e \Big)   
+\quad \Rightarrow \quad \col{\tau} = J\left( \, \col{q} \, \right)^T \, \col{f}_e 
+\end{align}
+%%%%%%%%%%%%%%%
+Donc les deux termes qui multiplient (produit intérieur) le vecteur colonne $\col{\dot{q}}$ doivent nécessairement être égaux, se qui nous donne l'équation qui relie les forces dans l'espace des joints aux forces équivalentes dans l'espace de la tâche. 
+
+
+\subsection{Flux de puissance}
+
+Du point de vue du flux de puissance dans le système robotique, de l'énergie électrique vers le travail mécanique fait par le robot, la matrice Jacobien peut-être vue comme une matrice de ratios de transformation. Par exemple, les Figures \ref{fig:robotpowerflow1} et \ref{fig:robotpowerflow2} illustrent quelques unes des transformations de puissance dans un système robotique et les paramètres associées. Dans chacun des domaines la puissance est caractérisée par deux variables, une de flux (courant, vitesse, débit, etc.) et une de d'effort (tension, couple, force, pression, etc.). La puissance est le produit de ces deux variables, ou le produit intérieur des vecteurs-colonnes de ces variables dans le cas de systèmes multi-variables. Le flux de puissance peut être transformé par des dispositifs qu'on appelle des transformateurs. Un transformateur amplifie la variable de flux et réduit la variable d'effort, ou vice-versa. Par exemple, les transformateurs électriques qui réduise la tension dans un réseau électrique, les transmissions mécaniques avec ratios de réduction, etc. Lorsqu'un dispositif transfert la puissance sous une forme d'énergie différente, on les appelle des transducteurs, par exemple un moteur électrique. La puissance en entrée et en sortie des transformateurs est conservée, si l'effort est amplifié d'un facteur $T$ le flux est réduit d'un facteur $T$. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htpb]
+	\centering
+		\includegraphics[width=0.70\textwidth]{fig/robotpowerflow1.jpg}
+	\caption{Flux de puissance: les variables de flux et d'effort dans les différents domaines et espaces du robot.}
+	\label{fig:robotpowerflow1}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Les Figures \ref{fig:robotpowerflow1} et \ref{fig:robotpowerflow2} illustrent les trois transformations de puissances principales dans un bras robotique typique. La puissance électrique est transformée en puissance mécanique des l'arbre des moteurs par les moteurs électriques, ensuite celle-ci est transformée en puissance mécanique dans les joints du robot par les transmissions, et finalement la puissance mécanique dans les joints est transformé en puissance mécanique à l'effecteur du robot. La première transformation est caractérisée par les constantes moteurs:
+%%%%%%%%%%%%%%%%
+\begin{align}
+%\text{\underline{Scalaire}} \quad \quad \text{Multi-DDL } \\
+\tau = k_m I \quad \quad  \col{\tau} &= K \col{I} \\
+v = k_m w \quad \quad  \col{v} &= K \col{w}
+\end{align}
+%%%%%%%%%%%%%%%
+la deuxième transformation est caractérisée par les ratios de réductions des transmissions:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\tau = R \tau_m \quad \quad  \col{\tau} &= R \col{\tau_m } \\
+w = R q \quad \quad  \col{w} &= R \col{q}
+\end{align}
+%%%%%%%%%%%%%%%
+et la dernière transformation est caractérisée par la matrice Jacobienne du robot:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\col{\tau} &= J^T \col{f}_e \\
+\col{\dot{r}} &= J \col{q}
+\end{align}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htpb]
+	\centering
+		\includegraphics[width=0.80\textwidth]{fig/robotpowerflow2.jpg}
+	\caption{Flux de puissance: de l'alimentation électrique vers le travail sur la charge}
+	\label{fig:robotpowerflow2}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+\subsection{Illustration pour un robot simple à un DDL}
+
+La Figure \ref{fig:static1dofexemple} illustre un la matrice Jacobienne d'un robot simple à 1 DDL, pour lequel l'espace de la tâche est simplement la position horizontale $x$ de l'effecteur. Pour ce système à une entrée et une sortie, la matrice Jacobienne est de dimension $1\times1$, donc un scalaire qui ici correspond à la hauteur de l'effecteur du robot. La vitesse $\dot{x}$ pour une vitesse angulaire $\dot{\theta}$ donnée est fonction de cette hauteur. Finalement, le lien entre une force horizontale à l'effecteur et le couple équivalent au joint est aussi fonction de cette même hautuer. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.70\textwidth]{fig/static1dofexemple.jpg}
+	\caption{Exemple de la relation statique pour un manipulateur à 1 DDL}
+	\label{fig:static1dofexemple}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Relation statique sur une singularité}
+
+Lorsqu'un robot manipulateur est sur une singularité, la transposée de la matrice Jacobienne est caractérisée par une amplification d'un facteur zéro pour certaines direction spécifique de vecteur force externe. Cela signifie que aucun couple dans l'espace des joints est nécessaire pour résister à une force externe dans cette direction. De façon générale si le un robot est proche d'une singularité, très peu de couple aux joint est nécessaire pour résister à certaines directions de forces externes. La marche humaine est particulièrement efficace car nos jambes sont maintenues dans des configurations proches de singularité qui permette de résister à la charge gravitationnelle avec peu d'effort musculaire. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.40\textwidth]{fig/externalforcesingularity.jpg}
+	\caption{Relation statique sur une singularité}
+	\label{fig:externalforcesingularity}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 
 \section{Relation de la compliance aux joints et à l'effecteur}
 \label{sec:manipcompliance}
 
-À venir!
-
-t = J K r = J K f(q)
-
-dt/dq = J K J + H K f(q)
-
-H = Hessien
-
+Lorsque les robots sont contrôler en position par des servo-moteurs à chaque joint, chacun de ces moteurs et boucle d'asservissement en position peut être représenté comme une rigidité dans l'espace des joints, i.e. une variation du couple produit par le joint pour un déplacement de ce joint par rapport à la configuration que le contrôleur tente de maintenir:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\delta \tau_i = k_i \delta q_i \quad \Rightarrow \quad \delta \col{\tau} = K_q \, \delta \col{q}
+\end{align}
+%%%%%%%%%%%%%%%
+où $K_q$ est une matrice de rigidité dans l'espace des joints. La variation de l'espace de joint peut être reliée à un déplacement de l'effecteur, et le couple peut-être ramener en terme d'effet à l'effecteur, pour obtenir une compliance apparente à l'effecteur:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\delta \col{r} = J \delta \col{q} = J K_q^{-1} \col{\tau} = 
+\underbrace{
+\left[ J K_q^{-1} J^T \right]
+}_{C_r} \,  \col{f}_e
+\end{align}
+%%%%%%%%%%%%%%%
+où $C_r$ est une matrice de compliance à l'effecteur. La rigidité apparente à l'effecteur, due à un rigidité dans l'espace des joints, est donc égale à :
+%%%%%%%%%%%%%%%%
+\begin{align}
+\col{f}_e = K_r \delta \col{r} \quad \text{avec } K_r = C_r^{-1} = \left[ J K_q^{-1} J^T \right]^{-1}
+\end{align}
+%%%%%%%%%%%%%%%
+Il est à noter que la matrice $C$ de compliance est singulière lorsque le Jacobien est singulier, donc sur une singularité, un robot manipulateur a une ou des directions avec aucune compliance, i.e. infiniment rigide.
 
 \section{Relation statique incluant les forces conservatrices}
 \label{sec:manipstaticconservative}
+
+Si la bilan d'énergie effectué à la section \ref{sec:manipstatic} est fait en incluant l'énergie potentielle, un terme de forces conservatrices $\col{g}$ doit être ajouté à l'équation de la balance des forces dans le systèmes. On nomme ce vecteur $\col{g}$ car pour les robots c'est souvent un vecteur de forces gravitationnelles. 
 
 %%%%%%%%%%%%%%%%
 \begin{align}
 \col{\tau} &= J\left( \, \col{q} \, \right)^T \, \col{f}_e +  g( \col{q} )
 \quad \quad \text{avec:  }
-\underbrace{ g( \col{q} ) = 
-\frac{ \partial V(\col{q} ) }{\partial \col{q} } 
+\underbrace{ \col{g} ( \col{q} ) = 
+\frac{ \partial V(\col{q} ) }{\partial \col{q}^T } 
 }_{\text{Gradient de l'énergie potentielle}}
+\label{eq:staticgravity}
 \end{align}
 %%%%%%%%%%%%%%%
+
+Note: Le vecteur colonne par lequel on prend les dérivés partielles de $V$ est ici noté avec une transposition pour respecter la convention (voir section \ref{sec:vectoropindex}) pour obtenir un vecteur-colonne $\col{g}$ $n \times 1$ plutôt que un vecteur-rangé $1 \times n$.
+
+Le nouveau terme provient du fait que la variation de l'energie interne du système n'est pas nulle dans ce cas:
+%%%%%%%%%%%%%%%%
+\begin{align}
+E = V( \col{q} ) \quad \Rightarrow \quad \frac{dE}{dt} = \frac{dV}{dt} = \frac{\partial V}{ \partial \col{q}} \, \frac{d \col{q}}{dt} = \frac{\partial V}{ \partial \col{q}} \, \col{\dot{q}}
+\end{align}
+%%%%%%%%%%%%%%%
+On obient alors:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\frac{dE}{dt} &= P_{in} - P_{out} \\
+\frac{\partial V}{ \partial \col{q}} \, \col{\dot{q}} &=  \col{\dot{q}}^T \col{\tau} - \col{\dot{q}}^T  J( \col{q})^T \col{f}_e  \\
+\col{\dot{q}}^T  \, \Big(  \frac{\partial V}{ \partial \col{q}^T} \Big) &=  \col{\dot{q}}^T  \Big(\col{\tau} -  J( \col{q})^T \col{f}_e  \Big)
+\end{align}
+%%%%%%%%%%%%%%%
+Donc pour que la relation de puissance soit respecté, les termes qui multiplie le vecteur-colonne de vitesses doivent être égaux, ce qui donne la relation entre les forces de l'équation \eqref{eq:staticgravity}.
 
 
 
@@ -58,5 +212,12 @@ Relation force joints-effecteur:
 \quad \quad \text{avec:  }
 g( \col{q} ) = 
 \frac{ \partial V(\col{q} ) }{\partial \col{q} } 
+\end{align}
+%%%%%%%%%%%%%%%
+
+Rigidité apparente à l'effecteur:
+%%%%%%%%%%%%%%%%
+\begin{align}
+K_r = C_r^{-1} = \left[ J K_q^{-1} J^T \right]^{-1}
 \end{align}
 %%%%%%%%%%%%%%%

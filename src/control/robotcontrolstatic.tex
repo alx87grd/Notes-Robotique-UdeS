@@ -178,7 +178,17 @@ Comme il a été vu à la section \ref{sec:invdiffkinredondant}, lorsque le nomb
 + \left[ I - J^{\#}J  \right] \col{v}
 \end{align}
 %%%%%%%%%%%%%%%%%
-où le vecteur-colonne $\col{v}$ contient les variables libres. On peut donc considérer le vecteur $\col{v}$ comme une entrée de contrôle secondaire, qu'il est possible d'utiliser pour faire autre chose avec le robot sans effectuer la convergence de l'effecteur. Par exemple, les bras humains: on peut les utiliser pour attraper un objet avec notre main (objectif principal), tout en utilisant notre bras pour tenir un cahier contre notre corps (objectif secondaire). On peut aussi utiliser l'espace nul pour tenter de garder la configuration du robot le plus loin possible des configurations singulières. 
+où le vecteur-colonne $\col{v}$ contient les variables libres. On peut donc considérer le vecteur $\col{v}$ comme une entrée de contrôle secondaire, qu'il est possible d'utiliser pour faire autre chose avec le robot sans effectuer la convergence de l'effecteur. Par exemple, les bras humains: on peut les utiliser pour attraper un objet avec notre main (objectif principal), tout en utilisant notre bras pour tenir un cahier contre notre corps (objectif secondaire). On peut aussi utiliser l'espace nul pour tenter de garder la configuration du robot le plus loin possible des configurations singulières. La Figure \ref{fig:nullspacecontrol} illustre graphiquement l'effet de divers options de vecteur $\col{v}$ sur les mouvements internes des joints d'un robot manipulateur. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.70\textwidth]{fig/nullspacecontrol.jpg}
+	\caption{Utilisation de l'espace nul d'un robot redondant pour effectuer un objectif secondaire}
+	\label{fig:nullspacecontrol}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 De façon général, on peut formuler l'objectif secondaire comme une fonction potentielle scalaire $G$ qui dépend de la configuration (un scalaire qui est le plus grand possible le plus on est sur l'objectif). La commande secondaire $\col{v}$ peut alors être déterminée par le gradient de cette fonction évalué à la configuration actuelle du robot:
 %%%%%%%%%%%%%%%%%%
