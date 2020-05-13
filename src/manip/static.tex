@@ -130,34 +130,6 @@ Lorsqu'un robot manipulateur est sur une singularité, la transposée de la matr
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-
-
-\section{Relation de la compliance aux joints et à l'effecteur}
-\label{sec:manipcompliance}
-
-Lorsque les robots sont contrôler en position par des servo-moteurs à chaque joint, chacun de ces moteurs et boucle d'asservissement en position peut être représenté comme une rigidité dans l'espace des joints, i.e. une variation du couple produit par le joint pour un déplacement de ce joint par rapport à la configuration que le contrôleur tente de maintenir:
-%%%%%%%%%%%%%%%%
-\begin{align}
-\delta \tau_i = k_i \delta q_i \quad \Rightarrow \quad \delta \col{\tau} = K_q \, \delta \col{q}
-\end{align}
-%%%%%%%%%%%%%%%
-où $K_q$ est une matrice de rigidité dans l'espace des joints. La variation de l'espace de joint peut être reliée à un déplacement de l'effecteur, et le couple peut-être ramener en terme d'effet à l'effecteur, pour obtenir une compliance apparente à l'effecteur:
-%%%%%%%%%%%%%%%%
-\begin{align}
-\delta \col{r} = J \delta \col{q} = J K_q^{-1} \col{\tau} = 
-\underbrace{
-\left[ J K_q^{-1} J^T \right]
-}_{C_r} \,  \col{f}_e
-\end{align}
-%%%%%%%%%%%%%%%
-où $C_r$ est une matrice de compliance à l'effecteur. La rigidité apparente à l'effecteur, due à un rigidité dans l'espace des joints, est donc égale à :
-%%%%%%%%%%%%%%%%
-\begin{align}
-\col{f}_e = K_r \delta \col{r} \quad \text{avec } K_r = C_r^{-1} = \left[ J K_q^{-1} J^T \right]^{-1}
-\end{align}
-%%%%%%%%%%%%%%%
-Il est à noter que la matrice $C$ de compliance est singulière lorsque le Jacobien est singulier, donc sur une singularité, un robot manipulateur a une ou des directions avec aucune compliance, i.e. infiniment rigide.
-
 \section{Relation statique incluant les forces conservatrices}
 \label{sec:manipstaticconservative}
 
@@ -174,9 +146,7 @@ Si la bilan d'énergie effectué à la section \ref{sec:manipstatic} est fait en
 \end{align}
 %%%%%%%%%%%%%%%
 
-Note: Le vecteur colonne par lequel on prend les dérivés partielles de $V$ est ici noté avec une transposition pour respecter la convention (voir section \ref{sec:vectoropindex}) pour obtenir un vecteur-colonne $\col{g}$ $n \times 1$ plutôt que un vecteur-rangé $1 \times n$.
-
-Le nouveau terme provient du fait que la variation de l'energie interne du système n'est pas nulle dans ce cas:
+Note: Le vecteur colonne par lequel on prend les dérivés partielles de $V$ est ici noté avec une transposition pour respecter la convention (voir section \ref{sec:vectoropindex}) pour obtenir un vecteur-colonne $\col{g}$ $n \times 1$ plutôt que un vecteur-rangé $1 \times n$. Le nouveau terme provient du fait que la variation de l'énergie interne du système n'est pas nulle, car l'énergie potentielle du système varie selon le travail effectué par les forces conservatrices:
 %%%%%%%%%%%%%%%%
 \begin{align}
 E = V( \col{q} ) \quad \Rightarrow \quad \frac{dE}{dt} = \frac{dV}{dt} = \frac{\partial V}{ \partial \col{q}} \, \frac{d \col{q}}{dt} = \frac{\partial V}{ \partial \col{q}} \, \col{\dot{q}}
@@ -193,6 +163,62 @@ On obient alors:
 Donc pour que la relation de puissance soit respecté, les termes qui multiplie le vecteur-colonne de vitesses doivent être égaux, ce qui donne la relation entre les forces de l'équation \eqref{eq:staticgravity}.
 
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Relation de la compliance aux joints et à l'effecteur}
+\label{sec:manipcompliance}
+
+Lorsque les robots sont contrôlé en position par des servo-moteurs à chaque joint, chacun de ces moteurs et sa boucle d'asservissement en position peut être représenté comme une rigidité dans l'espace des joints, i.e. une variation du couple produit par le joint pour un déplacement de ce joint par rapport à la configuration que le contrôleur tente de maintenir:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\delta \tau_i = k_i \delta q_i \quad \Rightarrow \quad \delta \col{\tau} = K_q \, \delta \col{q}
+\end{align}
+%%%%%%%%%%%%%%%
+où $K_q$ est une matrice de rigidité dans l'espace des joints. Il est ensuite intéressant de déterminer la rigidité d'un robot, comme illustré à la Figure \ref{fig:robotcompliance}, lorsqu'il subit une force externe en fonction de la rigidité angulaire de ces servo-moteurs.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.80\textwidth]{fig/robotcompliance.jpg}
+	\caption{Compliance d'un robot à une force externe}
+	\label{fig:robotcompliance}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+La variation de position de l'effecteur peut être reliée aux déplacement angulaire dans l'espace des joints, et la force externe peut-être ramener à des coules équivalent à chaque joint. En manipulant les équations on obtient:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\delta \col{r} = J \delta \col{q} = J K_q^{-1} \col{\tau} = 
+\underbrace{
+\left[ J K_q^{-1} J^T \right]
+}_{C_r} \,  \col{f}_e
+\end{align}
+%%%%%%%%%%%%%%%
+où $C_r$ est une matrice de compliance à l'effecteur. La rigidité apparente à l'effecteur, due à un rigidité dans l'espace des joints, est donc donnée par une relation qui relie la variation de la position de l'effecteur à un force externe appliquée sur l'effecteur:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\col{f}_e = K_r \delta \col{r} \quad \text{avec } K_r = C_r^{-1} = \left[ J K_q^{-1} J^T \right]^{-1}
+\end{align}
+%%%%%%%%%%%%%%%
+Comme illustré à la Figure \ref{fig:robotcompliance_effector}, la matrice de rigidité dans l'espace des joints est généralement diagonale (les moteurs sont indépendents). Il est à noter que la matrice de rigidité à l'effecteur est dépendante de la configuration nominale du robot (i.e. $J$ est une fonction de $\col{q}$ en général).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.80\textwidth]{fig/robotcompliance_effector.jpg}
+	\caption{Matrice de rigidité équivalente d'un robot dans l'espace de l'effecteur}
+	\label{fig:robotcompliance_effector}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+Finalement, il est à noter que la matrice $C$ de compliance est singulière lorsque le Jacobien est singulier, donc sur une singularité, un robot manipulateur a une ou des directions avec aucune compliance, i.e. infiniment rigide, comme illustré à la Figure \ref{fig:robotcompliance_singular}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.80\textwidth]{fig/robotcompliance_singular.jpg}
+	\caption{Effet des configuration singulière sur la rigidité d'un robot manipulateur}
+	\label{fig:robotcompliance_singular}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage
 \section{Résumé du chapitre}
