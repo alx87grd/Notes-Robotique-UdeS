@@ -27,7 +27,7 @@ Il y a généralement un compromis à faire entre la vitesse (le temps de répon
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=0.9\textwidth]{fig/controlgoal.jpg}
-	\caption{Différents aspects qui sont peuvent être considéré lors de la conception de loi de commandes}
+	\caption{Différents aspects qui peuvent être considéré lors de la conception de loi de commandes}
 	\label{fig:controlgoal}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,8 +92,7 @@ Une architecture qui est souvent utilisée pour les robots manipulateur est illu
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Cette approche a comme avantage de découpler le problème en deux problèmes plus simples et rendre plus modulaires les loi de commande qui sont développée. Par exemple, le concepteur du contrôleur des moteurs pourrait effectuer sont travail sans ce soucier du modèle cinématique compliqué du bras manipulateur. Inversement, le concepteur du contrôleur central du robot pourrait travailler avec un modèle purement cinématique du robot (plutôt que les équations dynamiques qui relient les couples moteurs aux accélérations), en assumant que les boucles en vitesse des moteurs fonctionnent et sont rapide. Dans ces conditions, comme illustré à la Figure \ref{fig:innerloop2}, le concepteur du contrôleur central aurait un problème classique avec une seule boucle fermée, mais sont modèle du système considère les contrôleurs de moteurs. 
-
+Cette approche a comme avantage de découpler le problème en deux problèmes plus simples et rendre plus modulaires les loi de commande qui sont développées. Par exemple, le concepteur du contrôleur des moteurs pourrait effectuer sont travail sans ce soucier du modèle cinématique compliqué du bras manipulateur. Inversement, le concepteur du contrôleur central du robot pourrait travailler avec un modèle purement cinématique du robot (plutôt que les équations dynamiques qui relient les couples moteurs aux accélérations), en assumant que les boucles en vitesse des moteurs fonctionnent et sont rapide. Dans ces conditions, comme illustré à la Figure \ref{fig:innerloop2}, le concepteur du contrôleur central aurait un problème classique avec une seule boucle fermée.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htbp]
 	\centering
@@ -103,15 +102,13 @@ Cette approche a comme avantage de découpler le problème en deux problèmes pl
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Il est donc important de noté que le modèle utilisé pour la conception du ou des contrôleurs d'un système robotisé doit être adapté au contexte et à l'architecture utilisée. 
+Il est donc important de noter que le modèle utilisé pour la conception du ou des contrôleurs d'un système robotisé doit être adapté au contexte et à l'architecture utilisée. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Synthétisation d'un plan hors-ligne ou en-ligne}
 
-Un autre aspect pour les méthodes de commandes avancées qui utilise beaucoup de calculs numériques, est qu'est-ce qui est calculé d'avance vs. en temps réel durant l'exécution du contrôleur. 
-
-Une architecture souvent utilisée avec les algorithmes de planification/optimisation de trajectoire (ex. RRT) est illustrée à la Figure \ref{fig:offlinetrajectorygeneration}. Les calculs lourds de rechercher et/ou optimisation sont effectués d'avance, et lors de l'exécution la loi de commande utilise seulement la trajectoire cible qui a été synthétisée hors-ligne.
+Un autre aspect pour les méthodes de commandes avancées qui utilise beaucoup de calculs numériques, est qu'est-ce qui est calculé d'avance vs. en temps réel durant l'exécution du contrôleur. Une architecture souvent utilisée avec les algorithmes de planification/optimisation de trajectoire (ex. RRT) est illustrée à la Figure \ref{fig:offlinetrajectorygeneration}. Les calculs lourds de rechercher et/ou optimisation sont effectués d'avance, et lors de l'exécution la loi de commande utilise seulement la trajectoire cible qui a été synthétisée hors-ligne.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htbp]
 	\centering
@@ -121,7 +118,7 @@ Une architecture souvent utilisée avec les algorithmes de planification/optimis
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-De façon similaire, les méthodes comme \textit{LQR} ou bien \textit{value-iteration} effectue des calculs généralement hors-ligne pour synthétisé une loi de commande sous forme de carte $\col{u} = c(\col{x})$ de quelles actions $\col{u}$ prendre en fonction des états mesurés $\col{x}$ du robot. C'est donc ici une fonction qui est synthétisée hors-ligne et utilisée en-ligne, voir Figure \ref{fig:offlinecontrollergeneration}. La fonction synthétisée peut-être analytique, par exemple pour la méthode \textit{LQR} avec un format $\col{u} = K \col{x}$, ou bien numérique, comme par exemple pour un contrôleur synthétisé avec la méthode \textit{value-iteration}. 
+De façon similaire, les méthodes comme \textit{LQR} ou bien \textit{value-iteration} effectuent des calculs généralement hors-ligne pour synthétiser une loi de commande sous forme de carte $\col{u} = c(\col{x})$ de quelles actions $\col{u}$ prendre en fonction des états mesurés $\col{x}$ du robot. C'est donc ici une fonction qui est synthétisée hors-ligne et utilisée en-ligne, voir Figure \ref{fig:offlinecontrollergeneration}. La fonction synthétisée peut-être analytique, par exemple pour la méthode \textit{LQR} avec un format $\col{u} = K \col{x}$, ou bien numérique, comme par exemple pour un contrôleur synthétisé avec la méthode \textit{value-iteration}. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htbp]
 	\centering
@@ -131,7 +128,7 @@ De façon similaire, les méthodes comme \textit{LQR} ou bien \textit{value-iter
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Ensuite, certain type de contrôleurs de systèmes robotiques vont avoir une certaine forme de synthétisation de trajectoire ou de contrôleur mais en ligne, voir un exemple à la Figure \ref{fig:onlinetrajectorygeneration}. Typiquement, du au lourd calcul numérique qui doivent être fait en ligne, les architectures vont aussi utilisée des boucles imbriquée avec une boucle interne plus rapide et une boucle externe plus lente qui met à jour la trajectoire cible. L'approche de commande prédictive (MPC Model Predictive Control), est un exemple ou on optimise des trajectoire cible constament en ligne dans la boucle. 
+Ensuite, certain type de contrôleurs de systèmes robotiques vont avoir une certaine forme de synthétisation de trajectoire ou de contrôleur mais en ligne, voir un exemple à la Figure \ref{fig:onlinetrajectorygeneration}. Typiquement, du au lourd calcul numérique qui doivent être fait en ligne, les architectures vont utiliser des boucles imbriquée avec une boucle interne plus rapide et une boucle externe plus lente qui met à jour la trajectoire cible. L'approche de commande prédictive (MPC pour \textit{Model Predictive Control} en anglais), est un exemple ou on optimise des trajectoire cible constamment en ligne dans la boucle. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htbp]
 	\centering

@@ -2,13 +2,13 @@
 \label{sec:staticcontrol}
 
 
-Les objectifs en termes de mouvement désiré d'un robot sont généralement plus naturellement spécifiés en termes de variables dans l'espace de la tâche d'un robot, alors que à bas niveau les consignes des actionneurs sont reliés à des variables dans l'espace des joints. Ce chapitre présente des méthodes de commande qui permettent de calculer les consignes pour les actionneurs basé sur des objectifs directement spécifié dans l'espace de la tâche, malgré la relation géométrique hautement non-linéaire. Les méthodes ici présenté utilisent grandement les notions de cinématique différentiel et de statique présentés dans les sections \ref{sec:differentialkinematicmanipulators} et XXX.
+Les objectifs en termes de mouvement désiré d'un robot sont généralement plus naturellement spécifiés en termes de variables dans l'espace de la tâche d'un robot, alors que à bas niveau les consignes des actionneurs sont reliés à des variables dans l'espace des joints. Ce chapitre présente des méthodes de commande qui permettent de calculer les consignes pour les actionneurs basé sur des objectifs directement spécifié dans l'espace de la tâche, malgré la relation géométrique hautement non-linéaire. Les méthodes ici présenté utilisent grandement les notions de cinématique différentiel et de statique présentés dans les sections \ref{sec:differentialkinematicmanipulators} et \ref{sec:static}.
 
 Les méthodes présentés dans ce chapitre négligent les effets dynamiques (inerties, frottement, etc.) et considèrent juste un comportement simplifié des robots: la relation statique non-linéaire entre le mouvement/force des actionneurs et le mouvement/force à l'effecteur. Ces méthodes sont généralement performante lorsque les mouvements du robot sont relativement lents, c'est pourquoi ils sont ici regroupé sous la caractéristique "quasi-statique". Ensuite, selon la nature des actionneurs des systèmes robotiques, différentes variantes peuvent être utilisée:
 
 \paragraph{Actionneurs commandés en vitesse:} Pour les méthodes de commande du mouvement de l'effecteur présentées aux sections \ref{sec:speedcontrol}, \ref{sec:positioncontrol} et \ref{sec:admcontrol}, il est considéré que le robot a des asservissements bas-niveau en vitesse à chacun des joints. Ces méthodes calculent les consignes en vitesse à envoyer aux joints pour contrôler le mouvement de l'effecteur. Ces méthodes fonctionnent bien dans des situations ou le suivi de consigne en vitesse des joints est très performant, c'est généralement le cas des manipulateurs industriels qui ont de très grand ratios de réduction. 
 
-\paragraph{Actionneurs commandés en force:} Pour les méthodes de commande présentées aux section \ref{sec:forcecontrol} et \ref{sec:impcontrol}, on considère seulement la relation géométrique entre les forces des actionneurs et ceux à l'effecteur. Les deux méthodes calculent des forces à appliquer au niveau des actionneurs/joint, pour contrôler la force au niveau de l'effecteur. Ces méthodes fonctionnent donc bien pour des systèmes robotisées à basse impédance (peu d'inertie, peu d'effets dissipatifs, transmission réversibles, etc.), comme les systèmes haptiques où les forces des actionneurs sont pratiquement proportionnelles au courant dans les moteurs du à des très petits ratio de transmissions.
+\paragraph{Actionneurs commandés en force:} Pour les méthodes de commande présentées aux section \ref{sec:forcecontrol} et \ref{sec:impcontrol}, on considère seulement la relation géométrique entre les forces des actionneurs et ceux à l'effecteur. Les deux méthodes calculent des forces à appliquer au niveau des actionneurs/joint, pour contrôler la force au niveau de l'effecteur. Ces méthodes fonctionnent donc bien pour des systèmes robotisées à basse impédance (peu d'inertie, peu d'effets dissipatifs, transmission réversibles, etc.), comme les systèmes haptiques et certain robot collaboratif où les forces des actionneurs sont pratiquement proportionnelles au courant dans les moteurs du à des très petits ratio de transmissions.
 
 
 
@@ -28,7 +28,7 @@ Si un robot a des actionneurs contrôlés en vitesse à bas niveau, contrôler l
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Si le nombre de joints $n$ est égale au nombre de DDL de l'espace de la tâche $m$, alors la matrice Jacobien est carrée et peut être inversée (sauf sur les singularités). Si le nombre de joint $n$ est supérieur au nombre de DDL de l'espace de la tâche $m$, alors on peut utiliser une matrice pseudo-inverse droite $J^{\#} = J^T (J J^T)^{-1}$ (voir section \ref{sec:pseudoinverse}). La loi de commande en équation peut donc être exprimée comme:
+Si le nombre de joints $n$ est égale au nombre de DDL de l'espace de la tâche $m$, alors la matrice Jacobienne est carrée et peut être inversée (sauf sur les singularités). Si le nombre de joint $n$ est supérieur au nombre de DDL de l'espace de la tâche $m$, alors on peut utiliser une matrice pseudo-inverse droite $J^{\#} = J^T (J J^T)^{-1}$ (voir section \ref{sec:pseudoinverse}). La loi de commande en équation peut donc être exprimée comme:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 \dot{\col{q}} = \left\{ \begin{array}{c}
@@ -60,7 +60,7 @@ sous les hypothèses que: 1) le Jacobien utilisé par le contrôleur est exacte,
 \label{sec:positioncontrol}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Pour commander la position de l'effecteur d'un robot, tenter de trouver une solution directement au problème de cinématique inverse (voir section \ref{sec:invkin}) n'est généralement pas la méthode la plus appropriée car la cinématique directe des manipulateurs est hautement non-linéaire. La méthode ici présentée utilise plutôt la méthode de commande en vitesse de l'effecteur (section \ref{sec:speedcontrol}) pour indirectement résoudre la cinématique inverse du robot. Le principe ce résume au fait que pour contrôler la position de l'effecteur de façon, il suffit de diriger le vecteur vitesse de l'effecteur vers la position cible. La méthode est illustrée graphiquement à la Figure \ref{fig:robotspeedcontrolgeo}: 1) Un vecteur d'erreur $\col{r}_e$ est calculé en comparant la position désirée $\col{r}_d$ à la position actuelle $\col{r}$. 2) Le vecteur d'erreur $\col{r}_e$ est multiplié par un paramètre scalaire $\lambda$ pour déterminer la vitesse cible instantanée pour l'effecteur notée $\dot{\col{r}}_r$, qui pointe en direction de la cible. 3) L'inverse du Jacobien est utilisé pour convertir la vitesse instantanée désirée de l'effecteur en consigne de vitesse pour les joints. 
+Pour commander la position de l'effecteur d'un robot, tenter de trouver une solution directement au problème de cinématique inverse (voir section \ref{sec:invkin}) n'est généralement pas la méthode la plus appropriée car la cinématique directe des manipulateurs est hautement non-linéaire. La méthode ici présentée utilise plutôt la méthode de commande en vitesse de l'effecteur (section \ref{sec:speedcontrol}) pour indirectement résoudre la cinématique inverse du robot. Le principe ce résume au fait que pour contrôler la position de l'effecteur, il suffit de diriger le vecteur vitesse de l'effecteur vers la position cible. La méthode est illustrée graphiquement à la Figure \ref{fig:robotspeedcontrolgeo}: 1) Un vecteur d'erreur $\col{r}_e$ est calculé en comparant la position désirée $\col{r}_d$ à la position actuelle $\col{r}$. 2) Le vecteur d'erreur $\col{r}_e$ est multiplié par un paramètre scalaire $\lambda$ pour déterminer la vitesse cible instantanée pour l'effecteur notée $\dot{\col{r}}_r$, qui pointe en direction de la cible. 3) L'inverse du Jacobien est utilisé pour convertir la vitesse instantanée désirée de l'effecteur en consignes de vitesse pour les joints. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
@@ -116,7 +116,7 @@ Lorsque le robot doit suivre une position cible de l'effecteur qui varie dans le
 \right.
 \end{align}
 %%%%%%%%%%%%%%%%%
-En terme de schéma bloc, la vitesse de la trajectoire doit être utilisée avec un feedfoward dans la loi de commande comme illustré à la Figure \ref{fig:robotspeedcontroltraj}, pour garantir la convergence sur la trajectoire.
+En terme de schéma bloc, la vitesse de la trajectoire doit être utilisée comme illustré à la Figure \ref{fig:robotspeedcontroltraj}, ce qu'on appel un \textit{feedforward} en anglais, pour garantir la convergence sur la trajectoire.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
@@ -129,7 +129,7 @@ En terme de schéma bloc, la vitesse de la trajectoire doit être utilisée avec
 
 \subsection{Convergence}
 
-Les méthodes de commande en position de l'effecteur converge sous certaines conditions. L'objectif peut être mathématiquement exprimé comme:
+Les méthodes de commande en position de l'effecteur convergent sous certaines conditions. L'objectif peut être mathématiquement exprimé comme:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 \lim_{t \rightarrow \infty } \col{r}_e(t) = 0 
@@ -161,14 +161,14 @@ La dynamique de l'erreur est donc stable et converge exponentiellement vers zér
 \col{r}_e(t=\infty) = 0
 \end{align}
 %%%%%%%%%%%%%%%%%
-Notez ici que cette analyse assume un contrôle parfait et instantané de la vitesse des moteurs. Une autre limite est que la convergence cesse si le robot passe sur une singularité, i.e. mathématiquement l'inverse (ou pseudo-inverse) du Jacobien n'excisera pas. Finalement, comme démontré dans la démarche, pour garantir la convergence exponentielle sur une trajectoire (position cible qui varie dans le temps), le feedforward illustré à la Figure \ref{fig:robotspeedcontroltraj} est nécessaire.
+Notez ici que cette analyse assume un contrôle parfait et instantané de la vitesse des moteurs. Une autre limite est que la convergence cesse si le robot passe sur une singularité, i.e. mathématiquement l'inverse (ou pseudo-inverse) du Jacobien n'excisera pas. Finalement, comme démontré dans la démarche, pour garantir la convergence exponentielle sur une trajectoire (position cible qui varie dans le temps), le terme de \textit{feedforward} illustré à la Figure \ref{fig:robotspeedcontroltraj} est nécessaire.
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Utilisation du Nullspace pour un objectif secondaire}
 
-Comme il a été vu à la section \ref{sec:invdiffkinredondant}, lorsque le nombre de DDL du robot ($dim(\col{q})$) est supérieur à celui de l'espace de la tâche qu'on désire contrôler ($dim(\col{r})$), il y a plusieurs solutions $\col{\dot{q}}$ pour lesquels la vitesse cible pour l'effecteur est parfaitement atteinte. Lorsque la consigne de vitesse de l'effecteur $\col{\dot{r}}_r$ est fixée par la loi de commande qui la fait converger vers $\col{r}_d$,  l'ensemble des solutions pour $\dot{\col{q}}$ peuvent être décrite par l'équation suivante:
+Comme il a été vu à la section \ref{sec:invdiffkinredondant}, lorsque le nombre de DDL du robot $n = dim(\col{q})$  est supérieur à celui de l'espace de la tâche qu'on désire contrôler $m = dim(\col{r})$, il y a plusieurs solutions $\col{\dot{q}}$ pour lesquels la vitesse cible pour l'effecteur est parfaitement atteinte. Lorsque la consigne de vitesse de l'effecteur $\col{\dot{r}}_r$ est fixée par la loi de commande qui la fait converger vers $\col{r}_d$,  l'ensemble des solutions pour $\dot{\col{q}}$ peuvent être décrite par l'équation suivante:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 \dot{\col{q}} = J^{\#} \, 
@@ -178,7 +178,7 @@ Comme il a été vu à la section \ref{sec:invdiffkinredondant}, lorsque le nomb
 + \left[ I - J^{\#}J  \right] \col{v}
 \end{align}
 %%%%%%%%%%%%%%%%%
-où le vecteur-colonne $\col{v}$ contient les variables libres. On peut donc considérer le vecteur $\col{v}$ comme une entrée de contrôle secondaire, qu'il est possible d'utiliser pour faire autre chose avec le robot sans effectuer la convergence de l'effecteur. Par exemple, les bras humains: on peut les utiliser pour attraper un objet avec notre main (objectif principal), tout en utilisant notre bras pour tenir un cahier contre notre corps (objectif secondaire). On peut aussi utiliser l'espace nul pour tenter de garder la configuration du robot le plus loin possible des configurations singulières. La Figure \ref{fig:nullspacecontrol} illustre graphiquement l'effet de divers options de vecteur $\col{v}$ sur les mouvements internes des joints d'un robot manipulateur. 
+où le vecteur-colonne $\col{v}$ contient les variables libres. On peut donc considérer le vecteur $\col{v}$ comme une entrée de contrôle secondaire, qu'il est possible d'utiliser pour faire autre chose avec le robot sans affecter la convergence de l'effecteur. Par exemple, les bras humains: on peut les utiliser pour attraper un objet avec notre main (objectif principal), tout en utilisant notre bras pour tenir un cahier contre notre corps (objectif secondaire). On peut aussi utiliser l'espace nul pour tenter de garder la configuration du robot le plus loin possible des configurations singulières. La Figure \ref{fig:nullspacecontrol} illustre graphiquement l'effet de divers options de vecteur $\col{v}$ sur les mouvements internes des joints d'un robot manipulateur redondant. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
@@ -190,7 +190,7 @@ où le vecteur-colonne $\col{v}$ contient les variables libres. On peut donc con
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-De façon général, on peut formuler l'objectif secondaire comme une fonction potentielle scalaire $G$ qui dépend de la configuration (un scalaire qui est le plus grand possible le plus on est sur l'objectif). La commande secondaire $\col{v}$ peut alors être déterminée par le gradient de cette fonction évalué à la configuration actuelle du robot:
+De façon général, on peut formuler l'objectif secondaire comme une fonction potentielle scalaire $G$ qui dépend de la configuration (un scalaire qui est le plus grand possible le plus on est loin de l'objectif). La commande secondaire $\col{v}$ peut alors être déterminée par le gradient de cette fonction évalué à la configuration actuelle du robot:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 G( \col{q} ) \; \Rightarrow \; \col{v} = \frac{\partial G }{\partial \col{q} }
@@ -260,7 +260,7 @@ Pour certaines tâches, ce n'est pas la position de l'outil que l'on désire con
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-La Figure \ref{fig:forcecontroleffectorbloc} montre cette méthode de commande avec un schéma bloc. À l'exception du calcul du Jacobien qui nécessite de connaître la position des joints actuelle, la méthode peut être peut être considérée comme une boucle ouverte.  Par exemple dans le cas des robots à entraînement direct, i.e. utilisant des gros moteurs électrique qui n'ont pas de ratio de réduction, il suffit de traduire la force désirée en couples moteurs à l'aide du Jacobien et ensuite de traduire les couples moteurs en consigne de courant des les moteurs en divisant par la constante des moteurs. Selon le type d'actionneur, des boucles de rétroaction en force à bas niveau peuvent être utilisées, par exemple un asservissement de la pression dans un actionneur pneumatique. La loi de commande présentée ici spécifie les consigne en force pour les actionneurs.
+La Figure \ref{fig:forcecontroleffectorbloc} montre cette méthode de commande avec un schéma bloc. À l'exception du calcul du Jacobien qui nécessite de connaître la position des joints actuelle, la méthode peut être peut être considérée comme une boucle ouverte.  Par exemple dans le cas des robots à entraînement direct, i.e. utilisant des gros moteurs électrique qui n'ont pas de ratio de réduction, il suffit de traduire la force désirée en couples moteurs à l'aide du Jacobien et ensuite de traduire les couples moteurs en consigne de courant des les moteurs en divisant par la constante des moteurs. Selon le type d'actionneur, des boucles de rétroaction en force à bas niveau peuvent être utilisées, par exemple un asservissement de la pression dans un actionneur pneumatique. La loi de commande présentée ici spécifie les consignes en force pour les actionneurs.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
@@ -282,7 +282,7 @@ Il est à noter que pour produire une force, le principe action-réaction nous r
 
 Jusqu'à maintenant, à la section \ref{sec:positioncontrol} une technique a été discutée pour contrôler la position d'un robot et à la section \ref{sec:forcecontrol} une technique a été discuté pour contrôler la force transmise par un robot. La dernière grande catégorie de type de commande est de contrôler la relation entre la positon et la force du robot. L'idée est d'imposer une loi de comportement qui relie la force au déplacement du système. Cette approche est particulièrement utile pour les situations ou un robot va entrer en contact avec un objet ou un humain. Un des inconvénients d'un contrôle en position pur est que si le robot rencontre un obstacle qui bloque son chemin, le robot va soudainement appliquer une très grande force pour tenter de continuer, ce qui peut risquer de briser soit l'objet rencontré ou le robot lui-même. À l'opposé, le problème avec une approche de contrôle en force pur est que si le robot n'a pas d'obstacle pour créer une résistance et établir la force désirée, le robot va plutôt accélérer jusqu'à se qu'il atteindre la limite de son espace de travail. La commande en impédance ou en admittance est une approche hybride qui vise plutôt à imposer une relation entre la force et le déplacement. Par exemple, on pourrait désirer que le robot se déplace de façon proportionnelle à une force appliqué sur celui-ci, en imposant ce comportement le robot émulerait le comportement d'un ressort. 
 
-Deux approches permettre d'imposer une relation entre la force et la vitesse: la commande en impédance et en admittance. D'un point de vu théorique les approches sont pratiquement équivalent, comme illustré à la Figure \ref{fig:impedanceadmitancecontrolbloc}, la différence est la causalité. Un contrôleur en impédance mesure le déplacement et impose une force pour l'impédance, et un contrôleur en admittance mesure la force pour imposer un déplacement dans le cas de l'admittance. Dans un monde idéal ou les mesures et le contrôle de la force/déplacement serait parfait, pour la même loi de comportement les deux approches donneraient un résultat identique. Toutefois, en pratique il y a des grandes différences d'implémentation et de performance entre ces approches. 
+\textbf{Deux approches permettent d'imposer une relation entre la force et le mouvement d'un système}: la commande en impédance et en admittance. D'un point de vu théorique les approches sont pratiquement équivalentes, comme illustré à la Figure \ref{fig:impedanceadmitancecontrolbloc}, la différence est la causalité. Un contrôleur en impédance mesure le déplacement et impose une force, et un contrôleur en admittance mesure la force pour imposer un déplacement. Dans un monde idéal ou les mesures et le contrôle de la force/déplacement serait parfait, pour la même loi de comportement les deux approches donneraient un résultat identique. Toutefois, en pratique il y a de très grandes différences d'implémentation et de performance entre ces approches. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 				%\vspace{-10pt}
@@ -308,9 +308,9 @@ Les lois de comportements mécaniques sont souvent décrit avec des fonctions de
 \end{align}
 %%%%%%%%%%%%%%%%%
 
-\paragraph{Note:} Dans certains ouvrage le concept d'impédance est définie comme la force divisée par la vitesse (contrairement à la position). La définition relative au déplacement sera toutefois utilisée ici car elle s'intègre plus naturellement au contexte de commande des robots. 
+\note{Note:}{Dans certains ouvrage le concept d'impédance est définie comme la force divisée par la vitesse (contrairement à la position). La définition relative au déplacement sera toutefois utilisée ici car elle s'intègre plus naturellement au contexte de commande des robots.}
 
-Un système mécanique avec une inertie $m$, un amortissement linéaire $b$ et une rigidité $k$ a une impédance égale à:
+Un système mécanique avec une inertie $m$, un amortissement linéaire $b$ et une rigidité $k$ a une impédance complexe égale à:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 Z(s) = m s^2 + b s + k 
@@ -325,7 +325,7 @@ f(t) = m \frac{d^2}{dt^2} x(t) + b \frac{d}{dt} x(t) + k x(t)
 %%%%%%%%%%%%%%%%%
 
 
-\paragraph{Exemple} Une loi de comportement qui est souvent désirable d'implémenter est la loi de \textit{Hooke}, i.e. un ressort. Comme illustré à la Figure \ref{fig:impedanceadmitancespring}, l'approche impédance se résume à mesurer un signal de position $x$ et le multiplier par une constante de rigidité $k$ pour obtenir la force à appliquer. L'approche en admittance se résume à mesurer un signal de force $f$ et le diviser par la constante de rigidité $k$ pour obtenir le déplacement $x$ à imposer. On utilise parfois la notion de compliance $C=1/k$ qui est l'inverse de la rigidité. 
+\paragraph{Exemple} Une loi de comportement qui est souvent désirable d'implémenter est la loi de \textit{Hooke}, i.e. un ressort. Comme illustré à la Figure \ref{fig:impedanceadmitancespring}, l'approche en impédance se résume à mesurer un signal de position $x$ et le multiplier par une constante de rigidité $k$ pour obtenir la force à appliquer. L'approche en admittance se résume à mesurer un signal de force $f$ et le diviser par la constante de rigidité $k$ pour obtenir le déplacement $x$ à imposer. On utilise parfois la notion de compliance $C=1/k$ qui est l'inverse de la rigidité. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 				\vspace{-10pt}
@@ -346,7 +346,7 @@ f(t) = m \frac{d^2}{dt^2} x(t) + b \frac{d}{dt} x(t) + k x(t)
 
 En pratique, se qui va guider le choix d'une approche ou d'une autre est principalement le type d'actionneur utilisé dans le système robotisé. L'approche par impédance est plus naturelle pour un système avec des actionneurs qui sont des sources de forces (moteur électrique sans réducteur, cylindre pneumatique, etc.), tandis que l'approche par admittance est plus naturelle pour les systèmes avec des actionneurs qui sont des sources de déplacement, i.e. plus facilement contrôlable en position ou vitesse comme la plupart des moteurs électriques jumelés à des grandes réductions utilisés dans les robots industriels. La Figure \ref{fig:impedanceadmitancesex} illustre deux implémentations possibles pour émuler la loi de \textit{Hooke}.
 %
-Généralement, l'approche en impédance jumelée à des actionneurs à faible résistance hautement réversible (le plus proche possible d'une source de force pure) est idéale pour bien émuler des loi de comportement pour des petites impédances. La performance est toutefois limitée pour émuler des rigidités très élevée. Cette approche est généralement utilisée par les systèmes haptiques. À l'inverse, l'approche en admittance avec des actionneurs irréversibles (le plus proche possible d'une source de position), est idéale pour émuler de très grandes impédances. La performance est toutefois limitée pour émuler un comportement très compliant (peu de résistance) car l'accélération et la vitesse des actionneurs sont limités en pratique. Cette approche est généralement utilisée par les robots collaboratifs industriels. 
+Généralement, l'approche en impédance jumelée à des actionneurs à faible résistance hautement réversible (source de force pure) est idéale pour bien émuler des loi de comportement caractérisés par des petites impédances. La performance est toutefois limitée pour émuler des rigidités très élevée. Cette approche est généralement utilisée par les systèmes haptiques et certains systèmes robotiques collaboratif. À l'inverse, l'approche en admittance avec des actionneurs irréversibles (source de position), est idéale pour émuler de très grandes impédances. La performance est toutefois limitée pour émuler un comportement très compliant (peu de résistance) car l'accélération et la vitesse des actionneurs sont limités en pratique. Cette approche est généralement utilisée par les robots collaboratifs industriels. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 				\vspace{-10pt}
@@ -360,13 +360,12 @@ Généralement, l'approche en impédance jumelée à des actionneurs à faible r
 				\subfloat[Commande en \textbf{admittance}]{
 				\includegraphics[width=0.45\textwidth]{fig/admitancecontrolservo.jpg}
 				\label{fig:admitancecontrolservo}}
-        \caption{Deux exemples d'implémentation de commande pour une loi de comportement $f=kx$ (ressort). L'approche en impédance est adaptée à aux actionneurs qui sont des sources de force avec peu de résistance interne. L'approche en admittance est adaptée aux actionneurs qui sont irréversibles et donc des sources de déplacements idéales qui sont peu influencées par la résistance externe.}
+        \caption{Deux exemples d'implémentation de commande pour une loi de comportement $f=kx$ (ressort). L'approche en impédance est adaptée à aux actionneurs qui sont des sources de force avec peu de résistance interne. L'approche en admittance est adaptée aux actionneurs qui sont irréversibles et donc des sources de déplacements peu influencées par la résistance externe.}
 				\label{fig:impedanceadmitancesex}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Les sections suivantes présentent des approches de commande haut-niveau, i.e. la coordination spatiale de plusieurs joints pour obtenir des lois de comportement, soit exprimées dans l'espace des joints ou de la tâche comme illustré à la Figure \ref{fig:stiffnesscontrol}. Dans ces sections il est considéré que les actionneurs sont soit des sources parfaites de force ou des sources parfaites de déplacement. La performance des boucles en forces/impédance/admittance implique une analyse de la dynamique bas-niveau des actionneurs qui est plutôt traité au chapitre \ref{sec:actuatorcontrol}. 
-
+Les sections suivantes présentent des approches de commande haut-niveau, i.e. la coordination spatiale de plusieurs joints pour obtenir des lois de comportement, soit exprimées dans l'espace des joints ou de la tâche comme illustré à la Figure \ref{fig:stiffnesscontrol}. Dans ces sections il est considéré que les actionneurs sont soit des sources parfaites de force ou des sources parfaites de déplacement. La performance dynamique des boucles en forces/impédance/admittance implique une analyse de la dynamique bas-niveau des actionneurs qui est plutôt traité au chapitre \ref{sec:actuatorcontrol}. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
@@ -407,7 +406,7 @@ ou $\col{q}_e = \col{q}_d - \col{q}$ est une erreur par rapport à la configurat
 	\label{fig:impedancecontroljoint}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Comme ici on programme des lois de comportement, il est possible de programmer des impédances non-linéaires arbitraires. 
+Comme ici on programme des lois de comportement, il est possible de programmer des impédances non-linéaires arbitraires. Par exemple, pour les systèmes haptiques un problème courant est d'émuler un obstacle rigide, ce qui est appeler mur virtuel dans la littérature. L'impédance cible dans ce cas est discontinue, aucune résistance pour une certaine plage de déplacement et une très grand rigidité lorsque la position atteint la position du mur virtuel.
 
 \textbf{Compensation de friction: } Les systèmes robotiques vont normalement avoir de la dissipation naturelle présente dans les joints (roulements, engrenage, etc.). Si la friction naturelle est significative et plus grande que l'amortissement qu'on désire émuler, les coefficients de friction dans $B$ pourraient être négatif pour appliquer une force opposée à la friction naturelle. La matrice $B$ pourrait être définie par:
 %%%%%%%%%%%%%%%%
@@ -417,7 +416,7 @@ B = B_{d} - B_{sys}
 %%%%%%%%%%%%%%%%%
 ou $B_{d}$ contient les coefficients d'amortissement que l'on désire émuler et $B_{sys}$ contient les coefficients d'amortissement naturel du robot. Il est toutefois risqué en pratique de tenter de totalement compenser la friction dans les joints d'un robot, car si la compensation est légèrement plus forte que la friction naturelle le système se retrouve instable. De plus le comportement de la friction autour de zéro vitesse est généralement très non-linéaire et avec de l'hystérésis, donc dur à modéliser avec précision. 
 
-\note{Note sur l'émulation de l'inertie: }{ On pourrait être tenté de rajouter un terme de type $M \col{\ddot{q}}_e$ à l'équation \eqref{eq:jointspaceimpe} pour rajouter l'option d'émuler un effet inertiel sur chaque joint. Toutefois il y a un problème de causalité à une telle opération. L'accélération n'est pas un état du système mais résulte de l'application de forces sur le système incluant $\col{\tau}$. Donc les couples dépendraient de l'accélération, qui dépend des couples, qui dépendraient de l'accélération, qui dépend des couples etc. c'est la poule ou bien l'oeuf qui vient en premier? En pratique, l'accélération mesurée serait celle d'un instant passé dû au délai de calcul dans le contrôleur et aux filtres dans les capteurs, et la rétroaction de la mesure de l'accélération risque de déstabiliser le système.}
+\note{Note sur l'émulation de l'inertie: }{ On pourrait être tenté de rajouter un terme de type $M \col{\ddot{q}}_e$ à l'équation \eqref{eq:jointspaceimpe} pour rajouter l'option d'émuler un effet inertiel sur chaque joint. Toutefois il y a un problème de causalité à une telle opération. L'accélération n'est pas un état du système mais résulte de l'application de forces sur le système incluant $\col{\tau}$. Donc les couples dépendraient de l'accélération mesurée, qui dépend des couples appliquées par les actionneurs, qui dépendraient de l'accélération mesurée, qui dépend ... etc. On se retrouve avec une boucle algébrique analogue au paradoxe de la poule et de l'oeuf (lequel vient en premier?). En pratique, l'accélération mesurée serait celle d'un instant passé dû au délai de calcul dans le contrôleur et aux filtres dans les capteurs, et la rétroaction de la mesure de l'accélération risque de déstabiliser le système.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -463,7 +462,9 @@ La Figure \ref{fig:impedanceeffectorbloc} illustre cette loi de commande avec un
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Il y a une certaine équivalence locale entre une loi de commande en impédance à l'effecteur et une loi de commande en impédance dans l'espace des joints. Si on définie une configuration d'origine (point d'équilibre des ressorts) comme la position zéro pour $\col{q}$ et $\col{r}$ alors les lois pour le domaine des joints et de la tâche sont des expressions simplifiés puisque les positions désirée sont égale à zéro: 
+\subsection{Équivalence entre une impédance définie aux joints vs. définie à l'effecteur}
+
+Il y a une certaine équivalence locale entre une loi de commande en impédance à l'effecteur et une loi de commande en impédance dans l'espace des joints. Pour un cas simplifié ou la cible $\col{q}_d$ et $\col{r}_d$ sont égale à zéro, les lois de commandes sont données par: 
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 \text{Joints: }
@@ -473,27 +474,27 @@ Il y a une certaine équivalence locale entre une loi de commande en impédance 
 \col{\tau} = - J(\col{q})^T   \left[ K_e \col{r} + B_e \col{\dot{r}} \right] 
 \end{align}
 %%%%%%%%%%%%%%%%%
-où on a rajouté les indices $q$ ou $e$ aux matrices pour spécifier l'espace, joint ou effecteur, dans lesquelles est sont définies. Ensuite si on distribue et utilise la relation de cinématique différentielle, on observe que la matrice d'amortissement $B_e$ à l'effecteur a exactement le même effet qu'une matrice d'amortissement dans l'espace des joints égale à $B_q = J^T B_e J$:
+où on a rajouté les indices $q$ ou $e$ aux matrices pour spécifier l'espace, joint ou effecteur, dans lesquelles elles sont définies. Ensuite si on distribue et utilise la relation de cinématique différentielle, on observe que la matrice d'amortissement $B_e$ à l'effecteur a exactement le même effet qu'une matrice d'amortissement dans l'espace des joints égale à $B_q = J^T B_e J$:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 \col{\tau} &= - J(\col{q})^T   K_e \col{r} - J(\col{q})^T B_e \col{\dot{r}} \\
 \col{\tau} &= - J(\col{q})^T   K_e \col{r} - \underbrace{ [ J(\col{q})^T   B_e  J(\col{q}) ] }_{ B_q } \col{\dot{q}}
 \end{align}
 %%%%%%%%%%%%%%%%%
-Pour des petites variations autour de la position zéro (celle pour laquelle la force nette est nulle), on peut aussi retrouver une équivalence similaire pour la rigidité $K_q = J^T K_e J$:
+Pour des petites variations autour de la position d'équilibre des ressorts virtuels (celle pour laquelle la force nette est nulle), on peut aussi retrouver une équivalence similaire pour la rigidité $K_q = J^T K_e J$:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 \delta \col{\tau} &= - \underbrace{ [ J(\col{q})^T   K_e  J(\col{q}) ] }_{ K_q }
-\delta \col{q} - \underbrace{ [ J(\col{q})^T   B_e  J(\col{q}) ] }_{ B_q }\delta \col{\dot{r}}
+\delta \col{q} - \underbrace{ [ J(\col{q})^T   B_e  J(\col{q}) ] }_{ B_q }\delta \col{\dot{q}}
 \end{align}
 %%%%%%%%%%%%%%%%%
-Il est à bien noter que ces équivalences sont locales et seulement valides pour dans les environ d'une configuration précise du robot. 
+Il est à bien noter que ces équivalences sont locales seulement due aux effets non-linéaires. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Convergence des lois de commande en impédance}
 \label{sec:impcontrolconvergence}
 
-Pour les robots avec des actionneurs contrôlés en force, une bonne façon de contrôler la position de l'effecteur est d'utiliser l'approche en impédance à l'effecteur avec une matrice $K$ très rigide. C'est l'équivalent de prendre un gros ressort très rigide, attacher une extrémité sur la position cible et l'autre sur l'effecteur du robot. Le robot va être attiré vers la position cible. D'un point de vu énergétique, le robot va converger vers le point ou l'énergie potentielle du système est minimum, ce qui est la position cible si le ressort est la seule source d'énergie potentielle, à condition qu'il y ait une certaine forme de dissipation dans le système (qui peut venir des coefficients du ressort virtuel dans $B$ ou bien de phénomènes physique dans les joints du robot). 
+Pour les robots avec des actionneurs contrôlés en force, une bonne façon de contrôler la position de l'effecteur est d'utiliser l'approche en impédance à l'effecteur avec une matrice $K$ très rigide. C'est l'équivalent de prendre un gros ressort très rigide, attacher une extrémité sur la position cible et l'autre sur l'effecteur du robot. Le robot va être attiré vers la position cible. D'un point de vu énergétique, le robot va converger vers le point ou l'énergie potentielle du système est minimum, ce qui est la position cible si le ressort est la seule source d'énergie potentielle. Pour que le point de convergence soit stable il faut aussi qu'il y ait une certaine forme de dissipation dans le système (qui peut venir des coefficients du ressort virtuel dans $B$ ou bien de phénomènes physique dans les joints du robot) sinon le robot oscillerait autour du point d'énergie potentiel minimum. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[h]
 	\centering
@@ -502,8 +503,8 @@ Pour les robots avec des actionneurs contrôlés en force, une bonne façon de c
 	\label{fig:impedancecontroltaskconvergencegeo}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-Comme illustré à la Figure \ref{fig:impedancecontroltaskconvergencegeo}, si considère d'abord le robot comme seulement une chaîne de corps rigide avec leurs propriétés inertielles, on peut bien visualiser qu'un ressort à l'effecteur va attirer le robot sur la cible. Les propriétés inertielles du bras et la géométrie non-linéaire vont influencer la trajectoire, mais dans ce cas le point d'équilibre dépend seulement des forces conservatrice. Si le ressort virtuel de la loi d'impédance est le seul élément qui produit une force conservatrice, alors le point d'équilibre sera la configuration ou l'effecteur est exactement sur la cible. Si le robot est influencé par des forces gravitationnelles, le point d'équilibre sera le point minimum de l'énergie potentielle totale. Le robot aura donc une erreur finale avec une amplitude qui dépend de la force relative du ressort virtuel et de la gravité. Comme illustré à la Figure \ref{fig:impedanceeffectorbloc}, il est toutefois possible d'inclure une \textbf{compensation de gravité} $\col{\hat{g}}$ à une loi de commande en impédance pour éliminer cet erreur finale:
+
+Comme illustré à la Figure \ref{fig:impedancecontroltaskconvergencegeo}, si considère d'abord le robot comme seulement une chaîne de corps rigide avec leurs propriétés inertielles, on peut bien visualiser qu'un ressort à l'effecteur va attirer le robot sur la cible. Les propriétés inertielles du bras et la géométrie non-linéaire vont influencer la trajectoire, mais dans ce cas le point d'équilibre dépend seulement des forces conservatrice. Si le ressort virtuel de la loi d'impédance est le seul élément qui produit une force conservatrice, alors le point d'équilibre sera la configuration ou l'effecteur est exactement sur la cible. Si le robot est influencé par des forces gravitationnelles, le point d'équilibre sera le point minimum de l'énergie potentielle totale. Le robot aura donc une erreur finale avec une amplitude qui dépend de la force relative du ressort virtuel et de la gravité. Comme illustré à la Figure \ref{fig:impedanceeffectorbloc}, il est toutefois possible d'inclure une \textbf{compensation de gravité} $\col{\hat{g}}$ à une loi de commande en impédance pour éliminer cette erreur finale:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 \col{\tau} = J(\col{q})^T   \left[ K \col{r}_e + B \col{\dot{r}}_e \right] + \col{\hat{g}}(\col{q})
@@ -633,7 +634,7 @@ J^T B J + D
 \lim_{t \rightarrow \infty} \col{\dot{q}}(t) = \col{0}
 \end{align} 
 %%%%%%%%%%%%%%%%%
-Ce qui démontre que le système va nécessairement converger vers le point minimum de la fonction $V$, ce qui correspond à $\col{q} = \col{0}$ et $\col{r}_e = \col{0}$. Avec comme condition que les termes d'amortissement total du système (contrôleur + friction naturelle) sont positifs, i.e. l'énergie nette du système est dissipée. Cette analyse peut aussi être faites pour une impédance dans le domaine des joints, et une combinaison des deux, pour obtenir des conclusions équivalentes. 
+Ce qui démontre que le système va nécessairement converger vers le point minimum de la fonction $V$, ce qui correspond à $\col{q} = \col{0}$ et $\col{r}_e = \col{0}$, avec comme condition que les termes d'amortissement total du système (contrôleur + friction naturelle) sont positifs. Cette analyse peut aussi être faites pour une impédance dans le domaine des joints, et une combinaison des deux, pour obtenir des conclusions équivalentes. 
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \begin{figure}[th]
@@ -677,13 +678,13 @@ donc simplement une relation algébrique entre les signaux. Avec des actionneurs
 q_i = \frac{1}{b s} \tau_i = \frac{1}{b} \int \tau_i
 \end{align}
 %%%%%%%%%%%%%%%%%
-ce qui implique d'intégrer le signal de force. Par contre, si on désire émuler un système masse-ressort-amortisseur c'est l'approche avec des actionneurs en position qui est préférable. Avec des actionneurs contrôlés en position l'équation \eqref{eq:admipos} se réduit à  
+ce qui implique d'intégrer le signal de force. Par contre, si on désire émuler un système masse-ressort-amortisseur c'est l'approche avec des actionneurs en position qui est préférable. Avec des actionneurs contrôlés en position l'équation \eqref{eq:admipos} se réduit dans ce cas à  
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 \dot{q}_i = \frac{1}{ms^2+bs+k} \tau_i
 \end{align}
 %%%%%%%%%%%%%%%%%
-La fonction de transfert a deux pôles donc l'implémentation inclurait deux intégrales. Avec des actionneurs contrôlés en vitesse l'équation \eqref{eq:admispeed} se réduit à 
+La fonction de transfert a deux pôles donc l'implémentation inclurait deux intégrales. Avec des actionneurs contrôlés en vitesse l'équation \eqref{eq:admispeed} se réduit dans ce cas à 
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 \dot{q}_i = \frac{s}{ms^2+bs+k} \tau_i
@@ -736,7 +737,7 @@ L'approche en admittance dans l'espace de l'effecteur est basée sur une mesure 
 B \col{\dot{r}} = \col{f}_e
 \end{align}
 %%%%%%%%%%%%%%%%%
-Une chose à noter est que généralement la cellule de charge va mesurer les composantes du vecteur force $\Vec{f}_e$ dans une base vectorielle mobile $t$ attachée à l'outil. Il faut donc faire un changement de base avec la matrice de rotation ${}^{w}R^t$ pour avoir les composantes dans la base vectorielle fixe $w$ dans laquelle le reste des autres vecteurs sont exprimés. La matrice de rotation ${}^{w}R^t$ doit donc être obtenue basé sur la positon des joints actuels en utilisant la relation de cinématique directe pour l'orientation. La loi de commande de la Figure \ref{fig:admittancecontroltaskspace1} est utilisée pour les "teach mode" des robots manipulateur, i.e. le mode ou un opérateur peut déplacer le robot manuellement dans l'espace. Avec cette loi de commande, un humain peut pousser sur l'effecteur du robot et le robot se déplacera alors dans le sens de la poussée avec une vitesse proportionnelle à l'amplitude de la poussée. Si il n'y a aucune poussée le robot reste en place. 
+Une chose à noter est que généralement la cellule de charge va mesurer les composantes du vecteur force $\Vec{f}_e$ dans une base vectorielle mobile $t$ attachée à l'outil. Il faut donc faire un changement de base avec la matrice de rotation ${}^{w}R^t$ pour avoir les composantes dans la base vectorielle fixe $w$ dans laquelle le reste des autres vecteurs sont exprimés. La matrice de rotation ${}^{w}R^t$ doit donc être obtenue basé sur la positon des joints actuels en utilisant la relation de cinématique directe pour l'orientation. La loi de commande de la Figure \ref{fig:admittancecontroltaskspace1} est utilisée pour le mode démonstration (\textit{teach mode}) des robots manipulateur, i.e. le mode ou un opérateur peut déplacer le robot manuellement dans l'espace. Avec cette loi de commande, un humain peut pousser sur l'effecteur du robot et le robot se déplacera alors dans le sens de la poussée avec une vitesse proportionnelle à l'amplitude de la poussée. Si il n'y a aucune poussée le robot reste en place. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[h]
 	\centering

@@ -23,7 +23,7 @@ où la matrice Jacobienne $J$ est la même matrice de la relation de cinématiqu
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-La relation statique qui implique le Jacobien (eq. \eqref{eq:staticmanipulator} peut être déterminée à partir d'un bilan de puissance. Si on applique la 1ère loi de la thermodynamique au volume de contrôle indiqué à la Figure \ref{fig:controlvolume} pour calculer le bilan d'énergie:
+La relation statique qui implique le Jacobien (eq. \eqref{eq:staticmanipulator}) peut être déterminée à partir d'un bilan de puissance. Si on applique la 1ère loi de la thermodynamique au volume de contrôle indiqué à la Figure \ref{fig:controlvolume} pour calculer le bilan d'énergie:
 %%%%%%%%%%%%%%%%
 \begin{align}
 \frac{dE}{dt} = P_{in} - P_{out}
@@ -43,7 +43,7 @@ P_{in} &= P_{out} \\
 \col{\dot{q}}^T \col{\tau} &= \col{\dot{r}}^T \col{f}_e \\
 \end{align}
 %%%%%%%%%%%%%%%
-Ensuite, si on substitut les composantes du vecteur vitesse de l'effecteur $\col{\dot{r}}$ par l'équation de cinématique différentielle directe (eq. \eqref{eq:diffkinrel}, on obtient:
+Ensuite, si on substitut les composantes du vecteur vitesse de l'effecteur $\col{\dot{r}}$ par l'équation de cinématique différentielle directe (eq. \eqref{eq:diffkinrel}), on obtient:
 %%%%%%%%%%%%%%%%
 \begin{align}
 \col{\dot{q}}^T \col{\tau} &= \left( J( \col{q}) \,  \col{\dot{q}}  \right)^T \col{f}_e \\
@@ -57,7 +57,7 @@ Donc les deux termes qui multiplient (produit intérieur) le vecteur colonne $\c
 
 \subsection{Flux de puissance}
 
-Du point de vue du flux de puissance dans le système robotique, de l'énergie électrique vers le travail mécanique fait par le robot, la matrice Jacobien peut-être vue comme une matrice de ratios de transformation. Par exemple, les Figures \ref{fig:robotpowerflow1} et \ref{fig:robotpowerflow2} illustrent quelques unes des transformations de puissance dans un système robotique et les paramètres associées. Dans chacun des domaines la puissance est caractérisée par deux variables, une de flux (courant, vitesse, débit, etc.) et une de d'effort (tension, couple, force, pression, etc.). La puissance est le produit de ces deux variables, ou le produit intérieur des vecteurs-colonnes de ces variables dans le cas de systèmes multi-variables. Le flux de puissance peut être transformé par des dispositifs qu'on appelle des transformateurs. Un transformateur amplifie la variable de flux et réduit la variable d'effort, ou vice-versa. Par exemple, les transformateurs électriques qui réduise la tension dans un réseau électrique, les transmissions mécaniques avec ratios de réduction, etc. Lorsqu'un dispositif transfert la puissance sous une forme d'énergie différente, on les appelle des transducteurs, par exemple un moteur électrique. La puissance en entrée et en sortie des transformateurs est conservée, si l'effort est amplifié d'un facteur $T$ le flux est réduit d'un facteur $T$. 
+Du point de vue du flux de puissance dans le système robotique, de l'énergie électrique vers le travail mécanique fait par le robot, la Jacobien peut-être vue comme une matrice de ratios de transformation. Par exemple, les Figures \ref{fig:robotpowerflow1} et \ref{fig:robotpowerflow2} illustrent quelques unes des transformations de puissance dans un système robotique et les paramètres associées. Dans chacun des domaines la puissance est caractérisée par deux variables, une de flux (courant, vitesse, débit, etc.) et une de d'effort (tension, couple, force, pression, etc.). La puissance est le produit de ces deux variables, ou le produit intérieur des vecteurs-colonnes de ces variables dans le cas de systèmes multi-variables. Le flux de puissance peut être transformé par des dispositifs qu'on appelle des transformateurs. Un transformateur amplifie la variable de flux et réduit la variable d'effort, ou vice-versa. Par exemple, les transformateurs électriques qui réduise la tension dans un réseau électrique, les transmissions mécaniques avec ratios de réduction, etc. Lorsqu'un dispositif transfert la puissance sous une forme d'énergie différente, on les appelle des transducteurs, par exemple un moteur électrique. La puissance en entrée et en sortie des transformateurs est conservée, si l'effort est amplifié d'un facteur $T$ le flux est réduit d'un facteur $T$. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htpb]
@@ -68,22 +68,22 @@ Du point de vue du flux de puissance dans le système robotique, de l'énergie �
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Les Figures \ref{fig:robotpowerflow1} et \ref{fig:robotpowerflow2} illustrent les trois transformations de puissances principales dans un bras robotique typique. La puissance électrique est transformée en puissance mécanique des l'arbre des moteurs par les moteurs électriques, ensuite celle-ci est transformée en puissance mécanique dans les joints du robot par les transmissions, et finalement la puissance mécanique dans les joints est transformé en puissance mécanique à l'effecteur du robot. La première transformation est caractérisée par les constantes moteurs:
+Les Figures \ref{fig:robotpowerflow1} et \ref{fig:robotpowerflow2} illustrent les trois transformations de puissances principales dans un bras robotique typique. La puissance électrique est transformée en puissance mécanique des l'arbre des moteurs par les moteurs électriques, ensuite celle-ci est transformée en puissance mécanique dans les joints du robot par les transmissions, et finalement la puissance mécanique dans les joints est transformé en puissance mécanique à l'effecteur du robot. La première transformation est caractérisée par les constantes moteurs $k_m$:
 %%%%%%%%%%%%%%%%
 \begin{align}
 %\text{\underline{Scalaire}} \quad \quad \text{Multi-DDL } \\
-\tau = k_m I \quad \quad  \col{\tau} &= K \col{I} \\
-v = k_m w \quad \quad  \col{v} &= K \col{w}
+\tau = k_m I \\%\quad \quad  \col{\tau} &= K \col{I} \\
+v = k_m w %\quad \quad  \col{v} &= K \col{w}
 \end{align}
 %%%%%%%%%%%%%%%
-la deuxième transformation est caractérisée par les ratios de réductions des transmissions:
+la deuxième transformation est caractérisée par les ratios de réductions des transmissions $R$:
 %%%%%%%%%%%%%%%%
 \begin{align}
-\tau = R \tau_m \quad \quad  \col{\tau} &= R \col{\tau_m } \\
-w = R q \quad \quad  \col{w} &= R \col{q}
+\tau = R \tau_m \\%\quad \quad  \col{\tau} &= R \col{\tau_m } \\
+w = R q %\quad \quad  \col{w} &= R \col{q}
 \end{align}
 %%%%%%%%%%%%%%%
-et la dernière transformation est caractérisée par la matrice Jacobienne du robot:
+et la dernière transformation est caractérisée par la matrice Jacobienne du robot $J$:
 %%%%%%%%%%%%%%%%
 \begin{align}
 \col{\tau} &= J^T \col{f}_e \\
@@ -106,7 +106,7 @@ et la dernière transformation est caractérisée par la matrice Jacobienne du r
 
 \subsection{Illustration pour un robot simple à un DDL}
 
-La Figure \ref{fig:static1dofexemple} illustre un la matrice Jacobienne d'un robot simple à 1 DDL, pour lequel l'espace de la tâche est simplement la position horizontale $x$ de l'effecteur. Pour ce système à une entrée et une sortie, la matrice Jacobienne est de dimension $1\times1$, donc un scalaire qui ici correspond à la hauteur de l'effecteur du robot. La vitesse $\dot{x}$ pour une vitesse angulaire $\dot{\theta}$ donnée est fonction de cette hauteur. Finalement, le lien entre une force horizontale à l'effecteur et le couple équivalent au joint est aussi fonction de cette même hautuer. 
+La Figure \ref{fig:static1dofexemple} illustre un la matrice Jacobienne d'un robot simple à 1 DDL, pour lequel l'espace de la tâche est simplement la position horizontale $x$ de l'effecteur. Pour ce système à une entrée et une sortie, la matrice Jacobienne est de dimension $1\times1$, donc un scalaire qui ici correspond à la hauteur de l'effecteur du robot. La vitesse $\dot{x}$ pour une vitesse angulaire $\dot{\theta}$ donnée est fonction de cette hauteur. Finalement, le lien entre une force horizontale à l'effecteur et le couple équivalent au joint est aussi fonction de cette même hauteur. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
@@ -133,7 +133,7 @@ Lorsqu'un robot manipulateur est sur une singularité, la transposée de la matr
 \section{Relation statique incluant les forces conservatrices}
 \label{sec:manipstaticconservative}
 
-Si la bilan d'énergie effectué à la section \ref{sec:manipstatic} est fait en incluant l'énergie potentielle, un terme de forces conservatrices $\col{g}$ doit être ajouté à l'équation de la balance des forces dans le systèmes. On nomme ce vecteur $\col{g}$ car pour les robots c'est souvent un vecteur de forces gravitationnelles. 
+Si la bilan d'énergie effectué à la section \ref{sec:manipstatic} est fait en incluant l'énergie potentielle, un terme de forces conservatrices $\col{g}$ doit être ajouté à l'équation de la balance des forces dans le systèmes. On nommera ici ce vecteur $\col{g}$ car pour les robots c'est souvent un vecteur de forces gravitationnelles. 
 
 %%%%%%%%%%%%%%%%
 \begin{align}
@@ -146,7 +146,10 @@ Si la bilan d'énergie effectué à la section \ref{sec:manipstatic} est fait en
 \end{align}
 %%%%%%%%%%%%%%%
 
-Note: Le vecteur colonne par lequel on prend les dérivés partielles de $V$ est ici noté avec une transposition pour respecter la convention (voir section \ref{sec:vectoropindex}) pour obtenir un vecteur-colonne $\col{g}$ $n \times 1$ plutôt que un vecteur-rangé $1 \times n$. Le nouveau terme provient du fait que la variation de l'énergie interne du système n'est pas nulle, car l'énergie potentielle du système varie selon le travail effectué par les forces conservatrices:
+\note{Note:}{
+Note: Le vecteur colonne par lequel on prend les dérivés partielles de $V$ est ici noté avec une transposition pour respecter la convention (voir section \ref{sec:vectoropindex}) pour obtenir pour $\col{g}$ un vecteur-colonne $n \times 1$ plutôt que un vecteur-rangé $1 \times n$. }
+
+Le nouveau terme provient du fait que la variation de l'énergie interne du système n'est pas nulle, car l'énergie potentielle du système varie selon le travail effectué par les forces conservatrices:
 %%%%%%%%%%%%%%%%
 \begin{align}
 E = V( \col{q} ) \quad \Rightarrow \quad \frac{dE}{dt} = \frac{dV}{dt} = \frac{\partial V}{ \partial \col{q}} \, \frac{d \col{q}}{dt} = \frac{\partial V}{ \partial \col{q}} \, \col{\dot{q}}
@@ -184,8 +187,7 @@ où $K_q$ est une matrice de rigidité dans l'espace des joints. Il est ensuite 
 	\label{fig:robotcompliance}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-La variation de position de l'effecteur peut être reliée aux déplacement angulaire dans l'espace des joints, et la force externe peut-être ramener à des coules équivalent à chaque joint. En manipulant les équations on obtient:
+La variation de position de l'effecteur peut être reliée aux déplacement angulaire dans l'espace des joints, et la force externe peut-être ramener à des couples équivalent à chaque joint. En manipulant les équations on obtient:
 %%%%%%%%%%%%%%%%
 \begin{align}
 \delta \col{r} = J \delta \col{q} = J K_q^{-1} \col{\tau} = 
@@ -210,7 +212,7 @@ Comme illustré à la Figure \ref{fig:robotcompliance_effector}, la matrice de r
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-Finalement, il est à noter que la matrice $C$ de compliance est singulière lorsque le Jacobien est singulier, donc sur une singularité, un robot manipulateur a une ou des directions avec aucune compliance, i.e. infiniment rigide, comme illustré à la Figure \ref{fig:robotcompliance_singular}.
+Finalement, il est à noter que la matrice $C$ de compliance est singulière lorsque le Jacobien est singulier, donc sur une singularité un robot manipulateur a une ou des directions avec aucune compliance, i.e. infiniment rigide, comme illustré à la Figure \ref{fig:robotcompliance_singular}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htbp]
 	\centering
