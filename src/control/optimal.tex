@@ -1,11 +1,55 @@
-\chapter{Commande optimale et programmation dynamique}
+\chapter{Commande optimale, programmation dynamique et apprentissage par renforcement}
 
 
-\section{Bellman equation}
+
+\section{Introduction}
+
+La programmation dynamique est un principe mathématique pour optimiser des décisions qui sont prises en séquence après avoir observé l'état d'un système. Le principe peut être utilisé autant pour analyser un système asservis classique, comme contrôler la position d'un moteur en choisissant la tension appliquée à ces bornes, que pour des problèmes probabiliste dans un contexte de finance, comme choisir quand acheter ou vendre une action, ou bien un problème d'IA comme choisir la pièce à déplacer lors d'une partie d'échec.
+
+\subsection{Type de problèmes}
+
+Le problème est de déterminer une loi de commande $c$, qui dicte l'action $\col{u}$ à prendre lorsque l'état du système est de $\col{x}$ au temps $t$:
+\begin{align}
+\col{u} = c( \col{x} , t )
+\end{align}
+de sorte à minimiser un coût intégral de la forme:
+\begin{align}
+    J=\int_0^{t_f}g(x,u,t) dt + h(x_f,t_f)
+\end{align}
+
+La plupart des outils sont mieux adapté à une approche de type temps discret. Cette section va donc présenter les principes et les algorithmes d'abord avec une approche à temps discret ou un index $k$ indique l'étape actuelle. Une approche pour travailler en temps continue est re-visitée plus tard à la section \ref{sec:dp_cont}. 
+
+Le problème équivalent à résoudre en temps discret est de déterminer les lois de commande $c_k$, qui dictent l'action $\col{u}$ à prendre lorsque l'état du système est de $\col{x}$ à l'étape $k$:
+\begin{align}
+\col{u}_k = c_k( \col{x_k} )
+\end{align}
+de sorte à minimiser un coût additif de la forme:
+\begin{align}
+    J = \sum_{k=0}^{N-1} g_k(x_k, u_k , w_k) + g_N( x_N )
+\end{align}
+
+\subsection{Exemples}
+
+\subsubsection{Système de chauffage optimal}
+
+\subsubsection{Navigation optimale}
+
+
+\subsection{Principe d'optimalité}
+
+\begin{align}
+\left[ \col{x}_0 , \col{x}_1 , ... , \col{x}_i , ... , \col{x}_N \right] \\
+\left[ \col{u}_0 , \col{u}_1 , ... , \col{u}_i , ... , \col{x}_N \right] \\
+\left[  \col{x}_i , ... , \col{x}_N \right] \\
+\left[  \col{u}_i , ... , \col{u}_N \right]
+\end{align}
+
+\subsection{Programmation dynamique excate}
 
 %%%%%%%%%%%%%%%%
 \begin{align}
-J^*_k(\col{x}_k) = 
+J^*_N(\col{x}_N) &= g_N(\col{x}_N) \\
+J^*_k(\col{x}_k) &= 
 \operatornamewithlimits{min}\limits_{\col{u}_k}
 %\mathbb{E}
 \left[
@@ -14,12 +58,99 @@ g_k(\col{x}_k , \col{u}_k ) + J^*_{k+1}(
 f_k(\col{x}_k , \col{u}_k ) 
 }_{\col{x}_{k+1}}
 )
-\right]
-\label{eq:bellamn}
+\right] \\
+u^*_k(\col{x}_k) &= 
+\operatornamewithlimits{argmin}\limits_{\col{u}_k}
+%\mathbb{E}
+\left[
+g_k(\col{x}_k , \col{u}_k ) + J^*_{k+1}( 
+\underbrace{
+f_k(\col{x}_k , \col{u}_k ) 
+}_{\col{x}_{k+1}}
+)
+\right] 
+\label{eq:exactdp}
 \end{align} 
 %%%%%%%%%%%%%%%%%
 
-\section{Hamilton–Jacobi–Bellman equation}
+
+\subsection{Variations sur un thème de programmation dynamique}
+
+\paragraph{Stochastique}
+
+%%%%%%%%%%%%%%%%
+\begin{align}
+J^*_k(\col{x}_k) = 
+\operatornamewithlimits{min}\limits_{\col{u}_k}
+{\color{red}
+\operatornamewithlimits{E}\limits_{\col{w}_k}
+}
+%\mathbb{E}
+&\left[
+g_k(\col{x}_k , \col{u}_k , \col{w}_k ) + J^*_{k+1}( 
+\underbrace{
+f_k(\col{x}_k , \col{u}_k , \col{w}_k ) 
+}_{\col{x}_{k+1}}
+)
+\right] 
+\end{align} 
+%%%%%%%%%%%%%%%%%
+
+\paragraph{Robuste}
+
+%%%%%%%%%%%%%%%%
+\begin{align}
+J^*_k(\col{x}_k) = 
+\operatornamewithlimits{min}\limits_{\col{u}_k}
+{\color{red}
+\operatornamewithlimits{max}\limits_{\col{w}_k}
+}
+%\mathbb{E}
+&\left[
+g_k(\col{x}_k , \col{u}_k , \col{w}_k ) + J^*_{k+1}( 
+\underbrace{
+f_k(\col{x}_k , \col{u}_k , \col{w}_k ) 
+}_{\col{x}_{k+1}}
+)
+\right] 
+\end{align} 
+%%%%%%%%%%%%%%%%%
+
+\paragraph{À horizon de temps infini}
+
+%%%%%%%%%%%%%%%%
+\begin{align}
+J^*(\col{x}) = 
+\operatornamewithlimits{min}\limits_{\col{u}_k}
+%\mathbb{E}
+&\left[
+g(\col{x} , \col{u} ) + {\color{red}\alpha} J^*( 
+\underbrace{
+f(\col{x} , \col{u} ) 
+}_{\col{x}_{k+1}}
+)
+\right] 
+\end{align} 
+%%%%%%%%%%%%%%%%%
+
+\paragraph{Sans modèles (apprentissage par renforcement)}
+
+%%%%%%%%%%%%%%%%
+\begin{align}
+Q^*(\col{x}, \col{u} ) = g(\col{x} , \col{u} ) + 
+\operatornamewithlimits{min}\limits_{\col{u}_{k+1}}
+&\left[
+Q^*( 
+\underbrace{
+f(\col{x} , \col{u} ) 
+}_{\col{x}_{k+1}}
+, \col{u}_{k+1}
+)
+\right] 
+\end{align} 
+%%%%%%%%%%%%%%%%%
+
+\paragraph{À temps continu}
 
 %%%%%%%%%%%%%%%%
 \begin{align}
@@ -35,3 +166,126 @@ f(\col{x} , \col{u} , t) )
 \label{eq:hjb}
 \end{align} 
 %%%%%%%%%%%%%%%%%
+
+\subsection{Approches de programmation dynamique approximée}
+
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problèmes déterministes}
+Un grand ensemble de types de problèmes peuvent être converti..
+
+%%%%%%%%%%%%%%%%
+\begin{align}
+J^*_k(i) &= 
+\operatornamewithlimits{min}\limits_{j \in U(i)}
+%\mathbb{E}
+\left[
+a_{ij}^k + J^*_{k+1}(j)
+\right] \\
+j^*_k(i) &= 
+\operatornamewithlimits{argmin}\limits_{j \in U(i)}
+%\mathbb{E}
+\left[
+a_{ij}^k + J^*_{k+1}(j)
+\right] 
+\label{eq:exactdpgraph}
+\end{align} 
+%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Programmation dynamique stochastique}
+
+
+On cherche donc ici à minimiser l'espérance du coûts-à-venir:
+\begin{align}
+    J = \large{E} \left\{ \sum_{k=0}^{N-1} g_k(x_k, u_k , w_k) + g_N( x_N ) \right\}
+\end{align}
+avec l'algorithme de programmation dynamique suivant:
+%%%%%%%%%%%%%%%%
+\begin{align}
+J^*_k(\col{x}_k) = 
+\operatornamewithlimits{min}\limits_{\col{u}_k}
+\operatornamewithlimits{E}\limits_{\col{w}_k}
+%\mathbb{E}
+\left[
+g_k(\col{x}_k , \col{u}_k , \col{w}_k ) + J^*_{k+1}( 
+\underbrace{
+f_k(\col{x}_k , \col{u}_k , \col{w}_k ) 
+}_{\col{x}_{k+1}}
+)
+\right] \\
+u^*_k(\col{x}_k) = 
+\operatornamewithlimits{argmin}\limits_{\col{u}_k}
+\operatornamewithlimits{E}\limits_{\col{w}_k}
+%\mathbb{E}
+\left[
+g_k(\col{x}_k , \col{u}_k , \col{w}_k) + J^*_{k+1}( 
+\underbrace{
+f_k(\col{x}_k , \col{u}_k , \col{w}_k) 
+}_{\col{x}_{k+1}}
+)
+\right] 
+\end{align} 
+%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Chaînes de Markov}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Programmation dynamique robuste et approche minimax}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Optimisation sur un horizon de temps infini}
+
+\subsection{Bellman equation}
+
+
+\subsection{Algorithme d'itération de valeurs (\textit{Value-iteration})}
+
+\subsection{Algorithme d'itération de loi de commande (\textit{policy-iteration})}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Apprentissage par renforcement}
+
+
+\subsection{TD-Learning}
+
+\subsection{Q-Learning}
+
+\subsection{Sarsa}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Programmation dynamique pour un système à temps continu}
+\label{sec:dp_continu}
+
+\subsection{Hamilton–Jacobi–Bellman equation}
+
+%%%%%%%%%%%%%%%%
+\begin{align}
+0 =
+\operatornamewithlimits{min}\limits_{\col{u}}
+%\mathbb{E}
+\left[
+g(\col{x} , \col{u} ) + \frac{\partial	J^*(\col{x},t)}{\partial \col{x} }
+\underbrace{
+f(\col{x} , \col{u} , t) )
+}_{\dot{\col{x}}}
+\right]
+\label{eq:hjb}
+\end{align} 
+%%%%%%%%%%%%%%%%%
+
+
+\subsection{Exercises}
