@@ -19,7 +19,10 @@
 \usepackage{xcolor}
  \usepackage[b]{esvect}
  
- 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Custom Math Commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\col}[1]{\underline{#1}}
 \DeclareMathOperator{\sgn}{sgn}
@@ -34,6 +37,13 @@
 \rule{\linewidth}{0.3mm}
 }
 \newcommand{\e}[1]{{\mathbb E}\left[ #1 \right]}
+\newcommand{\expectedvalue}[2]{\operatornamewithlimits{\mathbb E}\limits_{#1} \left[ #2 \right]}
+%\DeclareMathOperator*{\max}{max}
+%\DeclareMathOperator*{\min}{min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\E}{\mathbb{E}}
+
 
 \usepackage{fancyhdr}
 \pagestyle{fancy}
