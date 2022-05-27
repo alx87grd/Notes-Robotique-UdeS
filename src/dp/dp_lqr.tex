@@ -1,0 +1,53 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Solution LQR}
+
+Dans le contexte d'un système dynamique linéaire à états/actions continus représenté par:
+\begin{align}
+    \col{x}_{k+1} = f_k(\col{x}_k , \col{u}_k , \col{w}_k )  = A_k \col{x}_k + B_k \col{u}_k + \col{w}_k
+\end{align}
+où $\col{x}_k$ et $\col{w}_k$ sont des vecteurs de dimension $n$ et $\col{w}_k$ un vecteur de dimension $m$. Le vecteur $\col{w}_k$ représente des perturbations aléatoires, indépendantes de l'état actuel, de l'action actuelle et de tous les états passés, et avec des distributions centrées autour de zéro: 
+\begin{align}
+    \e{\col{w}_k} = \col{0} %\quad \quad \e{w_i w_j} = 0 \; \forall \; i \neq j
+\end{align}
+
+Si on cherche donc à minimiser l'espérance du coût-à-venir:
+\begin{align}
+    J = \e{ \sum_{k=0}^{N-1} 
+    \left(
+    \underbrace{
+    \col{x}_k^T Q_k \col{x}_k + \col{u}_k^T R_k \col{u}_k
+    }_{ g_k( \col{x}_k, \col{u}_k , \col{w}_k ) }
+    \right)
+    +
+    \underbrace{
+    \col{x}_N^T Q_N \col{x}_N
+    }_{ g_N( \col{x}_N )  }
+    }
+\end{align}
+où les matrices $Q_k$ et $R_k$ sont symétriques et définies positives:
+\begin{align}
+    Q_k \geq 0 \quad \quad R_k > 0 
+\end{align}
+
+En appliquant l'algorithme de programmation dynamique (pour l'étape $N\rightarrow N-1$ ou une étape générique $k+1 \rightarrow k$), on trouve que:
+1) le coût-à-venir d'un état $\col{x}_k$ a la forme quadratique suivante:
+\begin{align}
+    J_k^*( \col{x}_k ) = \col{x}_k^T S_k \col{x}_k + c
+\end{align}
+où $S_k$ est une matrice symétrique qui caractérise le coût-à-venir à l'état $\col{x}_k$ et $c$ est une constante qui ne dépent pas de l'état actuel.
+2) la loi de commande optimale a la forme linéaire suivante:
+\begin{align}
+    \col{u}_k^* = c_k^*( \col{x}_k ) = - K_k \col{x}_k
+\end{align}
+où $K_k$ est la matrice de gain égale à
+\begin{align}
+    K_k = \left[ R_k + B_k^T S_{k+1} B_k \right]^{-1} B_k S_{k+1} A_k
+\end{align}
+
+3) la matrice $S_k$ dans les équations précédentes peut être calculée en partant du coût final à $k=N$ et en remontant dans le temps avec la récursion suivante:
+\begin{align}
+    S_k = Q_k + A_k^T \left( S_{k+1} - S_{k+1}^T B_k^T  \left[ R_k + B_k^T S_{k+1} B_k \right]^{-1} B_k S_{k+1} \right) A_k
+\end{align}
+

@@ -1,0 +1,22 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Programmation dynamique pour un système à temps continu}
+\label{sec:dp_cont}
+
+\subsection{Hamilton–Jacobi–Bellman equation}
+
+%%%%%%%%%%%%%%%%
+\begin{align}
+0 =
+\operatornamewithlimits{min}\limits_{\col{u}}
+%\mathbb{E}
+\left[
+g(\col{x} , \col{u} ) + \frac{\partial	J^*(\col{x},t)}{\partial \col{x} }
+\underbrace{
+f(\col{x} , \col{u} , t) )
+}_{\dot{\col{x}}}
+\right]
+\label{eq:hjb}
+\end{align} 
+%%%%%%%%%%%%%%%%%

@@ -1,5 +1,10 @@
 \documentclass[letterpaper,oneside,french]{book}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Packages
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %% Language and font encodings
 \usepackage{babel}
 \usepackage[utf8x]{inputenc}
@@ -17,8 +22,18 @@
 \usepackage{float}
 \usepackage[caption=false,font=footnotesize]{subfig}
 \usepackage{xcolor}
- \usepackage[b]{esvect}
+\usepackage[b]{esvect}
+\usepackage{fancyhdr}
+\usepackage{etoolbox}
+\usepackage{minitoc}
+\usepackage{enumitem}
  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Options 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newtoggle{EN}
+\togglefalse{EN}
+%\toggletrue{EN}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Custom Math Commands
@@ -44,8 +59,64 @@
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator*{\E}{\mathbb{E}}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Formating Customization
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\usepackage{fancyhdr}
+\makeatletter
+\renewcommand{\section}{\@startsection {section}%   % the name
+{1}%                               % the level
+{0mm}%                             % the indent
+{0.8\baselineskip}%                % the beforeskip
+{0.4\baselineskip}%                 % the afterskip
+{\bfseries\LARGE}%                  % the style
+}%
+\makeatother
+
+\makeatletter
+\renewcommand{\subsection}{\@startsection {subsection}%    % the name
+{2}%                               % the level
+{0mm}%                             % the indent
+{0.6\baselineskip}%                % the beforeskip
+{0.3\baselineskip}%                % the afterskip
+{\bfseries\normalsize\Large}%      % the style
+}%
+\makeatother
+
+\makeatletter
+\renewcommand{\subsubsection}{\@startsection {subsubsection}%    % the name
+{3}%                               % the level
+{0mm}%                             % the indent
+{0.6\baselineskip}%                % the beforeskip
+{0.3\baselineskip}%                % the afterskip
+{\bfseries\normalsize\large}%      % the style
+}%
+\makeatother
+
+\makeatletter
+\renewcommand\paragraph{\@startsection{paragraph}
+{4}
+{0mm}%
+{0.4\baselineskip}%
+{0.2\baselineskip}%
+{\normalfont\bfseries\large\textit}
+}
+\makeatother
+
+%\setlength\parindent{0pt}
+
+\setlist{nosep}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Path to figures
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\graphicspath{{img/},{fig/}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Head and foot
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \pagestyle{fancy}
 %\fancyhead[LE]{}
 \fancyhead[RO]{}
@@ -61,7 +132,10 @@
 \renewcommand{\headrulewidth}{0pt}
 \fancyfoot[C]{Notes de cours génie robotique - Copyright \textcopyright \the\year{} Alexandre Girard}
 }
-\graphicspath{{img/},{fig/}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Title page
 
@@ -69,7 +143,11 @@
 
 \input{src/title}
 
+\setcounter{tocdepth}{0}
+\noptcrule
+
 {\hypersetup{linkcolor=black}
+\doparttoc[n]
 \tableofcontents
 \newpage
 %\listoffigures
@@ -77,10 +155,13 @@
 %\listoftables
 }
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \part{Modélisation et analyse des robots manipulateurs}
 \label{sec:manip}
+{\hypersetup{linkcolor=black}
+\parttoc
+}
+
 \include{src/manip/manip-intro}
 \include{src/manip/manip-lexique}
 \include{src/manip/manip}
@@ -89,6 +170,7 @@
 \include{src/manip/static}
 \include{src/manip/dynamic}
 
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \part{Conception des systèmes robotisés}
 % \label{sec:design}
@@ -96,29 +178,63 @@
 % \chapter{Éléments de machine}
 % \chapter{Actionneurs}
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\part{Commande des systèmes robotisés}
-\label{sec:control}
+\part{Commande des robots manipulateurs}
+\label{sec:manip_control}
+{\hypersetup{linkcolor=black}
+\parttoc
+}
+
 \include{src/control/control}
 \include{src/control/robotcontrolstatic}
-\include{src/control/classic}
 \include{src/control/robotcontroldynamic}
 \include{src/control/actuatorcontrol}
 \include{src/control/planif}
-\include{src/control/optimal}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{La science des systèmes asservis}
+\label{sec:feedback}
+{\hypersetup{linkcolor=black}
+\parttoc
+}
 
+\include{src/feedback/classic}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{La science des prises de décisions}
+\label{sec:decision}
+{\hypersetup{linkcolor=black}
+\parttoc
+}
+
+\include{src/dp/dp_preface}
+\include{src/dp/dp_intro}
+\include{src/dp/dp_det}
+\include{src/dp/dp_sto}
+\include{src/dp/dp_rob}
+\include{src/dp/dp_inf}
+\include{src/dp/dp_lqr}
+\include{src/dp/dp_rl}
+\include{src/dp/dp_con}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \part{Mathématiques pour la robotique}
+\label{sec:math}
+{\hypersetup{linkcolor=black}
+\parttoc
+}
 
 \include{src/math/lin}
 \include{src/math/geo}
+\include{src/appendix/trigo}
 \chapter{Optimisation}
 \section{Gradient}
 \section{Lagrange multiplier}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Bibliography
@@ -132,7 +248,12 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \appendix
-\include{src/appendix/trigo}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{Exercices}
+\label{sec:exer}
 
 \include{src/exer}
 
