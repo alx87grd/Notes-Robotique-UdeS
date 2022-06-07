@@ -44,7 +44,7 @@
 \medskip}
 
 % Video box
-\newcommand{\video}[3] {
+\newcommand{\video}[2] {
 \par\medskip
 \begin{mdframed}[userdefinedwidth=.8\textwidth, align=center, linecolor=black, backgroundcolor=white, linewidth=2pt]
 \begin{tabular}{ m{.2\textwidth}  m{.75\textwidth}}
@@ -55,8 +55,8 @@
 \begin{minipage}{.75\textwidth}
 \textbf{Capsule vidéo} \par 
 \href{#2}{\textbf{\textit{#1}}} \par
-\url{#2} \par
-#3
+\url{#2}% \par
+%#3
 \end{minipage}
 \end{tabular} 
 \end{mdframed}
@@ -65,7 +65,7 @@
 
 
 % Colab link
-\newcommand{\colab}[3] {
+\newcommand{\colab}[2] {
 \begin{mdframed}[userdefinedwidth=.8\textwidth, align=center, linecolor=black, backgroundcolor=white, linewidth=2pt]
 \begin{tabular}{ m{.2\textwidth}  m{.75\textwidth}}
 \begin{minipage}{.2\textwidth}
@@ -75,8 +75,8 @@
 \begin{minipage}{.75\textwidth}
 \textbf{Exercice de code} \par 
 \href{#2}{\textbf{\textit{#1}}} \par
-\url{#2} \par
-#3
+\url{#2} %\par
+% #3
 \end{minipage}
 \end{tabular} 
 \end{mdframed}

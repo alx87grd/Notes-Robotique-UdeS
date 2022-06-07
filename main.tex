@@ -32,8 +32,8 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{Introduction à la modélisation des systèmes robotisés} À venir!
-\include{src/control_intro}
+% \chapter{Introduction à la modélisation des systèmes robotisés} À venir!
+% \include{src/control_intro}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \part{Modélisation et analyse des robots manipulateurs}
@@ -42,13 +42,13 @@
 \parttoc
 }
 
-% \include{src/manip/manip-intro}
-% \include{src/manip/manip-lexique}
-% \include{src/manip/manip}
-% \include{src/manip/cinematique}
-% \include{src/manip/mouvement}
-% \include{src/manip/static}
-% \include{src/manip/dynamic}
+\include{src/manip/manip-intro}
+\include{src/manip/manip-lexique}
+\include{src/manip/manip}
+\include{src/manip/cinematique}
+\include{src/manip/mouvement}
+\include{src/manip/static}
+\include{src/manip/dynamic}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \part{Commande des robots manipulateurs}
@@ -56,10 +56,10 @@
 {\hypersetup{linkcolor=black}
 \parttoc
 }
-
+\include{src/control_intro}
 \include{src/control/robotcontrolstatic}
-% \include{src/control/robotcontroldynamic}
-% \include{src/control/planif}
+\include{src/control/robotcontroldynamic}
+\include{src/control/planif}
 % \include{src/control/actuatorcontrol}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,16 +69,12 @@
 % \chapter{Éléments de machine}
 % \chapter{Actionneurs}
 
-
-
-
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \part{Véhicules robotisées}
 % \label{sec:mobilerobot}
 % \chapter{Voitures}
 % \chapter{Drones}
 % \chapter{Avions}
-
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \part{La science des systèmes asservis}
@@ -88,7 +84,6 @@
 % }
 
 % \include{src/feedback/classic}
-
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \part{Programmation dynamique: La science des prises de décisions optimales}
@@ -108,17 +103,17 @@
 % \include{src/dp/dp_con}
 
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \part{Mathématiques pour la robotique}
-% \label{sec:math}
-% {\hypersetup{linkcolor=black}
-% \parttoc
-% }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{Boîte à outils mathématique}
+\label{sec:math}
+{\hypersetup{linkcolor=black}
+\parttoc
+}
 
-% \include{src/math/lin}
-% \include{src/math/geo}
+\include{src/math/lin}
+\include{src/math/geo}
 \include{src/math/optimisation}
-% \include{src/appendix/trigo}
+\include{src/appendix/trigo}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

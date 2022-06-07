@@ -4,7 +4,7 @@
 
 Les objectifs en termes de mouvement désiré d'un robot sont généralement plus naturellement spécifiés en termes de variables dans l'espace de la tâche d'un robot, alors que à bas niveau les consignes des actionneurs sont reliés à des variables dans l'espace des joints. Ce chapitre présente des méthodes de commande qui permettent de calculer les consignes pour les actionneurs basé sur des objectifs directement spécifié dans l'espace de la tâche, malgré la relation géométrique hautement non-linéaire. Les méthodes ici présenté utilisent grandement les notions de cinématique différentiel et de statique présentés dans les sections \ref{sec:differentialkinematicmanipulators} et \ref{sec:static}.
 
-Les méthodes présentés dans ce chapitre négligent les effets dynamiques (inerties, frottement, etc.) et considèrent juste un comportement simplifié des robots: la relation statique non-linéaire entre le mouvement/force des actionneurs et le mouvement/force à l'effecteur. Ces méthodes sont généralement performante lorsque les mouvements du robot sont relativement lents, c'est pourquoi ils sont ici regroupé sous la caractéristique "quasi-statique". Ensuite, selon la nature des actionneurs des systèmes robotiques, différentes variantes peuvent être utilisée:
+Les méthodes présentés dans ce chapitre négligent les effets dynamiques (inerties, frottement, etc.) et considèrent juste un comportement simplifié des robots: la relation statique non-linéaire entre le mouvement/force des actionneurs et le mouvement/force à l'effecteur. Ces méthodes sont généralement performante lorsque les mouvements du robot sont relativement lents, c'est pourquoi ils sont ici regroupé sous la caractéristique \textit{quasi-statique}. Ensuite, selon la nature des actionneurs des systèmes robotiques, différentes variantes peuvent être utilisée:
 
 \paragraph{Actionneurs commandés en vitesse:} Pour les méthodes de commande du mouvement de l'effecteur présentées aux sections \ref{sec:speedcontrol}, \ref{sec:positioncontrol} et \ref{sec:admcontrol}, il est considéré que le robot a des asservissements bas-niveau en vitesse à chacun des joints. Ces méthodes calculent les consignes en vitesse à envoyer aux joints pour contrôler le mouvement de l'effecteur. Ces méthodes fonctionnent bien dans des situations ou le suivi de consigne en vitesse des joints est très performant, c'est généralement le cas des manipulateurs industriels qui ont de très grand ratios de réduction. 
 
@@ -437,8 +437,6 @@ ou $B_{d}$ contient les coefficients d'amortissement que l'on désire émuler et
 
 \note{Note sur l'émulation de l'inertie: }{ On pourrait être tenté de rajouter un terme de type $M \col{\ddot{q}}_e$ à l'équation \eqref{eq:jointspaceimpe} pour rajouter l'option d'émuler un effet inertiel sur chaque joint. Toutefois il y a un problème de causalité à une telle opération. L'accélération n'est pas un état du système mais résulte de l'application de forces sur le système incluant $\col{\tau}$. Donc les couples dépendraient de l'accélération mesurée, qui dépend des couples appliquées par les actionneurs, qui dépendraient de l'accélération mesurée, qui dépend ... etc. On se retrouve avec une boucle algébrique analogue au paradoxe de la poule et de l'oeuf (lequel vient en premier?). En pratique, l'accélération mesurée serait celle d'un instant passé dû au délai de calcul dans le contrôleur et aux filtres dans les capteurs, et la rétroaction de la mesure de l'accélération risque de déstabiliser le système.}
 
-\video{Commande en impédance d'un robot manipulateur}{https://youtu.be/Rl2kDwsYS9E}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Commande en impédance de l'effecteur}
 \label{sec:effimpcontrol}
@@ -464,6 +462,9 @@ Le ressort-amortisseur virtuel produit une force virtuelle $\col{f}_e$ désirée
 \col{\tau} &= J(\col{q})^T \col{f}_e
 \end{align}
 %%%%%%%%%%%%%%%%%
+
+\video{Commande en impédance d'un robot manipulateur}{https://youtu.be/Rl2kDwsYS9E}
+
 La Figure \ref{fig:impedanceeffectorbloc} illustre cette loi de commande avec un schéma bloc. La première étape du contrôleur est de calculer la position et la vitesse de l'effecteur à partir des capteurs qui mesurent la position et la vitesse des joints. Il faut donc ici utiliser la cinématique directe et la cinématique-différentielle directe pour calculer la position et la vitesse de l'effecteur. Ensuite la position et la vitesse de l'effecteur sont comparées à la position et la vitesse désirée (qui peut varier dans le temps, i.e. une trajectoire). L'erreur en termes de position et vitesse est convertie en force cartésienne basé sur la loi de comportement désirée (l'impédance è l'effecteur). Finalement cette force cartésienne est convertie en couple aux joints grâce au Jacobien du robot manipulateur. On peut aussi ajouter une compensation de gravité, voir la section \ref{sec:impcontrolconvergence}. L'équation de la loi de commande est égale à:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
