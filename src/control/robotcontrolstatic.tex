@@ -64,11 +64,15 @@ Pour commander la position de l'effecteur d'un robot, tenter de trouver une solu
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.4\textwidth]{fig/robotspeedcontrolgeo.jpg}
+		\includegraphics[width=0.35\textwidth]{fig/robotspeedcontrolgeo.jpg}
 	\caption{Commande de la trajectoire de l'effecteur d'un robot : interprétation géométrique}
 	\label{fig:robotspeedcontrolgeo}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\video{Commande du mouvement de l'effecteur d'un robot manipulateur}{https://youtu.be/Qo60ySYaMqg}
+
+
 Formellement, la loi de commande est exprimée par l'expression mathématique:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
@@ -95,7 +99,7 @@ ou $\lambda$ est un paramètre scalaire de gain du contrôleur, $J$ est le Jacob
 
 
 
-
+\colab{Commande d'un manipulateur en position}{https://colab.research.google.com/drive/1M3O_nD8iLbRSvZzyUpBn0Mo8KUclrG26?usp=sharing}
 
 
 
@@ -129,13 +133,15 @@ En terme de schéma bloc, la vitesse de la trajectoire doit être utilisée comm
 
 \subsection{Convergence}
 
-Les méthodes de commande en position de l'effecteur convergent sous certaines conditions. L'objectif peut être mathématiquement exprimé comme:
+Les méthodes de commande en position de l'effecteur convergent sous certaines conditions, i.e. l'erreur (sur la position de l'effecteur) converge vers zéro lorsque le temps tend vers l'infini:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 \lim_{t \rightarrow \infty } \col{r}_e(t) = 0 
 \end{align}
 %%%%%%%%%%%%%%%%%
-c'est-à-dire l'erreur (sur la position de l'effecteur) doit converger vers zéro. L'erreur est une fonction de la trajectoire et de la positon réelle du robot:
+
+\begin{proof}
+L'erreur est une fonction de la position désirée et de la positon réelle du robot:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 \col{r}_e = \col{r}_d - \col{r}
@@ -151,7 +157,7 @@ Si on dérive cette équation dans le temps, on obtient une relation différenti
 \dot{\col{r}}_e  &= - \lambda \, \col{r}_e  
 \end{align}
 %%%%%%%%%%%%%%%%
-La dynamique de l'erreur est donc stable et converge exponentiellement vers zéro si $\lambda>0$, avec une constante de temps égale à $\lambda$:
+La dynamique de l'erreur est une équation différentielle d'ordre 1. Si la constante de temps est positive $\lambda>0$ (ici directement déterminée par le gain de notre contrôleur), l'erreur converge exponentiellement vers zéro:
 %%%%%%%%%%%%%%%%%%
 \begin{align}
 \dot{\col{r}}_e = - \lambda \, \col{r}_e 
@@ -161,12 +167,15 @@ La dynamique de l'erreur est donc stable et converge exponentiellement vers zér
 \col{r}_e(t=\infty) = 0
 \end{align}
 %%%%%%%%%%%%%%%%%
+\end{proof}
 Notez ici que cette analyse assume un contrôle parfait et instantané de la vitesse des moteurs. Une autre limite est que la convergence cesse si le robot passe sur une singularité, i.e. mathématiquement l'inverse (ou pseudo-inverse) du Jacobien n'excisera pas. Finalement, comme démontré dans la démarche, pour garantir la convergence exponentielle sur une trajectoire (position cible qui varie dans le temps), le terme de \textit{feedforward} illustré à la Figure \ref{fig:robotspeedcontroltraj} est nécessaire.
 
 
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Utilisation du Nullspace pour un objectif secondaire}
+\newpage
+\subsection{Utilisation de l'espace nul pour un objectif secondaire}
 
 Comme il a été vu à la section \ref{sec:invdiffkinredondant}, lorsque le nombre de DDL du robot $n = dim(\col{q})$  est supérieur à celui de l'espace de la tâche qu'on désire contrôler $m = dim(\col{r})$, il y a plusieurs solutions $\col{\dot{q}}$ pour lesquels la vitesse cible pour l'effecteur est parfaitement atteinte. Lorsque la consigne de vitesse de l'effecteur $\col{\dot{r}}_r$ est fixée par la loi de commande qui la fait converger vers $\col{r}_d$,  l'ensemble des solutions pour $\dot{\col{q}}$ peuvent être décrite par l'équation suivante:
 %%%%%%%%%%%%%%%%%%
@@ -189,6 +198,7 @@ où le vecteur-colonne $\col{v}$ contient les variables libres. On peut donc con
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\video{Commande de l'effecteur d'un robot redondant}{https://youtu.be/R0T4shGPBKo}
 
 De façon général, on peut formuler l'objectif secondaire comme une fonction potentielle scalaire $G$ qui dépend de la configuration (un scalaire qui est le plus grand possible le plus on est loin de l'objectif). La commande secondaire $\col{v}$ peut alors être déterminée par le gradient de cette fonction évalué à la configuration actuelle du robot:
 %%%%%%%%%%%%%%%%%%
@@ -206,6 +216,9 @@ G( \col{q} ) &= - \frac{1}{2} \lambda \col{q}_e^T \col{q}_e
 \end{align}
 %%%%%%%%%%%%%%%%%
 où $\lambda$ est un paramètre de gain de convergence pour cette boucle de commande secondaire avec une cible de configuration $\col{q}_d$ dans l'espace des joints. Notez que la boucle principale a toujours la priorité absolue avec cette formulation, la convergence de l'objectif principal est garantie mais pas celle de l'objectif secondaire. 
+
+\colab{Espace nul d'un robot redondant}{https://colab.research.google.com/drive/16ACenFOLOHVNeReqJTbkATAB3281iVbp?usp=sharing}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Formulation avec régulation de la norme du vecteur vitesse}
@@ -243,6 +256,8 @@ La solution des moindres carrés a une solution explicite qui correspond à
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 La convergence de cette méthode n'est toutefois pas garantie, le robot peut dériver de la trajectoire désirée surtout si $\lambda$ est trop grand. Une méthode pour palier à ce problème est d'ajuster dynamiquement $\lambda$ pour lui assigner de grandes valeurs seulement proche des configurations problématiques, i.e. proche des singularités. Dans la littérature, la méthode présentée dans cette section est appelée \textit{damped least-square}.
 
+\video{Commande en position avec régulation de vitesse}{https://youtu.be/n3G-O7cpQTQ}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
@@ -254,17 +269,19 @@ Pour certaines tâches, ce n'est pas la position de l'outil que l'on désire con
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.4\textwidth]{fig/forcecontroleffectorgeo.jpg}
+		\includegraphics[width=0.35\textwidth]{fig/forcecontroleffectorgeo.jpg}
 	\caption{Commande en force de l'effecteur d'un robot : interprétation géométrique}
 	\label{fig:forcecontroleffectorgeo}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\video{Commande en force d'un robot manipulateur}{https://youtu.be/mDQInbWXcj4}
+
 La Figure \ref{fig:forcecontroleffectorbloc} montre cette méthode de commande avec un schéma bloc. À l'exception du calcul du Jacobien qui nécessite de connaître la position des joints actuelle, la méthode peut être peut être considérée comme une boucle ouverte.  Par exemple dans le cas des robots à entraînement direct, i.e. utilisant des gros moteurs électrique qui n'ont pas de ratio de réduction, il suffit de traduire la force désirée en couples moteurs à l'aide du Jacobien et ensuite de traduire les couples moteurs en consigne de courant des les moteurs en divisant par la constante des moteurs. Selon le type d'actionneur, des boucles de rétroaction en force à bas niveau peuvent être utilisées, par exemple un asservissement de la pression dans un actionneur pneumatique. La loi de commande présentée ici spécifie les consignes en force pour les actionneurs.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.70\textwidth]{fig/forcecontroleffectorbloc.jpg}
+		\includegraphics[width=0.60\textwidth]{fig/forcecontroleffectorbloc.jpg}
 	\caption{Commande en force de l'effecteur d'un robot : schéma bloc}
 	\label{fig:forcecontroleffectorbloc}
 \end{figure}
@@ -281,6 +298,8 @@ Il est à noter que pour produire une force, le principe action-réaction nous r
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Jusqu'à maintenant, à la section \ref{sec:positioncontrol} une technique a été discutée pour contrôler la position d'un robot et à la section \ref{sec:forcecontrol} une technique a été discuté pour contrôler la force transmise par un robot. La dernière grande catégorie de type de commande est de contrôler la relation entre la positon et la force du robot. L'idée est d'imposer une loi de comportement qui relie la force au déplacement du système. Cette approche est particulièrement utile pour les situations ou un robot va entrer en contact avec un objet ou un humain. Un des inconvénients d'un contrôle en position pur est que si le robot rencontre un obstacle qui bloque son chemin, le robot va soudainement appliquer une très grande force pour tenter de continuer, ce qui peut risquer de briser soit l'objet rencontré ou le robot lui-même. À l'opposé, le problème avec une approche de contrôle en force pur est que si le robot n'a pas d'obstacle pour créer une résistance et établir la force désirée, le robot va plutôt accélérer jusqu'à se qu'il atteindre la limite de son espace de travail. La commande en impédance ou en admittance est une approche hybride qui vise plutôt à imposer une relation entre la force et le déplacement. Par exemple, on pourrait désirer que le robot se déplace de façon proportionnelle à une force appliqué sur celui-ci, en imposant ce comportement le robot émulerait le comportement d'un ressort. 
+
+\video{Commande et impédance et admittance}{https://youtu.be/h_3qngSmwPo}
 
 \textbf{Deux approches permettent d'imposer une relation entre la force et le mouvement d'un système}: la commande en impédance et en admittance. D'un point de vu théorique les approches sont pratiquement équivalentes, comme illustré à la Figure \ref{fig:impedanceadmitancecontrolbloc}, la différence est la causalité. Un contrôleur en impédance mesure le déplacement et impose une force, et un contrôleur en admittance mesure la force pour imposer un déplacement. Dans un monde idéal ou les mesures et le contrôle de la force/déplacement serait parfait, pour la même loi de comportement les deux approches donneraient un résultat identique. Toutefois, en pratique il y a de très grandes différences d'implémentation et de performance entre ces approches. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -418,6 +437,7 @@ ou $B_{d}$ contient les coefficients d'amortissement que l'on désire émuler et
 
 \note{Note sur l'émulation de l'inertie: }{ On pourrait être tenté de rajouter un terme de type $M \col{\ddot{q}}_e$ à l'équation \eqref{eq:jointspaceimpe} pour rajouter l'option d'émuler un effet inertiel sur chaque joint. Toutefois il y a un problème de causalité à une telle opération. L'accélération n'est pas un état du système mais résulte de l'application de forces sur le système incluant $\col{\tau}$. Donc les couples dépendraient de l'accélération mesurée, qui dépend des couples appliquées par les actionneurs, qui dépendraient de l'accélération mesurée, qui dépend ... etc. On se retrouve avec une boucle algébrique analogue au paradoxe de la poule et de l'oeuf (lequel vient en premier?). En pratique, l'accélération mesurée serait celle d'un instant passé dû au délai de calcul dans le contrôleur et aux filtres dans les capteurs, et la rétroaction de la mesure de l'accélération risque de déstabiliser le système.}
 
+\video{Commande en impédance d'un robot manipulateur}{https://youtu.be/Rl2kDwsYS9E}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Commande en impédance de l'effecteur}
@@ -461,6 +481,8 @@ La Figure \ref{fig:impedanceeffectorbloc} illustre cette loi de commande avec un
 	\label{fig:impedanceeffectorbloc}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\colab{Simulation d'un robot planaire contrôlé en impédance}{https://colab.research.google.com/drive/1EM3hNEwz2aiBqx9GDHoM7QGuPF-Afv1Q?usp=sharing}
 
 \subsection{Équivalence entre une impédance définie aux joints vs. définie à l'effecteur}
 
@@ -727,7 +749,7 @@ pour un robot contrôlé en position à bas niveau dans l'espace des joints, ave
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+\video{Commande en admittance d'un robot manipulateur}{https://youtu.be/SP5bISWmkT0}
 
 \subsection{Commande en admittance de l'effecteur}
 \label{sec:effadmcontrol}

@@ -5,10 +5,9 @@
 
 Dans le chapitre \ref{sec:cine1}, les méthodes pour modéliser la position, l'orientation ont été présentée. Ce chapitre présente les méthodes associés pour représenter leurs variation dans le temps, c'est-à-dire la vitesse. Les premières sections décrivent les principes généraux et ensuite des méthodes spécifiques pour les robots manipulateurs sont présentées. 
 
-Chapitre en construction!
+%Chapitre en construction!
 
 
-\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Référentiel} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,6 +18,8 @@ Un référentiel est un solide ou un ensemble de points par rapport auquel un ob
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Référentiel vs. repère}
 Pour décrire le mouvement d'un objet, les concepts de référentiel, origine et base vectorielle sont important à distinguer. En quelques mots, un \textbf{référentiel} est un point de vue utilisé pour décrire un phénomène, une \textbf{origine} c'est un point par rapport auquel les mesures de position sont faites et une \textbf{base} vectorielle représente l'orientation du système d'axe utilisé. Ces trois éléments peuvent être choisi indépendamment.  Ensuite, un \textbf{repère} c'est la combinaison d'une base et d'une origine. Par exemple, pour décrire la position d'un bateau, typiquement le référentiel utilisé serait la Terre, l'origine des mesures de position pourrait être le port le plus près, et la base pour exprimer cette position serait le système d'axe nord-sud/est-ouest. Il est important de noter que tous ces choix sont indépendants et les confondre est une source d'erreur courante en cinématique. Le reste de cette section discute de ce qui les distingue.
+
+\video{Référentiel vs. repère vs. base vectorielle}{https://youtu.be/Uv_MbbfkiS4}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
@@ -38,7 +39,7 @@ La figure \ref{fig:train} illustre ces concepts par un exemple où un train desc
 sont illustrés pour différents choix d'origine et de base vectorielle, lorsque que le référentiel fixe est utilisé (figure \ref{fig:refex1}) et lorsque que le référentiel du train est utilisé (figure \ref{fig:refex2}). Il est à noter que les points d'origine sont ici fixés à la Terre lorsque le référentiel fixe est utilisé, et fixés au train lorsque que le référentiel du train est utilisé. Comme illustré pour cet exemple, \textbf{un changement d'origine est analogue à une translation} de la trajectoire, \textbf{un changement de base vectorielle est analogue à une rotation} de la trajectoire, et \textbf{un changement de référentiel est ici analogue à une dilatation} de la trajectoire dans la direction $\hat{b}_1$, qui correspond à la direction de la vitesse du train. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
+\begin{figure}[p]
 				%\vspace{-10pt}
         \centering
         \subfloat[Repère $\{ A, \hat{a}_1, \hat{a}_2, \hat{a}_3\}$]{
@@ -59,7 +60,7 @@ sont illustrés pour différents choix d'origine et de base vectorielle, lorsque
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
+\begin{figure}[p]
 				%\vspace{-10pt}
         \centering
 				\subfloat[Repère $\{ A, \hat{a}_1, \hat{a}_2, \hat{a}_3\}$]{
@@ -461,6 +462,7 @@ autrement dit, il suffit de diviser l'équation \eqref{eq:diffkin1} par $dt$ pou
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\video{Cinématique différentielle et matrice jacobienne}{https://youtu.be/jJqYWNSsJvE}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{La matrice Jacobienne}
@@ -481,7 +483,7 @@ Chaque colonne a donc une interprétation vectorielle visuelle comme illustré �
 \begin{figure}[H]
 \vspace{-5pt}
 	\centering
-		\includegraphics[width=0.75\textwidth]{jaco_graph.jpg}
+		\includegraphics[width=0.65\textwidth]{jaco_graph.jpg}
 	\caption{Illustration vectorielle du Jacobian du manipulateur (relation de translation)}
 	\vspace{-5pt}
 	\label{fig:jaco_graph}
@@ -608,10 +610,12 @@ Pour les sections suivantes, s'il n'est pas préciser autrement on va toujours t
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Exemples de cinématique différentielle pour des robots manipulateurs}
+%\subsection{Exemples de cinématique différentielle pour des robots manipulateurs}
+
+\video{Exemple de calcul de la matrice jacobienne}{https://youtu.be/qgqDscXSsMM}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Cinématique différentielle d'un robot cartésien}
+\begin{example}[Cinématique différentielle d'un robot cartésien]
 
 La Figure \ref{fig:jaco_robot_cart} illustre un robot planaire constitué de deux actionneurs linéaires basé sur des vis à billes qui sont assemblés à 90 degrées. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -661,10 +665,12 @@ a_1 & 0 \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Il est a noter ici que: \textbf{1)} la matrice Jacobienne est diagonale car chaque joint influence indépendamment un seul DDL de l'effecteur. \textbf{2)} la matrice Jacobienne est constante et indépendante de $\col{q}$ car la relation de cinématique directe, voir équation \eqref{eq:fwdkinlin}, est linéaire. 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{example}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Cinématique différentielle d'un robot à deux joints}
+\begin{example}[Cinématique différentielle d'un robot à deux joints]
+
 \label{sec:kindiff_2dof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -715,12 +721,12 @@ On peut alors trouver la relation différentielle en dérivant par rapport au te
 \dot{\col{r}}  &= J(\col{q}) \dot{\col{q}}
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{example}
 
 
 
-\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Cinématique différentielle d'un robot à trois joints}
+\begin{example}[Cinématique différentielle d'un robot à trois joints]
 \label{sec:diffkinrobot3dofex}
 
 Les Figures \pageref{fig:jaco_3dof_a} et \ref{fig:jaco_3dof_b} illustre la cinématique différentielle d'un robot à trois joints dans une configuration qui permet de bien visualiser indépendamment les effets du mouvement de chaque joint. 
@@ -742,11 +748,12 @@ Les Figures \pageref{fig:jaco_3dof_a} et \ref{fig:jaco_3dof_b} illustre la ciné
 	\label{fig:jaco_3dof_b}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\end{example}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Cinématique différentielle inverse}
+\newpage
+\section{Cinématique différentielle inverse}
 
 Lorsque le problème de cinématique différentielle est inversé, c'est-à-dire lorsqu'on cherche un vecteur de vitesse aux joints $\col{\dot{q}}$ qui va produire une vitesse de l'effecteur spécifiée $\col{\dot{r}}$, il faut inverser la relation mathématique. Lorsque la matrice Jacobienne est carré et non-singulière, il suffit de multiplier la relation $\col{\dot{r}} = J\left( \, \col{q} \, \right) \, \col{\dot{q}}$ par l'inverse du Jacobien des deux côtés de l'équation pour obtenir la relation:
 %
@@ -757,6 +764,8 @@ Lorsque le problème de cinématique différentielle est inversé, c'est-à-dire
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 Toutefois, cette opération est impossible si le robot a une configuration singulière (voir section \ref{sec:singu}). De plus, si les dimensions de $\col{q}$ et $\col{r}$ sont différentes, la matrice Jacobienne est rectangulaire et d'autres techniques doivent être utilisée (voir sections \ref{sec:invdiffkinredondant} et \ref{sec:overconstraintrobot})
+
+\video{Cinématique différentielle inverse des robots manipulateurs}{https://youtu.be/YqYV10mVVBI}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -769,10 +778,10 @@ Certaine configuration $\col{q}$ d'un robot manipulateur peuvent être singuliè
 \text{Singularités :} \quad \{  \col{q} \; | \; det(J(\col{q})) = 0 \}
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Ces situations correspondent aussi à lorsque les colonnes de $J$ sont co-linéaires, et qu'aucune combinaison linéaire ne permet de déplacer l'effecteur dans au moins une direction (la matrice Jacobienne a un left-nullspace, voir section \ref{sec:leftnullspace} pour les notions d'algèbre linéaire associées). 
+Ces situations correspondent aussi à lorsque les colonnes de $J$ sont co-linéaires, et qu'aucune combinaison linéaire ne permet de déplacer l'effecteur dans au moins une direction (la matrice jacobienne a un espace-nul gauche, voir section \ref{sec:leftnullspace} pour les notions d'algèbre linéaire associées). 
 
 
-\subsubsection{Singularités pour un robot manipulateur 2 DDL}
+\begin{example}[Singularités d'un robot manipulateur planaire à 2 joints]
 
 Pour un robot manipulateur à deux DDl comme décrit à l'exemple \ref{sec:kindiff_2dof}, le Jacobien est donné par:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -796,7 +805,7 @@ det(J) &= l_2 s_{12} (l_1 c_1 + l_2 c_{12}) - l_2 c_{12} (l_1 s_1 + l_2 s_{12}) 
 Donc les singularités sont les configurations avec un angle $q_2$ égale à 0 ou 180 degrés. Comme illustré à la Figure \ref{fig:sigularite_2dof}, ces configurations correspondent à lorsque les deux liens rigides du robot sont alignés. Dans ces configurations, il est seulement possible de faire bouger l'effecteur dans une direction perpendiculaire aux liens rigides. Comme illustré à la Figure \ref{fig:sigularite_2dof_b}, la direction pour laquelle le mouvement est possible correspond à l'espace colonne de la matrice Jacobienne, et la direction orthogonale pour laquelle il est impossible de déplacer l'effecteur correspond au left-nullspace de la matrice Jacobienne, voir section \ref{sec:4espfond} pour les notions d'algèbre linéaire associées.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[htbp]
+\begin{figure}[H]
 	\centering
 		\includegraphics[width=0.75\textwidth]{sigularite_2dof.png}
 	\caption{Singularités pour un robot manipulateur à deux DDL}
@@ -805,13 +814,15 @@ Donc les singularités sont les configurations avec un angle $q_2$ égale à 0 o
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[htbp]
+\begin{figure}[H]
 	\centering
 		\includegraphics[width=0.95\textwidth]{sigularite_2dof_b.png}
 	\caption{Co-linéarité des colonnes du Jacobien pour une singularité}
 	\label{fig:sigularite_2dof_b}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{example}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -883,19 +894,17 @@ J^{\#} = J^T\, (JJ^T)^{-1}
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Le premier terme $J^{\#} \col{\dot{r}}$ produit un vecteur $\col{\dot{q}}$ qui produit une solution exacte pour le système d'équations \eqref{eq:underconstraintdiffkin}
-et minimise la norme du vecteur-colonne $\col{\dot{q}}$. Le second terme produit une variation pour le vecteur $\col{\dot{q}}$ qui réside dans le nullspace de la matrice $J$, donc cette variation n'a aucun influence sur la sortie et n’affectera pas l'objectif principal d'obtenir un vecteur $\col{\dot{q}}$ qui produit un mouvement de l'effecteur donné par $\col{\dot{r}}$. Le vecteur $\col{\psi}$ dans le second terme est arbitraire et peut être utilisé pour prioriser certaine solutions sans influencer la justesse de la solution. 
+et minimise la norme du vecteur-colonne $\col{\dot{q}}$. Le second terme produit une variation pour le vecteur $\col{\dot{q}}$ qui réside dans l'espace nul de la matrice $J$, donc cette variation n'a aucun influence sur la sortie et n’affectera pas l'objectif principal d'obtenir un vecteur $\col{\dot{q}}$ qui produit un mouvement de l'effecteur donné par $\col{\dot{r}}$. Le vecteur $\col{\psi}$ dans le second terme est arbitraire et peut être utilisé pour prioriser certaine solutions sans influencer la justesse de la solution. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Exemple de cinématique différentielle inverse pour une situation sous-contrainte}
-
-
+\begin{example}[Exemple de cinématique différentielle inverse pour une situation sous-contrainte]
 Le robot de l'exemple \ref{sec:diffkinrobot3dofex} est ici analysé en termes de cinématique différentielle, la Figure \ref{fig:robot_redo_a} illustre la présence de plusieurs solutions possibles et la Figure \ref{fig:robot_redo_c} illustre l'utilisation de la matrice pseudo-inverse pour obtenir la solution optimale ainsi que le nullspace. 
-
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.65\textwidth]{robot_redo_a.png}
+		\includegraphics[width=0.45\textwidth]{robot_redo_a.png}
 	\caption{Cinématique différentielle inverse d'un robot redondant ($n=3>m=2$)}
 	\label{fig:robot_redo_a}
 \end{figure}
@@ -909,21 +918,22 @@ Le robot de l'exemple \ref{sec:diffkinrobot3dofex} est ici analysé en termes de
 	%\label{fig:robot_redo_b}
 %\end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.55\textwidth]{robot_redo_b.png}
-		\includegraphics[width=0.95\textwidth]{robot_redo_c.png}
+		\includegraphics[width=0.45\textwidth]{robot_redo_b.png}
+		\includegraphics[width=0.85\textwidth]{robot_redo_c.png}
 	\caption{Cinématique différentielle inverse d'un robot redondant: solution optimale et nullspace}
 	\label{fig:robot_redo_c}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{example}
 
 
 
 
-\newpage
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cinématique différentielle inverse pour une situation sur-contrainte}
 \label{sec:overconstraintrobot}
@@ -973,7 +983,7 @@ Un méthode pratique pour la cinématique inverse dans ce contexte est la métho
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Exemple de cinématique différentielle inverse pour une situation sur-contrainte}
+\begin{example}[Exemple de cinématique différentielle inverse pour une situation sur-contrainte]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
@@ -982,14 +992,16 @@ Un méthode pratique pour la cinématique inverse dans ce contexte est la métho
 	\label{fig:robot_under}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\end{example}
 
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Indice de manipulabilité d'un robot manipulateur}
 
-À venir!
+Les indices de manipulabilité sont des fonctions scalaires qui ont comme objectif de caractériser si un robot dans une certaine configuration est proche d'une singularité. Même si un robot n'est pas parfaitement sur une singularité, certaines configurations peuvent nécessiter de très grandes vitesses aux joints pour satisfaire des vitesses cartésiennes de l'effecteur. Des indicateurs ont été développés pour analyser ces situations, et peuvent être utile lorsque qu'on conçoit la cinématique d'un robot ou lorsque qu'on programme des tâches avec un robot existant.
+
+Détails à venir!
 
 
 

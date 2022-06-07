@@ -16,7 +16,7 @@
 \DeclareMathOperator*{\E}{\mathbb{E}}
 
 
-% Note 
+% Note box
 \newcommand{\note}[2] {
 %\newline
 \noindent
@@ -25,20 +25,11 @@
 \rule{\linewidth}{0.3mm}
 }
 
-% % Example box
-% \newcounter{noexample}[chapter]
-% \newenvironment{example}[1][]{
-% \refstepcounter{noexample}\par\medskip
-% \begin{center}
-% \begin{tabular}{|p{0.9\textwidth}|}
-% \hline\\
-% \noindent \textbf{\textit{Exemple~\thenoexample. #1}}\\
-% \itshape
-%  }{
-% \\\\\hline
-% \end{tabular} 
-% \end{center}
-% \medskip}
+% Property env
+\newtheorem{property}{Propriété}[section]
+
+% Proof env
+\newtheorem{proof}{Preuve}[section]
 
 % Example box 
 \newcounter{noexampleb}[chapter]
@@ -52,14 +43,16 @@
 \end{mdframed}
 \medskip}
 
+% Video box
 \newcommand{\video}[3] {
+\par\medskip
 \begin{mdframed}[userdefinedwidth=.8\textwidth, align=center, linecolor=black, backgroundcolor=white, linewidth=2pt]
-\begin{tabular}{ m{.2\textwidth}  m{.8\textwidth}}
+\begin{tabular}{ m{.2\textwidth}  m{.75\textwidth}}
 \begin{minipage}{.2\textwidth}
 \includegraphics[width=15mm, height=10mm]{fig/youtube.png}
 \end{minipage}
 &
-\begin{minipage}{.8\textwidth}
+\begin{minipage}{.75\textwidth}
 \textbf{Capsule vidéo} \par 
 \href{#2}{\textbf{\textit{#1}}} \par
 \url{#2} \par
@@ -67,18 +60,19 @@
 \end{minipage}
 \end{tabular} 
 \end{mdframed}
+\medskip
 }
 
 
 % Colab link
 \newcommand{\colab}[3] {
 \begin{mdframed}[userdefinedwidth=.8\textwidth, align=center, linecolor=black, backgroundcolor=white, linewidth=2pt]
-\begin{tabular}{ m{.2\textwidth}  m{.8\textwidth}}
+\begin{tabular}{ m{.2\textwidth}  m{.75\textwidth}}
 \begin{minipage}{.2\textwidth}
 \includegraphics[width=15mm, height=10mm]{fig/colab.png}
 \end{minipage}
 &
-\begin{minipage}{.8\textwidth}
+\begin{minipage}{.75\textwidth}
 \textbf{Exercice de code} \par 
 \href{#2}{\textbf{\textit{#1}}} \par
 \url{#2} \par

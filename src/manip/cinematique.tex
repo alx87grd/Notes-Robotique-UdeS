@@ -194,10 +194,23 @@ La tâche d'un robot peut rarement être spécifiée facilement dans l'espace de
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsection{Transformation des coordonnées}
-%
+\section{L'approche présentée dans ce chapitre}
 
+L'approche de modélisation mise de l'avant dans ce chapitre, et illustrée à la Figure \ref{fig:approchemodelisation}, ce résume à la séquence:
+\begin{enumerate}
+	\item Décrire le problème avec des vecteurs géométriques symboliques;
+	\item Choisir des bases appropriées;
+	\item Traduire la relation vectorielle en relation matricielle (projection dans une base);
+	\item Déterminer la solution numérique avec les outils de l'algèbre linéaire.
+\end{enumerate}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.7\textwidth]{approchemodelisation.jpg}
+	\caption{Aperçu des grandes lignes de l'approche de modélisation présentée dans ces notes}
+	\label{fig:approchemodelisation}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
 
 
@@ -209,8 +222,7 @@ La tâche d'un robot peut rarement être spécifiée facilement dans l'espace de
 
 La notion de vecteur géométrique permet de travailler avec des \textbf{vecteurs de position} qui sont indépendants d'un choix de système de coordonnées. Pour les problèmes de cinématique de robots, il est particulièrement adapté de travailler d'abord avec les vecteurs géométrique, plutôt que directement avec des coordonnées. Cette approche \textbf{1)} simplifie les calculs en 3D et \textbf{2)} permet de faire le saut facilement entre plusieurs systèmes de coordonnées. Un vecteur géométrique est une quantité définie dans l’espace et possédant une grandeur et une direction. Dans ces notes, les vecteurs géométriques, notés $\vec{v}$, seront explicitement distingués des vecteur-colonnes (groupe de plusieurs scalaires) qui seront notés $\col{v}=\left[  \begin{array}{ccc} v_{1} & v_{2} & v_{3} \end{array} \right]^T$, voir chapitre \ref{sec:calcvec}.
 
-%La section XXXX présente un rappel sur les propriétés et les opérations possible avec les vecteurs. 
-
+\video{Les vecteurs géométrique de position}{https://youtu.be/5DeO4NeFAO8}
 %\subsubsection{Vecteurs de positions}
 
 \textbf{Un vecteur position nécessite deux points pour être défini}, une origine et une destination. Notez que c'est particulier des vecteurs positions, la plupart des autres vecteurs utilisés en physique (vitesse, accélération, force, champ électrique, etc.) ont un point d'application mais sont indépendants d'un choix d’origine. Dans ces notes, les vecteurs positions seront notés:
@@ -266,16 +278,18 @@ La figure \ref{fig:vecposprop} illustre les propriétés de base des vecteurs de
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-\paragraph{Addition}
+% \paragraph{Addition}
+\begin{property}[Addition]
 %
-Par définition, un vecteur position peut être décomposé en une addition de vecteurs qui passent par des points intermédiaires:
+Un vecteur position peut être décomposé en une addition de vecteurs qui passent par des points intermédiaires:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \vec{r}_{Z/A}  =   \vec{r}_{Z/Y} + \vec{r}_{Y/X} + ... + \vec{r}_{C/B} + \vec{r}_{B/A} 
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{property}
 %
-\paragraph{Inversion}
+\begin{property}[Inversion]
 %
 L'inversion de l'origine et la destination est équivalente à la négation du vecteur de position:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -283,24 +297,21 @@ L'inversion de l'origine et la destination est équivalente à la négation du v
 \vec{r}_{B/A}  = - \vec{r}_{A/B}
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{property}
 %
-\paragraph{Vecteurs unitaires}
+\begin{property}[Vecteurs unitaires]
 %
-Les vecteurs unitaires sont utilisés pour représenter des directions dans l'espace. Les vecteurs positions peuvent être exprimés comme des \textbf{combinaisons de distances et directions} qui sont représentées respectivement par des paires de scalaires $l_i$ et vecteurs unitaires $\hat{n}_i$:
+Les vecteurs positions peuvent être exprimés comme des \textbf{combinaisons de distances et directions} qui sont représentées respectivement par des paires de scalaires $l_i$ et vecteurs unitaires $\hat{n}_i$ (qui représente des directions dans l'espace):
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
 \vec{r} = l_1 \hat{n}_1 + l_2 \hat{n}_2 + ... + l_n \hat{n}_n
 \end{equation} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Des vecteurs unitaires doivent être identifiés selon les axes pertinents pour l'analyse d'un problème. 
+\end{property}
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Mesures avec les vecteurs de position}
-\label{sec:vecuni}
-%
-%Les vecteurs unitaires sont aussi utiles pour pouvoir mesurer une position selon une direction particulière. 
+\begin{property}[Norme]
 La norme d'un vecteur position, i.e. sa longueur, peut être calculée en effectuant un produit scalaire du vecteur avec lui même:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
@@ -308,14 +319,21 @@ La norme d'un vecteur position, i.e. sa longueur, peut être calculée en effect
 \label{eq:dotnorm}
 \end{equation} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Aussi, la dimension $d$ d'un vecteur position $\vec{r}$ selon un axe particulier correspond au produit scalaire du vecteur position avec un vecteur unitaire $\hat{n}$ aligné sur cet axe:
+\end{property}
+
+\begin{property}[Projection]
+La longueur $d$ d'un vecteur position $\vec{r}$ projeté selon un axe particulier correspond au produit scalaire du vecteur position avec un vecteur unitaire $\hat{n}$ aligné sur cet axe:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
 d = \vec{r} \bullet \hat{n} = \| \vec{r} \|  \cos \angle (\vec{r},\hat{n})
 \label{eq:vecproj}
 \end{equation} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Cette opération est aussi appelée \textbf{projection d'un vecteur sur un axe} et illustrée à la figure \ref{fig:distproj}. Finalement, le produit scalaire de deux vecteurs unitaires est égale au cosinus de l'angle qui les sépare puisqu'ils ont une dimension unitaire:
+Cette opération est aussi appelée \textbf{projection d'un vecteur sur un axe} et illustrée à la figure \ref{fig:distproj}. 
+\end{property}
+
+\begin{property}[Angle]
+Le produit scalaire de deux vecteurs unitaires est égale au cosinus de l'angle qui les sépare puisqu'ils ont une dimension unitaire:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
 \cos \angle (\hat{n}_1,\hat{n}_2) =  \hat{n}_1 \bullet \hat{n}_2
@@ -323,6 +341,7 @@ Cette opération est aussi appelée \textbf{projection d'un vecteur sur un axe} 
 \end{equation} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Il est donc possible d'utiliser le produit scalaire pour mesurer un angle entre deux vecteurs, comme illustré à la figure \ref{fig:dotcosuni}.  
+\end{property}
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htbp]
@@ -340,6 +359,8 @@ Il est donc possible d'utiliser le produit scalaire pour mesurer un angle entre 
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %TODO ajouter figure pour la norme
+
+\video{Exemple de calcul avec les vecteurs géométrique de position}{https://youtu.be/YqmyBJPJmP0}
 
 
 \begin{example}[Calcul de la hauteur d'un robot]
@@ -487,6 +508,7 @@ où l'exposant $a$ est utilisé pour spécifier la base vectorielle associée au
 \note{Note sur la séquence de lecture: }{Il est suggérer au lecteur de lire les sections \ref{sec:vec}, \ref{vectorbasis} et \ref{sec:opeveccol} dans le chapitre \ref{sec:calcvec} qui couvre le calcul vectoriel de façon plus générique. Ces sections couvrent plus en détails les fondements qui sont ici utilisés dans un contexte de cinématique. }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\video{Les bases vectorielles et composantes d'un vecteur}{https://youtu.be/pZdoFz5PpKU}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Rappel sur les bases vectorielles}
@@ -526,12 +548,10 @@ On appellera \textit{base vectorielle} $a$, une base formée par l'ensemble des 
 
 Les bases vectorielles permettent de faire des opérations et combiner des vecteurs en les exprimant avec une base commune de vecteurs unitaires. Dans la littérature, la notation $(\hat{i},\hat{j},\hat{k})$ ou $(\hat{x},\hat{y},\hat{z})$ est parfois utilisée. Dans ces notes, on utilisera des lettres ($a$,$b$,$c$,...) pour identifier des bases, ainsi que des indices (1,2,3) pour spécifier les trois axes (voir figure \ref{fig:base}). Cette approche simplifie la notation lorsqu'un grand nombre de bases sont utilisées simultanément, comme c'est souvent le cas en robotique.
 
+\newpage
 \note{Base vs. repère:}{ Les bases vectorielles représentent seulement des orientations, la position d'une base est donc sans signification. Dans les dessins et schémas, on dessine une base vectorielle sur un corps rigide pour signifier que celle-ci est attachée au corps rigide et tourne avec celui-ci, toutefois la position de la base vectorielle sur le corps est arbitraire. On parlera de repère, voir section \ref{sec:repere}, lorsqu'un point d'origine est associé à une base vectorielle. }
 
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Rappel sur la relations entre le vecteur et les composantes}
 
 Comme illustré à la figure \ref{fig:vecpospro2}, il est possible de calculer les composantes d'un vecteur exprimé dans une base par un produit scalaire du vecteur géométrique avec chacun des vecteurs unitaires de la base:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -670,6 +690,8 @@ et pour calculer entre deux vecteurs position $\vec{r}_A$ et $\vec{r}_B$:
 %
 Il est à noter que dans ces équations les vecteur-colonnes de composantes doivent tous être dans la même base. Les résultats sont des scalaires qui ne dépendent pas de la base utilisée. 
 
+\video{Opérations vectorielles avec les composantes de vecteurs}{https://youtu.be/7brvShmayAk}
+
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsubsection{Produit vectoriel}
 % %
@@ -787,7 +809,8 @@ Il est à noter que dans ces équations les vecteur-colonnes de composantes doiv
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\new
+\newpage
 \section{Les matrices de rotations}
 \label{sec:changematrice}
 
@@ -798,11 +821,13 @@ Une matrice de rotation notée $^aR^b$, est une matrice (3$\times$3 en 3D) qui p
 \label{eq:basechange}
 \end{align} 
 %%%%%%%%%%%%%%%%%
-La matrice de rotation est un raccourci pour projeter un vecteur position sur trois nouveaux axes en une seule opération matricielle, plutôt que d'effectuer trois opérations de projection indépendantes. Cette matrice représente l'orientation relative de deux bases vectorielles.  
+La matrice de rotation est un raccourci pour projeter un vecteur position sur trois nouveaux axes en une seule opération matricielle, plutôt que d'effectuer trois opérations de projection indépendantes. Cette matrice représente l'orientation relative de deux bases vectorielles et  \textbf{l'opération de multiplication d'un vecteur-colonne $\col{r}^a$ par la matrice de rotation $^bR^a$ correspond à la projection du vecteur géométrique associé $\vec{r}$ sur la base vectorielle $b$.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \note{Deux rôles pour la cinématique:}{ Une matrice de rotation a deux fonctions majeures dans un contexte de cinématique: \textbf{1)} effectuer des opérations de changement de base et \textbf{2)} représenter une orientation relative. Cette section présente le rôle des matrices de rotation pour les opérations de changement de base, les matrices de rotation seront discutées à nouveau dans le contexte de la représentation de l'orientation d'un corps rigide à la section \ref{sec:corps}.}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\video{Les matrices de rotation et les changements de base}{https://youtu.be/hVmcRYD1KFQ}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Définitions}
@@ -864,8 +889,9 @@ une équation qui est simple à se rappeler et permet d'éviter de mélanger l'o
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Démonstration de l'origine de la matrice de rotation}
+%\subsection{Démonstration de l'origine de la matrice de rotation}
 %Cette section démontre l'équation \eqref{eq:basechange} basé sur les définitions des vecteur-colonnes de composants. 
+\begin{proof}
 Si les composantes d'un vecteur $\vec{r}$ sont connus dans une base $a$:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
@@ -918,7 +944,10 @@ On obtient trois équations qui peuvent être regroupées sous forme matricielle
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-La matrice de rotation $^bR^a$ consiste donc à des produits scalaires entre les vecteurs unitaires des bases vectorielles $a$ et $b$. \textbf{L'opération de multiplication d'un vecteur-colonne $\col{r}^a$ par la matrice de rotation $^bR^a$ correspond à la projection du vecteur géométrique associé $\vec{r}$ sur la base vectorielle $b$.}
+La matrice de rotation $^bR^a$ consiste donc à des produits scalaires entre les vecteurs unitaires des bases vectorielles $a$ et $b$ comme définit à l'équation \eqref{eq:cosinusdirecteurs}.
+\end{proof}
+
+
 
 
 
@@ -1017,6 +1046,8 @@ c & f & i
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Pour les matrices de rotation élémentaires, i.e. les matrices qui représentent une rotation d'un angle $\theta$ autour de l'axe $\hat{b}_1$, $\hat{b}_2$ ou $\hat{b}_3$, les neufs éléments $a,b,c,d,..$ de la matrice peuvent seulement prendre comme valeurs $\cos \theta$, $\pm \sin \theta$, $1$ ou $0$. Il est donc relativement facile de les identifier par inspection, comme il est illustré à la section suivante.
+
+\video{Les matrices de rotation: propriétés et exemple de calcul}{https://youtu.be/CNIN7UpyXvo}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1186,7 +1217,7 @@ La matrice $^aR^b$ peut donc être formée grâce à la définition \eqref{eq:ma
 Cette section présente plusieurs propriétés des matrices de rotation qui sont utiles dans un contexte de changement de bases vectorielles.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Norme des colonnes et rangés}
+\begin{property}[Norme des colonnes et rangés]
 
 Les colonnes $\col{c}_i$ et les rangés $\col{r}_i$ d'une matrice de rotation ont une norme égale à 1:
 %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1211,9 +1242,11 @@ L’identité trigonométrique suivante est souvent utile pour ce type de calcul
 \sin^2(\theta) + \cos^2(\theta) = 1
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%
+\end{property}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Matrice identité}
+\begin{property}[Matrice identité]
 Une matrice de rotation est réduite à une matrice identitée lorsque les bases vectorielle sont coïncidentes. Par exemple, pour les matrices de rotation élémentaires des équations \eqref{eq:rot3theta}, \eqref{eq:rot2theta} et \eqref{eq:rot1theta}, lorsque l'angle est égale à zéro, les matrices sont réduites à des matrices identités:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
@@ -1226,10 +1259,11 @@ R_1( \theta ) = R_2( \theta ) = R_3( \theta ) = I_{3\times3} =
 \label{eq:rot3thetaident}
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%
+\end{property}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Inversion}
-
+\begin{property}[Inversion]
 Pour inverser la direction d'une opération de changement de base, il suffit de multiplier par l'inverse de la matrice de rotation:
 %%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
@@ -1247,11 +1281,10 @@ R^{-1} &= R^T \\
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\paragraph{Exercices de lecture}: Vérifiez ces propriétés pour la matrice exemple donnée à l'équation \eqref{eq:rot3theta}.
+\end{property}
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Changements de base successifs} 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{property}[Changements de base successifs]
 Des changements de base successifs $a \rightarrow b \rightarrow c \rightarrow ... \rightarrow z$  peuvent être combinés en une seule matrice de rotation en multipliant les matrices de rotation intermédiaires par la gauche:
 %%%%%%%%%%%%%%%%%%%
 \begin{align}
@@ -1269,10 +1302,10 @@ Notez que selon la notation utilisée dans ces notes, \textbf{les lettres des ba
 \end{array} \right\} \quad \Rightarrow \quad \col{r}^c = \underbrace{{}^cR^b \,  {}^bR^a}_{ {}^cR^a } \col{r}^a \quad \Rightarrow \quad {}^cR^a  = {}^cR^b \,  {}^bR^a 
 \end{align}
 %%%%%%%%%%%%%%%%%%
+\end{property}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Non-commutativité}
-
+\begin{property}[Non-commutativité]
 Le produit des matrices de rotation n'est toutefois pas commutatif, sauf pour des petites rotations infinitésimales. L'ordre de multiplication des matrices est donc important et généralement:
 %%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
@@ -1285,7 +1318,7 @@ Une \textbf{exception à cette règle} est pour les rotations successives selon 
 R_i( \theta_1 ) R_i( \theta_2 )  = R_i( \theta_2 ) R_i( \theta_1 ) = R_i( \theta_1 + \theta_2 )
 \end{equation} 
 %%%%%%%%%%%%%%%%%%%%%%%
-
+\end{property}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1700,6 +1733,8 @@ Un système de coordonnées est toujours implicitement attaché à un repère, m
 
 %Pour modéliser un bras robotique, il est utile de définir un repère sur chaque corps rigides, car les coordonnées des différents points d’intérêts sont constantes quand elles sont exprimées dans des repères locaux.
 
+\video{Les repères et les matrices de transformation}{https://youtu.be/yTPA1R8b8XE}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Changement de repère}
@@ -1903,6 +1938,8 @@ De façon générale, six variables sont nécessaires pour définir la positon d
 	\label{fig:rigid}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\video{Pose (position et orientation) d'un corps rigide}{https://youtu.be/wrw4T8OE36U}
 
 \paragraph{Translation:}
 %
@@ -2330,6 +2367,8 @@ Rotatif: \;
 
 Une procédure pour calculer la cinématique d'un chaîne ouverte arbitraire de $n$ joints et $n+1$ liens rigides, est ici présentée. La notation utilisée est présentée aux figures \ref{fig:serial_kin_1}, \ref{fig:serial_kin_2} et \ref{fig:serial_kin_3}. 
 
+\video{Cinématique directe d'un robot manipulateur}{https://youtu.be/qgUkhZxMTpM}
+
 \paragraph{I: Définition des références}
 
 La première étape est de définir des coordonnées généralisées ($q_1$, $q_2$, $q_2$, ..., $q_m$) qui décrive l'état des $m$ DDL des $n$ joints du robot. En générale, pour la plupart des robots manipulateurs, $m=n$ car des joints standards à 1 DDL prismatique ou rotatif sont normalement utilisés. Ensuite, la seconde étape est de définir des points de références ($A_o$, $B_o$, $C_o$, ..., $T_o$) et des bases vectorielles ($a$, $b$, $c$, ..., $t$) sur chaque lien rigide. 
@@ -2701,6 +2740,8 @@ Avec la dernière colonne de la matrice ${}^AT^D$, il est possible d'extraire le
 
 Les paramètres \textit{DH} (\textit{Denavit–Hartenberg}) consistent en quatre paramètres associés à une convention particulière pour attacher des repères aux liens rigides d'un robot manipulateur. Plutôt que de définir arbitrairement les bases vectorielles et les points d'origine des repères, la convention impose une méthodologie standardisée pour définir les repères et les matrices de transformations associées. Plusieurs librairies de cinématique de robot utilise cette convention, qui a comme principal avantage de décrire la cinématique d'un robot avec un nombre de paramètres et repères minimum.
 
+\video{Les paramètres DH}{https://youtu.be/LT5Fa1tbDFQ}
+
 \subsubsection{Convention de positionnement relatif des repères }
 Avec la convention \textit{DH}, il faut placer les axes 3 (ou $z$) des repères sur les axe de rotation des joints révolus et sur les axes de translation des joints prismatiques. Ensuite les axes 1 (ou X) d'un joint sont positionnés relativement à la position du joint précédent (parallèle à la normale commune des axes 3), et ensuite les axes 2 sont placés selon la règle de la main droite. L'axe 1 du premier repère est un choix arbitraire. Il y a aussi plusieurs options lorsque les axes 3 de deux joints consécutifs sont parallèles ou coïncident, donc la convention de permet pas de standardisé la représentation de la cinématique d'un à 100\%. La Figure \ref{fig:dh1} illustre cette convention de définition des repères d'un robot.
 %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2797,6 +2838,16 @@ s\theta & c\theta c\alpha  & -c\theta s\alpha  & r s\theta\\
 %%%%%%%%%%%%%%%%%%%%
 Donc lorsque la convention est utilisée, la matrice de transformation entre deux repères successifs a toujours la forme ci-dessus, et il suffit d'identifier les quatre paramètres DH de chaque joints. 
 
+\video{Exemple d'utilisation des paramètres DH}{https://youtu.be/cA0jxfkOgaI}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.90\textwidth]{fig/dh3.jpg}
+	\caption{Exemple de modélisation de la cinématique d'un robot manipulateur anthropomorphique avec la convention des paramètres \textit{DH}}
+	\label{fig:dh3}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\subsubsection{Exemple pour un robot anthropomorphique avec les paramètres \textit{DH}}
@@ -2812,16 +2863,6 @@ La Figure \ref{fig:dh3} illustre l'utilisation de la convention \textit{DH} pour
 \textbf{Joint 3 } Pour la dernière transformation, il n'y a pas d'axe de rotation de joint puisque que c'est l'effecteur qui reste à localiser, on choisi ici arbitrairement de garder la même orientation que la base précédente. Avec ce choix, la pose du repère $D$ par rapport au repère $C$ a exactement la même structure que celle du repère $C$ par rapport au repère $B$. La seule différence est les variables impliquées qui sont $\theta_3$ et $l_3$. On trouve donc $d=0$, $\theta= \theta_3$, $r=l_3$ et $\alpha=0$ comme paramètres \textit{DH} pour le joint 3.
 %
 Ensuite, il suffit d'utiliser la formule donnée à l'équation \eqref{eq:Tdh} pour calculer les matrices de transformation entre chaque repère, et de les multiplier ensemble pour calculer la matrice de transformation totale. Avec la méthode des paramètres \textit{DH}, le plus long de la démarche est donc de bien positionner et déterminer les paramètres.  
-
-%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
-	\centering
-		\includegraphics[width=0.90\textwidth]{fig/dh3.jpg}
-	\caption{Exemple de modélisation de la cinématique d'un robot manipulateur anthropomorphique avec la convention des paramètres \textit{DH}}
-	\label{fig:dh3}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \end{example}
 
 

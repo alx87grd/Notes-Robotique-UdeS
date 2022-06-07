@@ -1,7 +1,7 @@
 \chapter{Statique des robots manipulateurs}
 \label{sec:static}
 
-Chapitre en construction!
+%Chapitre en construction!
 
 \section{Relation entre les forces aux joints et les forces à l'effecteur pour un robot manipulateur}
 \label{sec:manipstatic}
@@ -17,12 +17,15 @@ où la matrice Jacobienne $J$ est la même matrice de la relation de cinématiqu
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.75\textwidth]{fig/controlvolume.jpg}
+		\includegraphics[width=0.55\textwidth]{fig/controlvolume.jpg}
 	\caption{Bilan de puissance mécanique pour un robot manipulateur}
 	\label{fig:controlvolume}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\video{Statique des robots manipulateurs}{https://youtu.be/klAfYgPYi0k}
+
+\begin{proof}
 La relation statique qui implique le Jacobien (eq. \eqref{eq:staticmanipulator}) peut être déterminée à partir d'un bilan de puissance. Si on applique la 1ère loi de la thermodynamique au volume de contrôle indiqué à la Figure \ref{fig:controlvolume} pour calculer le bilan d'énergie:
 %%%%%%%%%%%%%%%%
 \begin{align}
@@ -53,16 +56,19 @@ Ensuite, si on substitut les composantes du vecteur vitesse de l'effecteur $\col
 \end{align}
 %%%%%%%%%%%%%%%
 Donc les deux termes qui multiplient (produit intérieur) le vecteur colonne $\col{\dot{q}}$ doivent nécessairement être égaux, se qui nous donne l'équation qui relie les forces dans l'espace des joints aux forces équivalentes dans l'espace de la tâche. 
+\end{proof}
 
 
 \subsection{Flux de puissance}
 
 Du point de vue du flux de puissance dans le système robotique, de l'énergie électrique vers le travail mécanique fait par le robot, la Jacobien peut-être vue comme une matrice de ratios de transformation. Par exemple, les Figures \ref{fig:robotpowerflow1} et \ref{fig:robotpowerflow2} illustrent quelques unes des transformations de puissance dans un système robotique et les paramètres associées. Dans chacun des domaines la puissance est caractérisée par deux variables, une de flux (courant, vitesse, débit, etc.) et une de d'effort (tension, couple, force, pression, etc.). La puissance est le produit de ces deux variables, ou le produit intérieur des vecteurs-colonnes de ces variables dans le cas de systèmes multi-variables. Le flux de puissance peut être transformé par des dispositifs qu'on appelle des transformateurs. Un transformateur amplifie la variable de flux et réduit la variable d'effort, ou vice-versa. Par exemple, les transformateurs électriques qui réduise la tension dans un réseau électrique, les transmissions mécaniques avec ratios de réduction, etc. Lorsqu'un dispositif transfert la puissance sous une forme d'énergie différente, on les appelle des transducteurs, par exemple un moteur électrique. La puissance en entrée et en sortie des transformateurs est conservée, si l'effort est amplifié d'un facteur $T$ le flux est réduit d'un facteur $T$. 
 
+\video{Flux de puissance pour un robot manipulateur}{https://youtu.be/qyrFzkjPhHY}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htpb]
 	\centering
-		\includegraphics[width=0.70\textwidth]{fig/robotpowerflow1.jpg}
+		\includegraphics[width=0.60\textwidth]{fig/robotpowerflow1.jpg}
 	\caption{Flux de puissance: les variables de flux et d'effort dans les différents domaines et espaces du robot.}
 	\label{fig:robotpowerflow1}
 \end{figure}
@@ -92,9 +98,9 @@ et la dernière transformation est caractérisée par la matrice Jacobienne du r
 %%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[htpb]
+\begin{figure}[H]
 	\centering
-		\includegraphics[width=0.80\textwidth]{fig/robotpowerflow2.jpg}
+		\includegraphics[width=0.70\textwidth]{fig/robotpowerflow2.jpg}
 	\caption{Flux de puissance: de l'alimentation électrique vers le travail sur la charge}
 	\label{fig:robotpowerflow2}
 \end{figure}
@@ -104,7 +110,7 @@ et la dernière transformation est caractérisée par la matrice Jacobienne du r
 
 
 
-\subsection{Illustration pour un robot simple à un DDL}
+\begin{example}[Relation statique pour un robot simple à un DDL]
 
 La Figure \ref{fig:static1dofexemple} illustre un la matrice Jacobienne d'un robot simple à 1 DDL, pour lequel l'espace de la tâche est simplement la position horizontale $x$ de l'effecteur. Pour ce système à une entrée et une sortie, la matrice Jacobienne est de dimension $1\times1$, donc un scalaire qui ici correspond à la hauteur de l'effecteur du robot. La vitesse $\dot{x}$ pour une vitesse angulaire $\dot{\theta}$ donnée est fonction de cette hauteur. Finalement, le lien entre une force horizontale à l'effecteur et le couple équivalent au joint est aussi fonction de cette même hauteur. 
 
@@ -116,6 +122,7 @@ La Figure \ref{fig:static1dofexemple} illustre un la matrice Jacobienne d'un rob
 	\label{fig:static1dofexemple}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{example}
 
 \subsection{Relation statique sur une singularité}
 
@@ -123,7 +130,7 @@ Lorsqu'un robot manipulateur est sur une singularité, la transposée de la matr
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.40\textwidth]{fig/externalforcesingularity.jpg}
+		\includegraphics[width=0.30\textwidth]{fig/externalforcesingularity.jpg}
 	\caption{Relation statique sur une singularité}
 	\label{fig:externalforcesingularity}
 \end{figure}
@@ -165,7 +172,7 @@ On obient alors:
 %%%%%%%%%%%%%%%
 Donc pour que la relation de puissance soit respecté, les termes qui multiplie le vecteur-colonne de vitesses doivent être égaux, ce qui donne la relation entre les forces de l'équation \eqref{eq:staticgravity}.
 
-
+\video{Relation statique d'un robot manipulateur incluant la gravité}{https://youtu.be/RcARRDVzrm8}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -182,7 +189,7 @@ où $K_q$ est une matrice de rigidité dans l'espace des joints. Il est ensuite 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=0.80\textwidth]{fig/robotcompliance.jpg}
+		\includegraphics[width=0.70\textwidth]{fig/robotcompliance.jpg}
 	\caption{Compliance d'un robot à une force externe}
 	\label{fig:robotcompliance}
 \end{figure}
@@ -221,6 +228,9 @@ Finalement, il est à noter que la matrice $C$ de compliance est singulière lor
 	\label{fig:robotcompliance_singular}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\video{Compliance et rigidité des robots manipulateurs}{https://youtu.be/U3fhFlkVoEg}
+
 
 \newpage
 \section{Résumé du chapitre}
