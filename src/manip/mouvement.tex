@@ -1,4 +1,4 @@
-\chapter{Cinématique II: Le mouvement}
+\chapter{Cinématique des robots manipulateurs II: Le mouvement}
 \label{sec:cinediff}
 
 
@@ -596,9 +596,9 @@ J_{trans} \\ J_{ori}
 Il est aussi possible de définir un matrice Jacobienne pour une relation spécifique à une tâche. Par exemple, voir Figure \ref{fig:spaces}, où il serait désirable d'obtenir les équations qui relit la position/vitesse des joints et celle de la tâche décrite en termes de $x$ et $y$ sur un plan particulier. Si on a un espace de la tâche de dimension $m$ (normalement égale ou inférieur au nombre de DDL de l'effecteur du robot), alors on peut déterminer matrice Jacobienne $m$ par $n$. 
 %%%%%%%%%%%%%%%%
 \begin{align}
-\Big[ \col{r}_{task} \Big]_{m \times 1} = f_{task}( \col{q} )
+\Big[ \col{r}_{e} \Big]_{m \times 1} = f_{e}( \col{q} )
 \quad \Rightarrow \quad 
-\Big[ \col{\dot{r}}\Big]_{m \times 1}_{task} &= \Big[ J_{task} \Big]_{m \times n}  \, \Big[ \col{\dot{q}} \Big]_{n \times 1}
+\Big[ \col{\dot{r}_{e}}\Big]_{m \times 1} &= \Big[ J_{e} \Big]_{m \times n}  \, \Big[ \col{\dot{q}} \Big]_{n \times 1}
 \end{align}
 %%%%%%%%%%%%%%%%
 

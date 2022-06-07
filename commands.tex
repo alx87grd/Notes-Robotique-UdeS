@@ -1,0 +1,75 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Custom Commands
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\col}[1]{\underline{#1}}
+\DeclareMathOperator{\sgn}{sgn}
+\renewcommand{\bullet}{\boldsymbol{\cdot}}
+\DeclareMathOperator{\re}{\mathbb{R}}
+\newcommand{\tensor}[1] {\vv{\vv{#1}}}
+\newcommand{\e}[1]{{\mathbb E}\left[ #1 \right]}
+\newcommand{\expectedvalue}[2]{\operatornamewithlimits{\mathbb E}\limits_{#1} \left[ #2 \right]}
+%\DeclareMathOperator*{\max}{max}
+%\DeclareMathOperator*{\min}{min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\E}{\mathbb{E}}
+
+
+% Note 
+\newcommand{\note}[2] {
+%\newline
+\noindent
+\rule{\linewidth}{0.3mm}
+\textbf{#1} #2 \\
+\rule{\linewidth}{0.3mm}
+}
+
+% % Example box
+% \newcounter{noexample}[chapter]
+% \newenvironment{example}[1][]{
+% \refstepcounter{noexample}\par\medskip
+% \begin{center}
+% \begin{tabular}{|p{0.9\textwidth}|}
+% \hline\\
+% \noindent \textbf{\textit{Exemple~\thenoexample. #1}}\\
+% \itshape
+%  }{
+% \\\\\hline
+% \end{tabular} 
+% \end{center}
+% \medskip}
+
+% Example box 
+\newcounter{noexampleb}[chapter]
+\newenvironment{example}[1][]{
+\refstepcounter{noexampleb}\par\medskip
+\begin{mdframed}[backgroundcolor=lightgray, linewidth=1pt]
+\noindent \textbf{\textit{Exemple~\thenoexampleb. #1\\}}\par
+\itshape
+\hypersetup{linkcolor=black}
+ }{
+\end{mdframed}
+\medskip}
+
+\newcommand{\video}[2] {
+\begin{mdframed}[backgroundcolor=gray, linewidth=2pt]
+\hypersetup{linkcolor=black}
+\textbf{Capsule vidéo} \url{#2} - \textit{#1} \\
+\textbf{Capsule vidéo} \href{#2}{\color{black}{\textit{#1}}}
+\end{mdframed}
+}
+
+% Video box
+\newenvironment{videobox}{
+\par\medskip
+\begin{center}
+\begin{tabular}{|c|p{0.6\textwidth}|}
+\hline\\
+\includegraphics[width=0.10\textwidth]{fig/youtube.png}
+& \noindent \textbf{Capsules vidéos:}
+ }{
+\\\\\hline
+\end{tabular} 
+\end{center}
+\medskip}

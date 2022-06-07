@@ -1,0 +1,68 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Formating Customization
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \makeatletter
+% \renewcommand{\section}{\@startsection {section}%   % the name
+% {1}%                               % the level
+% {0mm}%                             % the indent
+% {0.8\baselineskip}%                % the beforeskip
+% {0.4\baselineskip}%                 % the afterskip
+% {\bfseries\LARGE}%                  % the style
+% }%
+% \makeatother
+
+% \makeatletter
+% \renewcommand{\subsection}{\@startsection {subsection}%    % the name
+% {2}%                               % the level
+% {0mm}%                             % the indent
+% {0.6\baselineskip}%                % the beforeskip
+% {0.3\baselineskip}%                % the afterskip
+% {\bfseries\normalsize\Large}%      % the style
+% }%
+% \makeatother
+
+% \makeatletter
+% \renewcommand{\subsubsection}{\@startsection {subsubsection}%    % the name
+% {3}%                               % the level
+% {0mm}%                             % the indent
+% {0.6\baselineskip}%                % the beforeskip
+% {0.3\baselineskip}%                % the afterskip
+% {\bfseries\normalsize\large}%      % the style
+% }%
+% \makeatother
+
+% \makeatletter
+% \renewcommand\paragraph{\@startsection{paragraph}
+% {4}
+% {0mm}%
+% {0.4\baselineskip}%
+% {0.2\baselineskip}%
+% {\normalfont\bfseries\large\textit}
+% }
+% \makeatother
+
+%\setlength\parindent{0pt}
+
+\setlist{nosep}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Head and foot
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagestyle{fancy}
+%\fancyhead[LE]{}
+\fancyhead[RO]{}
+%\fancyhead[RE]{}
+%\fancyhead[LO]{}
+\fancyfoot[C]{Notes de cours génie robotique - Copyright \textcopyright \the\year{} Alexandre Girard}
+\rhead{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+\fancypagestyle{plain}{%
+\fancyhf{}
+\rhead{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{Notes de cours génie robotique - Copyright \textcopyright \the\year{} Alexandre Girard}
+}

@@ -1,4 +1,4 @@
-\chapter{Cinématique I: La position}
+\chapter{Cinématique des robots manipulateurs I: La position}
 \label{sec:cine1}
 
 Ce chapitre présente des méthodes pour modéliser et analyser la position de systèmes à plusieurs degrés de liberté, donc bien adaptés aux robots manipulateurs. Dans un contexte de robotique, les problèmes de cinématique consistent premièrement à bien choisir et définir des systèmes de coordonnées pertinents. Par exemple, des coordonnées généralisées pour décrire la configuration des joints, des coordonnées cartésiennes pour décrire la tâche d'un robot en terme de trajectoire de l'effecteur, des coordonnées sphériques pour décrire les mesures d'un système de vision, etc. Ensuite, le défi est de \textbf{calculer les fonctions de transformations pour passer d'un système de coordonnées à un autre}. Par exemple, pour les robots manipulateurs, le principal défi est le calcul de la fonction de la cinématique directe et son inverse, i.e. une fonction avec comme entrées les coordonnées généralisées qui représentent la configuration des joints et comme sortie la pose de l'effecteur. Le calcul de ces transformations dans un contexte de robotique est le sujet principal de ce chapitre. La section \ref{sec:syscoord} introduit aux différents systèmes de coordonnées. Les sections \ref{sec:vecgeopos} et \ref{sec:basevecpos} introduisent les notions de vecteurs de position géométriques, bases vectorielles et vecteur-colonnes de composantes. Les sections \ref{sec:changematrice} et \ref{sec:repere} présentent les changements de base et les changements des repères. Ensuite, la section \ref{sec:corps} présente les méthodes pour représenter mathématiquement la pose d'un corps rigide. Finalement, les sections \ref{sec:fwdkin} et \ref{sec:invkin} traitent de la cinématique des robots manipulateurs, i.e. le calcul des transformations pour passer de l'espace des joints à la pose de l'effecteur et vice-versa. 
@@ -341,9 +341,10 @@ Il est donc possible d'utiliser le produit scalaire pour mesurer un angle entre 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %TODO ajouter figure pour la norme
 
-\subsection{Exemple: calcul de la hauteur d'un robot}
+
+\begin{example}[Calcul de la hauteur d'un robot]
 \label{sec:hauteurrobot}
-%
+
 Un exemple est ici donné pour le calcul de la hauteur de l'effecteur d'un robot à 3 DDL, illustré à la figure \ref{fig:vecposphi}, avec l'aide des vecteurs géométriques de position. Comme illustré à la Figure \ref{fig:vecposcons}, par inspection il est possible de déterminer la relation vectorielle suivante:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
@@ -406,7 +407,8 @@ Dans un cas simple planaire comme celui-ci il aurait été assez simple de calcu
         \caption{Exemple de calcul de la hauteur d'un robot.}
 				\label{fig:vecposunipro}
 \end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{example}
 
 %TODO, faire exemple 3D vectoriel ici
 
@@ -438,7 +440,7 @@ La démarche utilisée pour calculer des positions avec les vecteurs géométriq
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \section{Bases vectorielles et composantes d'un vecteur position}
 \label{sec:basevecpos}
@@ -598,11 +600,7 @@ Les équations vectorielles avec des vecteurs de position peuvent donc être sub
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\\ \noindent
-\rule{\linewidth}{0.3mm}
-\textbf{Programmation de calculs de cinématique:} Lors de l'écriture d'un programme informatique pour effectuer des calculs de cinématique, les calculs numériques doivent être fait en termes de composantes. En effet, les ordinateurs sont adaptés à manipuler des chiffres, des vecteur-colonnes de chiffres, des matrices de chiffres, etc. Toutefois, un ordinateur ne peut manipuler directement des éléments conceptuels comme les vecteurs unitaires.
-\\ 
-\rule{\linewidth}{0.3mm}
+\note{Programmation de calculs de cinématique:}{ Lors de l'écriture d'un programme informatique pour effectuer des calculs de cinématique, les calculs numériques doivent être fait en termes de composantes. En effet, les ordinateurs sont adaptés à manipuler des chiffres, des vecteur-colonnes de chiffres, des matrices de chiffres, etc. Toutefois, un ordinateur ne peut manipuler directement des éléments conceptuels comme les vecteurs unitaires.}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -803,11 +801,7 @@ Une matrice de rotation notée $^aR^b$, est une matrice (3$\times$3 en 3D) qui p
 La matrice de rotation est un raccourci pour projeter un vecteur position sur trois nouveaux axes en une seule opération matricielle, plutôt que d'effectuer trois opérations de projection indépendantes. Cette matrice représente l'orientation relative de deux bases vectorielles.  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\\ \noindent
-\rule{\linewidth}{0.3mm}
-\textbf{Deux rôles pour la cinématique:} Une matrice de rotation a deux fonctions majeures dans un contexte de cinématique: \textbf{1)} effectuer des opérations de changement de base et \textbf{2)} représenter une orientation relative. Cette section présente le rôle des matrices de rotation pour les opérations de changement de base, les matrices de rotation seront discutées à nouveau dans le contexte de la représentation de l'orientation d'un corps rigide à la section \ref{sec:corps}.
-\\
-\rule{\linewidth}{0.3mm}
+\note{Deux rôles pour la cinématique:}{ Une matrice de rotation a deux fonctions majeures dans un contexte de cinématique: \textbf{1)} effectuer des opérations de changement de base et \textbf{2)} représenter une orientation relative. Cette section présente le rôle des matrices de rotation pour les opérations de changement de base, les matrices de rotation seront discutées à nouveau dans le contexte de la représentation de l'orientation d'un corps rigide à la section \ref{sec:corps}.}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -929,7 +923,7 @@ La matrice de rotation $^bR^a$ consiste donc à des produits scalaires entre les
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Exemple: matrice de rotation dans le plan calculée par trigonométrie}
+\begin{example}[Matrice de rotation dans le plan calculée par trigonométrie]
 
 La figure \ref{fig:basechange2d} montre un exemple d'un vecteur $\vec{r}$ en 2 dimensions exprimé dans deux base vectorielles $b$ et $a$. Comme illustré à la figure \ref{fig:r_trigo}, avec une construction de triangles il est possible de déterminer par trigonométrie les relations entre les composantes dans les deux bases, et donc la matrice de rotation ${}^aR^b$. L'approche par trigonométrie est toutefois limitée pour les rotations en 3D, une approche vectorielle plus simple et plus universelle pour calculer des matrices de rotation est présentée à la section \ref{sec:calmat}.
 %%%%%%%%%%%%%
@@ -949,6 +943,7 @@ La figure \ref{fig:basechange2d} montre un exemple d'un vecteur $\vec{r}$ en 2 d
 \end{figure}
 %%%%%%%%%%%%%%
 
+\end{example} 
 
 
 
@@ -1294,7 +1289,7 @@ R_i( \theta_1 ) R_i( \theta_2 )  = R_i( \theta_2 ) R_i( \theta_1 ) = R_i( \theta
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Exemple: réorganisation des vecteurs unitaires}
+\begin{example}[Réorganisation des vecteurs unitaires]
 %
 La figure \ref{fig:r_reorg} illustre deux bases vectorielles qui ont des vecteurs unitaires parallèles mais avec des directions et un ordre différents. Pour calculer la matrice de rotation associée $^bR^a$, la première étape est d'identifier la relation entre les vecteurs unitaires $\hat{a}_i$ et $\hat{b}_i$. 
 %
@@ -1347,12 +1342,12 @@ Il est donc maintenant possible d'assembler la matrice de rotation $^bR^a$ basé
 %\label{eq:rot3theta}
 \end{align}
 %%%%%%%%%%%%
-
+\end{example}
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Exemple: réorganisation des vecteurs unitaires et rotation selon un axe}
+\begin{example}[Réorganisation des vecteurs unitaires et rotation selon un axe]
 %
 Un exemple de calcul d'une matrice de rotation $^bR^a$ est donné pour une base $a$ qui subit une révolution de $\theta$ degrés autour de l'axe $\hat{b}_3$ par rapport à une base $b$, mais ici avec des vecteurs unitaires qui sont définis avec des directions différentes, tel qu'illustré à la figure \ref{fig:rot3}, et ce n'est donc pas un cas de rotation élémentaire. Pour construire la matrice de rotation, la première étape est de dessiner les deux bases avec une origine commune, dans une configuration où la rotation $\theta$ est relativement faible (pour simplifier la visualisation). On peut constater que le vecteur unitaire $\hat{a}_1$ est aligné avec l'axe de rotation, donc indépendant de $\theta$ et toujours donné par $\hat{a}_1=-\hat{b}_3$. Ensuite, par inspection, il est possible d'exprimer chaque vecteur unitaire $\hat{a}_i$ comme une combinaison des vecteurs unitaires $\hat{b}_i$, avec des relations trigonométriques simples comme illustrés par les figures \ref{fig:rot3_a1} et \ref{fig:rot3_a2}. 
 %
@@ -1405,10 +1400,10 @@ Il est donc maintenant possible d'assembler la matrice de rotation $^bR^a$ basé
 %\label{eq:rot3theta}
 \end{align}
 %%%%%%%%%%%%
-
+\end{example}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Exemple: calcul de la position globale de l'effecteur d'un robot}
+\begin{example}[Calcul de la position globale de l'effecteur d'un robot]
 \label{sec:exer-cinematique-base}
 %
 Dans cet exemple, le robot précédemment étudié (Figure \ref{fig:vecposunipro}) est ici analysé à nouveau mais cette fois avec l'aide des bases vectorielles. L'objectif est ici de calculer la position du point $D$ par rapport au point $A$ exprimée dans la base vectorielle $a$. Comme illustré à la figure \ref{fig:vecposbase1}, la première étape est de décrire la position qui doit être calculée en terme de vecteurs de position géométriques:
@@ -1570,9 +1565,8 @@ c\theta_3 l_3 + c\theta_2 l_2  + s\theta_1 l_1  \\
 %%%%%%%%%%%%%%%%%
 À noter que ici les angles $\theta_i$ sont tous des angles absolus qui représentent l'orientation des bases $b$, $c$ et $d$ du robot par rapport à la base fixe $a$ directement. Lorsqu'on contrôle un bras robotisé, c'est généralement les angles relatifs entre chacun des joints qui sont les variables mesurées et contrôlées. 
 
-
-
-\note{Exercice de lecture: }{La hauteur du robot correspond à la deuxième ligne de l'équation \eqref{eq:robot2dpos}, qui est la distance $\vec{r}_{D/A}$ selon le vecteur unitaire $\hat{a}_2$: 
+\paragraph{Exercice de lecture:}
+La hauteur du robot correspond à la deuxième ligne de l'équation \eqref{eq:robot2dpos}, qui est la distance $\vec{r}_{D/A}$ selon le vecteur unitaire $\hat{a}_2$: 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 h = c\theta_3 l_3 + c\theta_2 l_2  + s\theta_1 l_1  
@@ -1584,11 +1578,12 @@ Alternativement, à l'exemple \ref{sec:hauteurrobot}, l'équation suivante avait
 h &= l_1 \cos (\varphi_1) + l_2 \cos (\varphi_2) + l_3 \cos (\varphi_3)
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Trouvez la correspondance entre les angles $\theta_i$ et $\varphi_i$ et vérifiez que les deux expressions sont équivalentes.}
+Trouvez la correspondance entre les angles $\theta_i$ et $\varphi_i$ et vérifiez que les deux expressions sont équivalentes.
 
+\end{example}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Exemple: distance projetée calculée avec les vecteur-colonnes}
+\begin{example}[Distance projetée calculée avec les vecteur-colonnes]
 %
 Comme illustré à la figure \ref{fig:exprojcomp}, cet exemple démontre comment calculer la distance projetée $d_n$ d'un vecteur $\vec{r}_{C/A}$ selon un axe décrit par $\hat{n}$, connaissant les vecteur-colonnes de composantes:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1668,14 +1663,14 @@ d_n &=
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 C'est donc cette équation qui devrait être programmée pour faire ce calcul numériquement sur un ordinateur.
 %%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[htbp]
+\begin{figure}[H]
 	\centering
 		\includegraphics[width=0.50\textwidth]{exprojcomp.png}
 	\caption{Exemple de calcul d'une distance projetée}
 	\label{fig:exprojcomp}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\end{example}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
@@ -1684,7 +1679,7 @@ C'est donc cette équation qui devrait être programmée pour faire ce calcul nu
 
 En robotique, il est souvent utile de placer un point de référence ainsi qu'une base vectorielle sur chaque corps rigide du robot. Bien qu'on peut travailler avec des points de référence et des bases vectorielles de façon indépendante, il est souvent pratique de les jumeler en paires puisqu'il faut ces deux types de références pour exprimer des coordonnées. \textbf{La combinaison d'un point d'origine et d'une base vectorielle est appelée repère dans ces notes}, le terme \textit{Frame} est généralement utilisé en anglais. Un repère $A$ dans ces notes fait donc référence à la fois à un point d'origine $A_o$ et à une base vectorielle $a$ qui consiste des trois vecteurs unitaires $\{ \hat{a}_1, \hat{a}_2, \hat{a}_3 \}$. Autrement dit, on appellera \textit{repère} $A$ le repère formé par l'ensemble $\{ A_o, \hat{a}_1, \hat{a}_2, \hat{a}_3 \}$. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[htpb]
+\begin{figure}[H]
 	\centering
 		\includegraphics[width=0.45\textwidth]{repere}
 	\caption{Système de coordonnées cartésiennes $(x,y,z)$ basé sur le repère $\{A_o,\hat{a}_1,\hat{a}_2,\hat{a}_3\}$}
@@ -1909,7 +1904,7 @@ De façon générale, six variables sont nécessaires pour définir la positon d
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection{Translation}
+\paragraph{Translation:}
 %
 Les trois DDL de translation peuvent être représentés par un vecteur position qui a comme origine un point fixe $A$ et comme cible un point arbitraire $B$ sur le corps rigide. Ce vecteur position $\vec{r}_{B/A}$, est typiquement représenté avec trois coordonnées cartésiennes ($x$, $y$, $z$) qui utilisent une base vectorielle fixe $a$:
 %%%%%%%%%%%%%%%%%%%
@@ -1920,7 +1915,7 @@ Les trois DDL de translation peuvent être représentés par un vecteur position
 \end{equation} 
 %%%%%%%%%%%%%%%%%%%%
 
-\subsubsection{Orientation}
+\paragraph{Orientation:}
 %
 Ensuite, même avec un point défini dans l'espace par un vecteur translation, un corps rigide a plusieurs orientations possibles. Pour définir l'orientation, une autre base vectorielle $b$ attachée au corps rigide doit être utilisée. L'orientation d'un corps rigide est alors représentée par la direction des vecteurs unitaires $\hat{b}_i$, qui peuvent être représentés par leurs composantes dans la base fixe $a$. Les trois vecteur-colonnes $\col{b}_i^a$ de trois composantes peuvent être regroupés sous la forme d'une matrice de rotation, comme il a été discuté à la section \ref{sec:changematrice} dans le contexte des changements de base:
 %%%%%%%%%%%%%%%%%%%
@@ -1933,8 +1928,7 @@ Malgré les neuf composants d'une matrice de rotation, puisque les vecteurs $\ha
 
 %\paragraph{Note:} L'orientation d'un corps rigide est aussi parfois appelée \textit{attitude}, typiquement dans le domaine de l'aérospatiale, ou bien \textit{position angulaire}.
 
-\subsubsection{Pose}
-
+\paragraph{Pose:}
 La pose d'un corps rigide, c'est la combinaison de sa translation et de son orientation. Il est possible d'utiliser des représentations indépendantes pour la translation et l'orientation, mais alternativement on peut regrouper une matrice de rotation (pour représenter l'orientation) et un vecteur-colonne (pour représenter la translation)  sous la forme d'une matrice de transformation 4x4, qui relie le repère $\{A_o,\hat{a}_1,\hat{a}_2,\hat{a}_3\}$ formé par le point fixe et la base fixe, au repère $\{B_o,\hat{b}_1,\hat{b}_2,\hat{b}_3\}$ formé par le point mobile et la base mobile attachés au corps rigide. Cette matrice peut alors être paramétrée par 6 variables qui représent tous les DDL du corps rigide:
 %%%%%%%%%%%%%%%%%%%
 \begin{equation}
@@ -2129,7 +2123,8 @@ Détails à venir!
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Exemple: cinématique d'un robot mobile}
+\begin{example}[Cinématique d'un robot mobile]
+%\subsection{Exemple: cinématique d'un robot mobile}
 
 La figure illustre un exemple où un véhicule et les points d’intérêts qu'il trouve doivent être localisés par rapport à une base. La cinématique de ce problème peut se résumer à calculer la matrice de transformation $^AT^B$, qui peut être construite à partir de la définition:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2172,6 +2167,7 @@ Cette matrice représente la pose du véhicule par rapport au repère de la base
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\end{example}
 
 
 \newpage
@@ -2484,7 +2480,8 @@ Les matrices de transformation globales de tous les repères mobiles vers le rep
 
 
 %%%%%%%%%%%%%%%%%%%%%%
-\subsection{Exemple de la cinématique pour un robot avec deux joints}
+\begin{example}[Cinématique pour un robot avec deux joints]
+%\subsection{Exemple de la cinématique pour un robot avec deux joints}
 
 Un exemple est ici présenté de calcul de la cinématique directe pour le robot illustré à la figure \ref{fig:kinex} qui possède un joint rotatif et un joint prismatique. L'objectif est ici de calculer les coordonnées du point $D_o$ dans le repère fixe $\{ A_o, \hat{a}_1, \hat{a}_2, \hat{a}_3\}$ comme un fonction de la configuration des joints. Trois méthodes de résolution sont présentées, une méthode minimaliste qui utilise seulement les équations vectorielles, une méthode matricielle qui utilise les vecteur-colonnes et les matrices de rotation, ainsi qu'une méthode utilisant les coordonnées homogènes. 
 
@@ -2616,9 +2613,6 @@ l_2 \\ 0 \\ 0
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%
 
-
-
-
 \paragraph{Méthode avec les transformations homogènes}
 
 Alternativement, une façon plus systématique de procéder, est d'associer un repère à chaque lien rigide et de calculer toutes les matrices de transformation entre ces repères. 
@@ -2698,6 +2692,8 @@ Avec la dernière colonne de la matrice ${}^AT^D$, il est possible d'extraire le
 \end{array} \right] 
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%
+
+\end{example}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
@@ -2802,7 +2798,9 @@ s\theta & c\theta c\alpha  & -c\theta s\alpha  & r s\theta\\
 Donc lorsque la convention est utilisée, la matrice de transformation entre deux repères successifs a toujours la forme ci-dessus, et il suffit d'identifier les quatre paramètres DH de chaque joints. 
 
 
-\subsubsection{Exemple pour un robot anthropomorphique avec les paramètres \textit{DH}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsubsection{Exemple pour un robot anthropomorphique avec les paramètres \textit{DH}}
+\begin{example}[Cinématique d'un robot anthropomorphique avec les paramètres \textit{DH}]
 \label{sec:dhex}
 
 La Figure \ref{fig:dh3} illustre l'utilisation de la convention \textit{DH} pour déterminer la matrice de transformation qui représente la pose de l'effecteur. 
@@ -2823,6 +2821,8 @@ Ensuite, il suffit d'utiliser la formule donnée à l'équation \eqref{eq:Tdh} p
 	\label{fig:dh3}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{example}
 
 
 
@@ -2884,13 +2884,14 @@ Pour les chaînes cinématiques ouvertes, comme la plupart des robots manipulate
 
 En pratique, les contrôleurs de robot trouvent généralement indirectement les solutions à l'équation \eqref{eq:kininv}. Une méthode standard est de contrôler les déplacement locaux de l'effecteur en direction de la position $\col{r}$ désirée, voir section \ref{sec:positioncontrol}, une méthode qui revient à faire une descente du gradient itérative comme avec la méthode de Newton-Raphson mais en temps réel avec le vrai système.
 
-
-\subsection{Exemple: cinématique inverse d'un robot à deux joints rotatifs}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Exemple:}
+\begin{example}[Cinématique inverse d'un robot à deux joints rotatifs]
 
 Cet exemple illustre une résolution analytique de la cinématique inverse d'un robot simple à deux joints rotatifs dans le plan, illustré à la figure \ref{fig:invkin}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[htbp]
+\begin{figure}[H]
 				%\vspace{-10pt}
         \centering
 				\subfloat[Bases et points de références]{
@@ -2968,7 +2969,7 @@ Il est aussi possible d'isoler l'angle $\theta_1$ sous forme explicite, comme il
 %%%%%%%%%%%%%%%%%%%%s
 
 %%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[htbp]
+\begin{figure}[H]
 	\centering
 		\includegraphics[width=0.60\textwidth]{invkin_theta1.png}
 	\caption{Calcul de $\theta_1$}
@@ -2976,6 +2977,7 @@ Il est aussi possible d'isoler l'angle $\theta_1$ sous forme explicite, comme il
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%
 
+\end{example}
 
 
 \newpage

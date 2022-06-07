@@ -1,7 +1,7 @@
 \chapter{Introduction à la commande des systèmes robotisés}
 \label{sec:introcommanderobots}
 
-La science de "la commande" traite du développement d'algorithmes qui déterminent les actions qu'un système robotisé doit prendre en fonction de la situation pour atteindre un objectif (par exemple une position cible). Ces algorithmes sont généralement implémentés sur un micro-contrôleur, qui choisit les actions des actionneurs (par exemple le couple des moteurs électriques). Mathématiquement, le problème consiste à choisir les termes qui représentent les actions possible dans un système d'équations différentielles qui représentent le comportement du robot, afin d'obtenir le comportement désiré.
+La science de \textit{la commande }traite du développement d'algorithmes qui déterminent les actions qu'un système robotisé doit prendre en fonction de la situation pour atteindre un objectif (par exemple une position cible). Ces algorithmes sont généralement implémentés sur un micro-contrôleur, qui choisit les actions des actionneurs (par exemple le couple des moteurs électriques). Mathématiquement, le problème consiste à choisir les termes qui représentent les actions possible dans un système d'équations différentielles qui représentent le comportement du robot, afin d'obtenir le comportement désiré.
 
 Lors de la conception des lois de commandes, plusieurs aspects (illustrés qualitativement à la Figure \ref{fig:controlgoal}) peuvent être analysés selon le contexte: 
 
@@ -15,11 +15,11 @@ Dans certain contextes, principalement ceux ou les actions possibles sont limit�
 
 \paragraph{Le temps de réponse} 
 
-La stabilité et la faisabilité détermine si le système pourra atteindre l'objectif. Ensuite, on cherche généralement à atteindre l'objectif le plus rapidement possible ce qui est caractérisé par le temps de réponse. Un critère relié est la "bande passante" du système, la "vitesse" du système exprimée dans le domaine fréquentiel.
+La stabilité et la faisabilité détermine si le système pourra atteindre l'objectif. Ensuite, on cherche généralement à atteindre l'objectif le plus rapidement possible ce qui est caractérisé par le temps de réponse. Un critère relié est la bande passante, la rapidité du système exprimée dans le domaine fréquentiel.
 
 \paragraph{L'optimalité} 
 
-Il y a généralement un compromis à faire entre la vitesse (le temps de réponse) et l'utilisation agressive des actions possibles du système qui ont généralement un coût énergétique. Un objectif commun lors de la conception d'un asservissement est de maximiser la performance. La maximisation de la performance dans le domaine de la commande est généralement formulé comme la minimisation d'un coût qui combine les dépenses énergétiques et le temps passé loin de l'objectif.
+Il y a généralement un compromis à faire entre la vitesse (le temps de réponse) et l'utilisation agressive des actions possibles du système qui ont généralement un coût énergétique. Un objectif commun lors de la conception d'un asservissement est d'optimiser la performance, ce qui est généralement formulé comme la minimisation d'un coût qui combine les dépenses énergétiques et le temps passé loin de l'objectif.
 
 \paragraph{La robustesse} Finalement, dans plusieurs situations il faut considérer l'incertitude dans le système lors de la conception des lois de commande. L'incertitude peut être due à des perturbations externes inconnues (ex.: rafales de vent pour un avion) ou bien à des paramètres incertains du système robotique (ex.: poids de la charge transportée pour un bras manipulateur). L'analyse de robustesse consiste à vérifier si les lois de commandes vont fonctionner dans divers scénarios possibles. Des méthodes existe pour garantir le fonctionnement d'un contrôleur malgré un certain niveau d'incertitude (commande robuste ou commande adaptative).
 
