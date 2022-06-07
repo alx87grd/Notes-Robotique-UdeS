@@ -2,8 +2,6 @@
 
 La première partie de ces notes discute de la science pour modéliser et analyser le mouvement des robots manipulateurs. Dans un contexte d'ingénierie, modéliser un système robotique est essentiel lors de la phase de conception, par exemple pour valider qu'une géométrie de bras permet d'atteindre plusieurs positions désirées avec son effecteur (i.e. l'outil au bout du bras), et aussi lors de la programmation pour coordonner les différents moteurs et articulations d'un robot. Les outils présentés dans ces notes sont pertinents pour toute machine et/ou système avec plusieurs articulations, on parlera toutefois de \textit{robot} dans ces notes pour alléger le texte.
 
-%Les methodes presentes ici ne sont pas exclusive aux robots, 
-
 \section{Modélisation et analyse des robots manipulateurs}
 
 Comme illustré à la figure \ref{fig:fields}, la modélisation des robots peut être séparée en quatre grandes familles d'analyse.
@@ -11,11 +9,16 @@ Comme illustré à la figure \ref{fig:fields}, la modélisation des robots peut 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.95\textwidth]{fields.png}
+		\includegraphics[width=0.90\textwidth]{fields.png}
 	\caption{Quatre grands domaines de base de l'analyse de robots manipulateurs  }
 	\label{fig:fields}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\video{Introduction à l'analyse des robots manipulateurs}{https://youtu.be/N9cYzmWeyKM}
+
+\colab{Demo colab}{https://colab.research.google.com/drive/16ACenFOLOHVNeReqJTbkATAB3281iVbp?usp=sharing}
+
 
 Les méthodes de \textbf{cinématique directe} visent à calculer la position finale de l'effecteur d'un robot en fonction du positionnement des articulations. Lorsqu'on parle de \textbf{cinématique inverse}, l'objectif est de déterminer le positionnement des articulations qui mène à une position désirée de l'effecteur du robot. Mathématiquement, l'analyse consiste à construire et solutionner la fonction non-linéaire qui relie les coordonnées de l'effecteur, groupées dans un vecteur-colonne $\col{r}$, aux coordonnées des joints, groupées dans un vecteur-colonne $\col{q}$:
 %%%%%%%%%%%%%%%%
@@ -53,12 +56,6 @@ où les termes $H(\col{q}) \col{\ddot{q}}$ et $C(\col{q},\col{\dot{q}}) \col{\do
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \note{Hypothèses de travail:}{L'approche de modélisation pour la cinématique, la statique et la dynamique utilisée dans cette partie (chapitres \ref{sec:cine1}, \ref{sec:cinediff}, \ref{sec:static} et \ref{sec:dynamic}) considère les robots comme des systèmes de corps rigides reliés par des articulations qui permettent un nombre restreint de mouvements relatifs. Cette approche de modélisation fait l'hypothèse que \textbf{les déformations des sections rigides du robot sont négligeables}, ce qui est par exemple raisonnable pour les robots manipulateurs industriels dans la plupart des applications.}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\video{Introduction}{https://youtu.be/N9cYzmWeyKM}
-
-\begin{videobox}
-\href{https://youtu.be/N9cYzmWeyKM}{Introduction à la robotique}
-\end{videobox}
 
 
 \section{L'importance de l'algèbre linéaire pour la robotique}

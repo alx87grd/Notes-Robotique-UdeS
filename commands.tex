@@ -52,24 +52,39 @@
 \end{mdframed}
 \medskip}
 
-\newcommand{\video}[2] {
-\begin{mdframed}[backgroundcolor=gray, linewidth=2pt]
-\hypersetup{linkcolor=black}
-\textbf{Capsule vidéo} \url{#2} - \textit{#1} \\
-\textbf{Capsule vidéo} \href{#2}{\color{black}{\textit{#1}}}
+\newcommand{\video}[3] {
+\begin{mdframed}[userdefinedwidth=.8\textwidth, align=center, linecolor=black, backgroundcolor=white, linewidth=2pt]
+\begin{tabular}{ m{.2\textwidth}  m{.8\textwidth}}
+\begin{minipage}{.2\textwidth}
+\includegraphics[width=15mm, height=10mm]{fig/youtube.png}
+\end{minipage}
+&
+\begin{minipage}{.8\textwidth}
+\textbf{Capsule vidéo} \par 
+\href{#2}{\textbf{\textit{#1}}} \par
+\url{#2} \par
+#3
+\end{minipage}
+\end{tabular} 
 \end{mdframed}
 }
 
-% Video box
-\newenvironment{videobox}{
-\par\medskip
-\begin{center}
-\begin{tabular}{|c|p{0.6\textwidth}|}
-\hline\\
-\includegraphics[width=0.10\textwidth]{fig/youtube.png}
-& \noindent \textbf{Capsules vidéos:}
- }{
-\\\\\hline
+
+% Colab link
+\newcommand{\colab}[3] {
+\begin{mdframed}[userdefinedwidth=.8\textwidth, align=center, linecolor=black, backgroundcolor=white, linewidth=2pt]
+\begin{tabular}{ m{.2\textwidth}  m{.8\textwidth}}
+\begin{minipage}{.2\textwidth}
+\includegraphics[width=15mm, height=10mm]{fig/colab.png}
+\end{minipage}
+&
+\begin{minipage}{.8\textwidth}
+\textbf{Exercice de code} \par 
+\href{#2}{\textbf{\textit{#1}}} \par
+\url{#2} \par
+#3
+\end{minipage}
 \end{tabular} 
-\end{center}
-\medskip}
+\end{mdframed}
+}
+
