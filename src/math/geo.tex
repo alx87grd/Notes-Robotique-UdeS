@@ -23,13 +23,12 @@ La notation suivant est utilisée dans ces notes:
 où l'exposant $a$ est utilisé pour spécifier la base vectorielle associée aux composantes scalaires. Selon les domaines, le terme vecteur réfère soit à la quantité avec une amplitude et une direction (physique, géométrie, etc) soit à une colonne de scalaire (algèbre linéaire, programmation, etc). Comme tous ces domaines sont utilisés en robotique on fera toujours la distinction 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Propriété des vecteurs}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Propriété des vecteurs}
 
-À venir!
+% À venir!
 
 
-\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Les bases vectorielles}
 \label{vectorbasis}
@@ -680,12 +679,7 @@ T = \frac{\partial A}{\partial \col{x}} =
 
 
 
-\newpage
-
-\subsection{Examples}
-
-\subsubsection{Gradient of Quadratic Function}
-
+\begin{example}[Gradient of Quadratic Function]
 Finding the gradient $\frac{\partial f}{\partial \underline{x}}$ of the quadratic function $f=\underline{x}^T A \underline{x}$. First converting to index notations:
 \begin{align}
 f = \sum_{ij}{x_i A_{ij} x_j}
@@ -703,9 +697,9 @@ Which correspond in matrix form, with the numerator layout convention, to:
 \begin{align}
 \frac{\partial f}{\partial \underline{x}} = \underline{x}^T ( A + A^T )
 \end{align}
+\end{example}
 
-\subsubsection{Least square solution derivation in vector form}
-
+\begin{example}[Least square solution derivation in vector form]
 Minimizing the error norm $\|\underline{e}\|^2$ of the estimation problem $\underline{e} = A \underline{\hat{x}} - \underline{b}$ by selecting the parameters $\underline{\hat{x}}$. If the gradient of the error norm with respect to the parameter vector is set to zero:
 \begin{align}
 \underline{0} &= \frac{\partial \|\underline{e}\|^2 }{\partial \underline{\hat{x}}} = \frac{\partial (\underline{e}^T \underline{e} )}{\partial \underline{\hat{x}}} = 2 \, \underline{e}^T \frac{\partial \underline{e} }{\partial \underline{\hat{x}}} = 2\, (A \underline{\hat{x}} - \underline{b})^T A 
@@ -714,3 +708,4 @@ For which the solution is
 \begin{align}
 \underline{\hat{x}} = \left[ A^T A \right]^{-1} A^T \underline{b}
 \end{align}
+\end{example}

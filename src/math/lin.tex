@@ -244,7 +244,7 @@ col(A) =
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%
 
-\textbf{Note sur la notation mathématique pour les ensembles:} Les crochets $\{ \}$ représentent un ensemble, à l'intérieur on note la liste des éléments de l'ensemble ou bien la définition. La barre verticale $|$ signifie \textit{tel que} et le symbole $\in$ signifie \textit{appartient à}. L'équation \eqref{eq:cola} peut donc se lire \textit{l'espace colonne de la matrice $A$ est égale à l'ensemble des résultats possible de l'opération $A \col{x} $ tel que $\col{x}$ appartient à l'espace vectoriel de dimension $n$}.
+\note{Notation mathématique pour les ensembles:}{ Les crochets $\{ \}$ représentent un ensemble, à l'intérieur on note la liste des éléments de l'ensemble ou bien la définition. La barre verticale $|$ signifie \textit{tel que} et le symbole $\in$ signifie \textit{appartient à}. L'équation \eqref{eq:cola} peut donc se lire \textit{l'espace colonne de la matrice $A$ est égale à l'ensemble des résultats possible de l'opération $A \col{x} $ tel que $\col{x}$ appartient à l'espace vectoriel de dimension $n$}.}
 
 Lorsque la matrice $A$ est inversible, i.e. de rang plein, l'espace colonne correspond à $\re^m$, ou $m$ est le nombre de variables de sortie.
 
@@ -303,7 +303,7 @@ Les coefficients non-nuls $p_i$ sur la diagonale de la matrice $U$ sont appeles 
 
 Un vecteur est dit linéairement dépendant d'un autre vecteur (ou un ensemble de vecteurs), lorsque celui-ci peut être exprimé comme un combinaison pondéré des autres. 
 
-TODO figure
+%TODO figure
 
 Un ensemble de vecteurs $\left\{ \col{v}_1, \col{v}_2, \hdots, \col{v}_n \right\}$ est \textbf{linéairement dépendant} s'il existe des coefficients non nuls $x_i$ tels que la somme pondérée des vecteurs est nulle:
 %%%%%%%%%%%%%%%%%%%%%%
@@ -398,57 +398,64 @@ Un système d'équations peut être parfaitement contraint (une seule solution e
 
 Les grandes catégories de situations possibles illustrés à la figure \ref{fig:rmn} sont exemplifiés avec les exemples illustrés aux figures \ref{fig:rmn_ex1}, \ref{fig:rmn_ex2}, \ref{fig:rmn_ex3} et \ref{fig:rmn_ex4}.
 
+\begin{example}[Système d'équation parfaitement contraint]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[htp]
+\begin{figure}[H]
 	\centering
 		\includegraphics[width=0.65\textwidth]{linalgebra_4types_ex1.png}
 	\caption{Exemple d'un système d'équation parfaitement contraint}
 	\label{fig:rmn_ex1}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{example}
 
+\begin{example}[Système d'équation sous-contraint]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[htp]
+\begin{figure}[H]
 	\centering
 		\includegraphics[width=0.65\textwidth]{linalgebra_4types_ex2.png}
 	\caption{Exemple d'un système d'équation sous-contraint}
 	\label{fig:rmn_ex2}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{example}
 
+\begin{example}[Système d'équation sur-contraint]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[htp]
+\begin{figure}[H]
 	\centering
 		\includegraphics[width=0.65\textwidth]{linalgebra_4types_ex3.png}
 	\caption{Exemple d'un système d'équation sur-contraint}
 	\label{fig:rmn_ex3}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{example}
 
+\begin{example}[Système d'équation non-inversible]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[htp]
+\begin{figure}[H]
 	\centering
 		\includegraphics[width=0.65\textwidth]{linalgebra_4types_ex4.png}
 	\caption{Exemple d'un système d'équation non-inversible}
 	\label{fig:rmn_ex4}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\end{example}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
-\section{Nullspace}
+\section{Espace nul}
 \label{sec:nullspace}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Le \textit{Nullspace} d'une matrice $A$, noté $N(A)$ correspond a l'ensemble de tous les vecteur-colonnes $\col{x}$ pour lesquels la multiplication avec la matrice $A$ donne un vecteur-colonne nulle $\col{0}$ :
+L'espace nul (\textit{Nullspace}) d'une matrice $A$, noté $N(A)$ correspond a l'ensemble de tous les vecteur-colonnes $\col{x}$ pour lesquels la multiplication avec la matrice $A$ donne un vecteur-colonne nulle $\col{0}$ :
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 N(A) = \left\{ \col{x} \in \mathbb{R}^n \,|\, A\col{x} = \col{0} \right\}
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Tous les vecteur-colonnes entrées $\col{x}$ pour une matrice appartiennent soit à l'espace rangé soit au \textit{Nullspace}:
+Tous les vecteur-colonnes entrées $\col{x}$ pour une matrice appartiennent soit à l'espace rangé soit à l'espace nul:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \col{x} \in \re^n = col(A^T) \; \cup \; N(A) %\quad \text{et} \quad
@@ -456,9 +463,9 @@ Tous les vecteur-colonnes entrées $\col{x}$ pour une matrice appartiennent soit
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\textbf{Les vecteur-colonnes appartenant à l'espace rangé influencent la sortie alors que les vecteur-colonnes appartenant au \textit{Nullspace} n'influent pas la sortie.} 
+\textbf{Les vecteur-colonnes appartenant à l'espace rangé influencent la sortie alors que les vecteur-colonnes appartenant à l'espace nul n'influent pas la sortie.} 
 
-Une matrice $A$ va avoir un \textit{Nullspace} seulement lorsqu'elle a une rang déficient, donc des colonnes linéairement dépendantes. La présence d'un \textit{Nullspace} indique un système sous-contraint ou il y a un surplus de variables, donc plusieurs solutions possibles d'entrées $\col{x}$ pour obtenir une même sortie $\col{y}$. 
+Une matrice $A$ va avoir un espace nul seulement lorsqu'elle a une rang déficient, donc des colonnes linéairement dépendantes. La présence d'un espace nul indique un système sous-contraint ou il y a un surplus de variables, donc plusieurs solutions possibles d'entrées $\col{x}$ pour obtenir une même sortie $\col{y}$. 
 %
 %\textbf{Utilisation} Une utilité du \textit{Nullspace} est que si on connaît un solution $\col{x}_s$ tel que: 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -477,21 +484,21 @@ Une matrice $A$ va avoir un \textit{Nullspace} seulement lorsqu'elle a une rang 
 %\end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-La figure \ref{fig:4spaces_ex1} illustre la signification physique du \textit{Nullspace} d'une matrice qui relie la vitesse des joints d'un robot manipulateur à la vitesse de son effecteur. 
+La figure \ref{fig:4spaces_ex1} illustre la signification physique de l'espace nul d'une matrice qui relie la vitesse des joints d'un robot manipulateur à la vitesse de son effecteur. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Left-Nullspace}
+\section{Espace nul gauche}
 \label{sec:leftnullspace}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Le \textit{Left-Nullspace} d'une matrice $A$, noté $N(A^T)$ correspond a l'ensemble de tous les vecteur-colonnes $\col{y}$ pour lesquels la multiplication avec la matrice $A^T$ donne un vecteur-colonne nulle $\col{0}$ :
+L'espace nul gauche (\textit{Left-Nullspace}) d'une matrice $A$, noté $N(A^T)$ correspond a l'ensemble de tous les vecteur-colonnes $\col{y}$ pour lesquels la multiplication avec la matrice $A^T$ donne un vecteur-colonne nulle $\col{0}$ :
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 N(A^T) = \left\{ \col{y} \in \mathbb{R}^m \,|\, A^T\col{y} = \col{0} \right\}
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Tous les vecteur-colonnes sorties $\col{y}$ appartiennent soit à l'espace colonne soit au \textit{Left-Nullspace}:
+Tous les vecteur-colonnes sorties $\col{y}$ appartiennent soit à l'espace colonne soit à espace nul gauche:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \col{y} \in \re^m = col(A) \; \cup \; N(A^T) %\quad \text{et} \quad
@@ -499,9 +506,9 @@ Tous les vecteur-colonnes sorties $\col{y}$ appartiennent soit à l'espace colon
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\textbf{Les vecteur-colonnes $\col{y}$ appartenant à l'espace colonne ont une solution $\col{x}$ possible, tandis que ceux appartenant au \textit{Left-Nullspace} n'ont aucune solution exacte $\col{x}$ possible}.
+\textbf{Les vecteur-colonnes $\col{y}$ appartenant à l'espace colonne ont une solution $\col{x}$ possible, tandis que ceux appartenant à l'espace nul gauche n'ont aucune solution exacte $\col{x}$ possible}.
 %
-Une matrice $A$ va avoir un \textit{Left-Nullspace} seulement lorsqu'elle a une rang déficient. La présence d'un \textit{Left-Nullspace} indique un système sur-contraint, i.e. un surplus d'équations. Il y aura donc plusieurs sorties $\col{y}$ pour lesquelles il n'y a pas de solutions $\col{x}$.
+Une matrice $A$ va avoir un espace nul gauche seulement lorsqu'elle a une rang déficient. La présence d'un espace nul gauche indique un système sur-contraint, i.e. un surplus d'équations. Il y aura donc plusieurs sorties $\col{y}$ pour lesquelles il n'y a pas de solutions $\col{x}$.
 
 
 \newpage
@@ -530,24 +537,27 @@ La figure \ref{fig:4spaces} résume les quatre espaces fondamentaux d'une matric
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\begin{example}[Espace-nul de la matrice jacobienne d'un robot manipulateur]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.85\textwidth]{linalgebra_4spaces_ex1.png}
-	\caption{Exemple de Nullspace d'une matrice}
+		\includegraphics[width=0.80\textwidth]{linalgebra_4spaces_ex1.png}
+	\caption{Exemple de l'espace nul d'une matrice}
 	\label{fig:4spaces_ex1}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{example}
 
+\begin{example}[Espace-nul gauche de la matrice jacobienne d'un robot manipulateur]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.85\textwidth]{linalgebra_4spaces_ex2.png}
-	\caption{Exemple de Left-Nullspace d'une matrice}
+		\includegraphics[width=0.80\textwidth]{linalgebra_4spaces_ex2.png}
+	\caption{Exemple de l'espace-nul gauche d'une matrice}
 	\label{fig:4spaces_ex2}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\end{example}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Projection}
@@ -637,10 +647,9 @@ Pour ensuite utiliser la méthode des moindres-carrés pour obtenir un estimé d
 
 
 
-\subsection{Exemple de régression linéaire avec les moindres-carrés}
-
+\begin{example}[Régression linéaire avec les moindres-carrés]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[htbp]
+\begin{figure}[H]
 	\centering
 		\includegraphics[width=0.5\textwidth]{regression_ex1.png}
 		\includegraphics[width=0.5\textwidth]{regression_ex2.png}
@@ -648,10 +657,9 @@ Pour ensuite utiliser la méthode des moindres-carrés pour obtenir un estimé d
 	\label{fig:regression-ex1}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{example}
 
-
-\subsection{Preuve}
-
+\begin{proof}
 La solution des moindres-carrés minimise une fonction coût qui est défini comme le carré de la norme du vecteur d'erreur, qui correspond à la somme des carrés des erreurs individuelles pour chaque sortie du système:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
@@ -677,6 +685,7 @@ A^T \col{y} &= A^T A \col{\hat{x}} \\
 (A^T A)^{-1} A^T \col{y} &= \col{\hat{x}} 
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
@@ -795,12 +804,10 @@ Il est à noter que la matrice $A$ doit avoir des rangés indépendantes pour qu
 
 
 
-\newpage
-\subsection{Exemple d'utilisation d'un matrice pseudo-inverse}
-
+\begin{example}[Utilisation d'un matrice pseudo-inverse]
 Pour cet exemple, un robot doit produire un force de 14 N sur un mur. Pour y parvenir le courant électrique dans les trois moteurs doit être ajusté. La relation entre la force et le courant dans les moteurs est linéaire et illustrée ci-dessous. On cherche ici une solution qui minimise les pertes joules $ri^2$ dans les moteurs. Comme il y a plusieurs solutions possible pour atteindre le niveau de force désiré, et que la fonction coût à minimiser est quadratique, une matrice pseudo-inverse droite peut être utilisée pour calculer la solution optimale directement, voir Figure \ref{fig:pseudo-inverse-ex1}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[htbp]
+\begin{figure}[H]
 	\centering
 		\includegraphics[width=0.7\textwidth]{pseudo-inverse-ex1.png}
 		\includegraphics[width=0.5\textwidth]{pseudo-inverse-ex2.png}
@@ -808,7 +815,7 @@ Pour cet exemple, un robot doit produire un force de 14 N sur un mur. Pour y par
 	\label{fig:pseudo-inverse-ex1}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\end{example}
 
 
 
@@ -851,7 +858,7 @@ A \col{x} = \lambda  \col{x}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Une matrice $n \times n$ va avoir $n$ paires de vecteur et valeurs propres (qui peuvent être répété et aussi des nombres complexes). Si une ou plusieurs valeurs propres de la matrice est égale à zéro alors la matrice est singulière et les vecteurs propres associés forme une base du nullspace de la matrice. 
+Une matrice $n \times n$ va avoir $n$ paires de vecteur et valeurs propres (qui peuvent être répété et aussi des nombres complexes). Si une ou plusieurs valeurs propres de la matrice est égale à zéro alors la matrice est singulière et les vecteurs propres associés forme une base de l'espace nul de la matrice. 
 
 La trace d'un matrice est égale à la somme des valeurs propres et le déterminant d'une matrice est égale à la multiplication de toutes les valeurs propres:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -874,10 +881,10 @@ La matrice $(A - \lambda I)$ doit être singulière pour qu'il existe des soluti
 det(A - \lambda I) = 0
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-Pour chaque solution, i.e pour chaque valeur propre $\lambda_i$, il est possible de déterminer le vecteur propre associé $\col{v}_i$ en déterminant le nullspace de $(A - \lambda I)$:
+Pour chaque solution, i.e pour chaque valeur propre $\lambda_i$, il est possible de déterminer le vecteur propre associé $\col{v}_i$ en déterminant l'espace nul de $(A - \lambda I)$:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-\col{v}_i \in nullspace(A - \lambda I)
+\col{v}_i \in nul(A - \lambda I)
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 Il est à noté que pour chaque valeur propre, le vecteur propre n'est pas unique, seule la direction l'est. Si $\col{v}_i$ est un vecteur propre alors tout multiple de lui même est aussi un vecteur propre. Donc autrement dit pour chaque valeur propre $\lambda_i$, on cherche en fait une base pour l'espace 1D associé aux vecteurs propres de cette valeur.
@@ -928,7 +935,7 @@ La diagonalisation d'une matrice peut être interprété comme un changement de 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Preuve}
+\begin{proof}
 \label{sec:preuvediag}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -949,15 +956,14 @@ A \left[   \begin{array}{c}  \\ \underline{v}_1 \\ \\ \end{array} \right] &  \ld
 \label{eq:diagproof}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 Ensuite, si la matrice $V$ est inversible (ce qui explique la condition d'indépendance des vecteurs propres pour que la matrice soit diagonalisable), il suffit de multiplier l'équation \eqref{eq:diagmatrix} par $V^{-1}$ par la droite pour obtenir l'équation \eqref{eq:diagmatrix}. 
-
+\end{proof}
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Exemple de diagonalisation pour une dillatation en 2D}
+\begin{example}[Exemple de diagonalisation pour une dillatation en 2D]
 \label{sec:ExempleDeDiagonalisationPourUneDillatationEn2D}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
@@ -997,7 +1003,7 @@ c\theta &   s\theta \\
 }_{V^{-1}}
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\end{example}
 
 
 
@@ -1038,9 +1044,8 @@ A^p = A \; A \; \hdots \; A = V \Lambda V^{-1} \; V \Lambda V^{-1} \;  \hdots \;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Exemple de calcul de l'évolution d'un système discret}
+\begin{example}[Exemple de calcul de l'évolution d'un système discret]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 La suite de Fibonacci est définie par une séquence de chiffre pour lequel le prochain est la somme des deux précédents:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
@@ -1201,6 +1206,7 @@ Il est donc possible de calculer directement la valeur dans la suite pour une po
 f_p = \frac{\lambda_1^{p+1}}{\lambda_1 - \lambda_2} = \frac{1.618^{(p+1)}}{\sqrt{5}}
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{example}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Exponentiel de matrice}
@@ -1227,28 +1233,3 @@ e^{\lambda_1 t} &  0          & 0 & 0 \\
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
-\section{Exercices}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\subsection{Moindres carrés pour estimer un ratio de transmission}
-
-La figure \ref{fig:exer_ls_gearbox} illustre un boiter de transmission et cinq paires de mesures angulaires à l'entrée et à la sortie. 
-%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
-	\centering
-		\includegraphics[width=0.50\textwidth]{exer_ls_gearbox.png}
-	\caption{Moindres carrés pour estimer un ratio de transmission}
-	\label{fig:exer_ls_gearbox}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%
-
-\paragraph{A)}
-Construisez le un système d'équation linéaire qui relie ces mesures expérimentales.
-
-\paragraph{B)}
-Écrivez l'équation matricielle à résoudre pour estimer le ratio de transmission.
-
-\paragraph{C)}
-Effectuer le calcul numérique pour estimer le ratio de transmission.

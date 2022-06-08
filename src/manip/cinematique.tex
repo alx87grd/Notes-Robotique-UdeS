@@ -2840,6 +2840,15 @@ Donc lorsque la convention est utilisée, la matrice de transformation entre deu
 
 \video{Exemple d'utilisation des paramètres DH}{https://youtu.be/cA0jxfkOgaI}
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsubsection{Exemple pour un robot anthropomorphique avec les paramètres \textit{DH}}
+\begin{example}[Cinématique d'un robot anthropomorphique avec les paramètres \textit{DH}]
+\label{sec:dhex}
+
+La Figure \ref{fig:dh3} illustre l'utilisation de la convention \textit{DH} pour déterminer la matrice de transformation qui représente la pose de l'effecteur. 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
@@ -2849,13 +2858,6 @@ Donc lorsque la convention est utilisée, la matrice de transformation entre deu
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\subsubsection{Exemple pour un robot anthropomorphique avec les paramètres \textit{DH}}
-\begin{example}[Cinématique d'un robot anthropomorphique avec les paramètres \textit{DH}]
-\label{sec:dhex}
-
-La Figure \ref{fig:dh3} illustre l'utilisation de la convention \textit{DH} pour déterminer la matrice de transformation qui représente la pose de l'effecteur. 
-%
 \textbf{Joint 1} Premièrement l'axe de rotation du 1er joint doit être repéré, et le repère fixe $A$ doit être placé de sorte à aligner sont vecteur unitaire $\hat{a}_3$ avec cet axe. Les autres variables sont arbitraires, ici on a choisi de position l'origine au sol et l'aligner le vecteur unitaire $\hat{a}_1$ avec les autres liens du robot pour la configuration nominale. Ensuite l'axe de rotation du 2e joint doit être repéré et le repère $B$ doit être fixé de sorte à aligner sont vecteur $\hat{b}_3$. L'orientation de $\hat{b}_1$ doit être alignée avec la normale commune entre $\hat{a}_3$ et $\hat{b}_3$, ici comme les axes se croisent la normale est réduite à un seul point et donc l'orientation de $\hat{b}_1$ est arbitraire, il a donc été choisi de l'aligner avec les liens rigides en position neutre. Avec les repères $A$ et $B$ positionnés selon la convention, il est maintenant possible de déterminer les quatre paramètres de la première matrice de transformation. La distance entre l'origine $A_o$ et la normale commune (réduite au point $B_o$) est ici la longueur du premier lien $d= l_1$ et la longueur de la normale commune est nulle $r = 0$. L'angle $\theta$ entre les vecteurs unitaires $\hat{a}_1$ et $\hat{b}_1$ est nul pour la position neutre, mais lorsque le joint 1 va tourner l'angle correspond en fait à la position active $\theta_1$. Finalement l'angle entre $\hat{a}_3$ et $\hat{b}_3$ autour de l'axe $\hat{b}_1$ est égale à $\pi/2$ radians. 
 %
 \textbf{Joint 2 } Pour la prochaine transformation qui caractérise le joint 2, il faut d'abord positionner le repère $C$ selon la convention. Le vecteur unitaire $\hat{c}_3$ est aligné avec l'axe de rotation du 2e joint, et le vecteur unitaire $\hat{c}_1$ est aligné avec la normale commune qui est directement alignée avec $\hat{b}_1$. Donc ici l'orientation de la base $c$ est complètement fixée par la convention. Toutefois comme les axes de rotation du joint 2 et 3 sont parallèle, c'est l'origine $C_o$ qui pourrait être placée n'importe ou sur l'axe de rotation du joint 3 (il y a une infinité de normales communes entre deux axes parallèles). Par simplicité ici on fixe arbitrairement l'origine $C_o$ directement dans l'axe formé par $\hat{b}_1$. Avec le repère $C$ positionné selon la convention il est maintenant possible de déterminer les quatre paramètres \textit{DH}. Le paramètre $d$ est ici nul car le point $B_o$ est coïncident avec la normale commune choisie et le paramètre $r=l_2$ car la normale commune coïncide directement avec le 2e lien rigide. Ensuite, l'angle $\theta$ entre les vecteurs unitaires $\hat{b}_1$ et $\hat{c}_1$ est nul pour la position neutre, mais lorsque le joint 1 va tourner l'angle correspond en fait à la position active du 2e joint $\theta_2$. Finalement l'angle entre $\hat{b}_3$ et $\hat{c}_3$ est nul donc $\alpha=0$. 

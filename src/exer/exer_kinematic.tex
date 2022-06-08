@@ -1,28 +1,6 @@
 \chapter{Chapitre \ref{sec:cine1} exercices}
 \label{sec:exer_kinematic}
 
-%\subsection{Système de coordonnées}
-%
-%\subsubsection{Détermination de systèmes de coordonnées pour des systèmes robotiques}
-%
-%Pour les systèmes robotiques suivants, a) déterminez les coordonnées qui représentes l'espace des joints et ensuite b) déterminez un système de coordonnées qui serait adapté pour décrire la tâche.
-%
-%\paragraph{A)} 
-%
-%TODO
-%
-%
-%\paragraph{B)} 
-%
-%TODO
-%
-%
-%\paragraph{C)} 
-%
-%TODO
-
-
-%\subsection{Vecteurs positions}
 
 \section{Traduire des énoncés en équations vectorielles}
 \label{sec:exerposmaison}
@@ -272,3 +250,97 @@ Trouver le vecteur position du point $B$ par rapport à l'origine $A_o$, exprim�
 	\label{fig:exer_exer_robot2D}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Approximation}
+
+\subsection{Moindres carrés pour estimer un ratio de transmission}
+
+La figure \ref{fig:exer_ls_gearbox} illustre un boiter de transmission et cinq paires de mesures angulaires à l'entrée et à la sortie. 
+%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.50\textwidth]{exer_ls_gearbox.png}
+	\caption{Moindres carrés pour estimer un ratio de transmission}
+	\label{fig:exer_ls_gearbox}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%
+
+\paragraph{A)}
+Construisez le un système d'équation linéaire qui relie ces mesures expérimentales.
+
+\paragraph{B)}
+Écrivez l'équation matricielle à résoudre pour estimer le ratio de transmission.
+
+\paragraph{C)}
+Effectuer le calcul numérique pour estimer le ratio de transmission.
+
+
+\subsubsection{Paramètres DH}
+
+\textbf{a)} Identifier les paramètres DH pour le lève charge illustré à la Figure \ref{fig:lift} et sa matrice de transformation reliant le repère B au repère C ci-dessous. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.70\textwidth]{fig/LiftDim.PNG}
+	\caption{Lève-charge}
+	\label{fig:lift}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%TODO Donner toutes les dimentions???
+
+\textbf{b)} Identifier les paramètres DH et la matrice associée reliant le repère H au repère P d’une patte du MiniDog V2 de James Bruton, voir Figure \ref{fig:OpenDog}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.70\textwidth]{fig/OpenDogDim.PNG}
+	\caption{MiniDog V2 de James Bruton}
+	\label{fig:OpenDog}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\textbf{c)} Identifier les paramètres DH du robot Fanuc décrit par le CAD suivant:  
+\url{https://cad.onshape.com/documents/12ec30dccc54eeca2294d694/w/61a90dbb68f97f2771010491/e/fe7737920bee5cf7c4202b51})
+
+
+
+\textbf{d)} Déterminer s'il est possible d'utiliser les paramètres DH pour le robot dércit par le CAD au lien suivant:
+\url{https://cad.onshape.com/documents/7dd54d71984b662e6cbc588e/w/2d33a12386161e8798cac451/e/5212be203761fdcc2b8ddee2}. Déterminer une méthode possible pour utiliser les praramètres DH avec ce type de robot (à haut niveau sans aller dans le détail).
+
+Plus d’information sur l’OpenDog, dont le CAD, se retrouve ici : \url{https://cad.onshape.com/documents/12ec30dccc54eeca2294d694/w/61a90dbb68f97f2771010491/e/fe7737920bee5cf7c4202b51}
+
+Déterminer les paramètres DH pour le robot Fanuc à la Figure \ref{fig:robotfanuc}. Calculer la matrice de transformation de l'effecteur en utilisant les longueurs indiqué par la Figure \ref{fig:robotfanuclongueur} et le tableau \ref{tab:fanucdimension}. 
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.80\textwidth]{fig/robot-fanuc_axes.png}
+	\caption{Robot Fanuc 6 DDLs et ses axes de rotations associés}
+	\label{fig:robotfanuc}
+\end{figure}
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.80\textwidth]{fig/robot-fanuc-longueur.png}
+	\caption{Dimensions du Robot Fanuc 6 DDLs}
+	\label{fig:robotfanuclongueur}
+\end{figure}
+
+\begin{table}[htbp]
+\scriptsize
+\centering
+\begin{tabular}{ |p{0.2\textwidth}|p{0.2\textwidth}| }
+\hline  
+Longueur                & Valeur     \\ \hline
+\textit{l}_\textit{1}               & 0.15 \textit{m}    \\ \hline
+\textit{l}_\textit{2x}              & 0.05 \textit{m}    \\ \hline
+\textit{l}_\textit{2y}              & 0.1 \textit{m}    \\ \hline
+\textit{l}_\textit{3}               & 0.5 \textit{m}    \\ \hline
+\textit{l}_\textit{4x}              & 0.1 \textit{m}    \\ \hline
+\textit{l}_\textit{4y}              & 0.02 \textit{m}    \\ \hline
+\textit{l}_\textit{5}               & 0.3 \textit{m}    \\ \hline
+\textit{l}_\textit{6}               & 0.02 \textit{m}    \\ \hline
+
+\end{tabular}
+\caption{Dimensions du Robot Fanuc 6 DDLs}
+\label{tab:fanucdimension}
+\end{table}

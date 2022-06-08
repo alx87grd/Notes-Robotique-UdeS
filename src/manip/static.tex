@@ -86,14 +86,14 @@ la deuxième transformation est caractérisée par les ratios de réductions des
 %%%%%%%%%%%%%%%%
 \begin{align}
 \tau = R \tau_m \\%\quad \quad  \col{\tau} &= R \col{\tau_m } \\
-w = R q %\quad \quad  \col{w} &= R \col{q}
+w = R \dot{q} %\quad \quad  \col{w} &= R \col{q}
 \end{align}
 %%%%%%%%%%%%%%%
 et la dernière transformation est caractérisée par la matrice Jacobienne du robot $J$:
 %%%%%%%%%%%%%%%%
 \begin{align}
 \col{\tau} &= J^T \col{f}_e \\
-\col{\dot{r}} &= J \col{q}
+\col{\dot{r}} &= J \col{\dot{q}}
 \end{align}
 %%%%%%%%%%%%%%%
 
@@ -153,9 +153,9 @@ Si la bilan d'énergie effectué à la section \ref{sec:manipstatic} est fait en
 \end{align}
 %%%%%%%%%%%%%%%
 
-\note{Note:}{
-Note: Le vecteur colonne par lequel on prend les dérivés partielles de $V$ est ici noté avec une transposition pour respecter la convention (voir section \ref{sec:vectoropindex}) pour obtenir pour $\col{g}$ un vecteur-colonne $n \times 1$ plutôt que un vecteur-rangé $1 \times n$. }
+\note{Note:}{Le vecteur colonne par lequel on prend les dérivés partielles de $V$ est ici noté avec une transposition pour respecter la convention (voir section \ref{sec:vectoropindex}) pour obtenir pour $\col{g}$ un vecteur-colonne $n \times 1$ plutôt que un vecteur-rangé $1 \times n$. }
 
+\begin{proof}
 Le nouveau terme provient du fait que la variation de l'énergie interne du système n'est pas nulle, car l'énergie potentielle du système varie selon le travail effectué par les forces conservatrices:
 %%%%%%%%%%%%%%%%
 \begin{align}
@@ -171,6 +171,8 @@ On obient alors:
 \end{align}
 %%%%%%%%%%%%%%%
 Donc pour que la relation de puissance soit respecté, les termes qui multiplie le vecteur-colonne de vitesses doivent être égaux, ce qui donne la relation entre les forces de l'équation \eqref{eq:staticgravity}.
+\end{proof}
+
 
 \video{Relation statique d'un robot manipulateur incluant la gravité}{https://youtu.be/RcARRDVzrm8}
 

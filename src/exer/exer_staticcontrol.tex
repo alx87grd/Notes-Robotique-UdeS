@@ -1,0 +1,47 @@
+\chapter{Chapitre \ref{sec:staticcontrol} exercices}
+\label{sec:exer_staticcontrol}
+
+
+\subsubsection{Suivi de trajectoires déterminées à l'effecteur}
+
+\note{COLAB}{Utilisez le fichier amorce suivant sur colab \url{https://colab.research.google.com/drive/1M3O_nD8iLbRSvZzyUpBn0Mo8KUclrG26?usp=sharing} pour faire les deux prochains exercices. Le fichier colab fournit un environnement pour rapidement tester des lois de commande cinématiques et visualiser les résultats.}
+
+\textbf{a)} Pour le robot illustré à la Figure \ref{fig:2dofarm} avec comme paramètres $l_1=4$ et $l_2=3$, trouvez des trajectoires temporelles $\theta_1(t)$ et $\theta_2(t)$ pour suivre avec l'effecteur le trajet décris à la Figure \ref{fig:traj}. Le profil temporel de la trajectoire de l'effecteur n'est pas imposé, seulement le chemin. 
+%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.55\textwidth]{fig/2dofarm.png}
+	\vspace{-5pt}
+	\caption{Robot à 2 joint rotatifs}
+	\label{fig:2dofarm}
+	\vspace{-5pt}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.5\textwidth]{fig/traj.jpg}
+	\caption{Trajet cible pour l'effecteur}
+	\label{fig:traj}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%
+
+
+\textbf{b)} Pour le même robot illustré à la Figure \ref{fig:2dofarm}, mais ici avec comme paramètres $l_1=l_2=3$, programmez et implémentez le contrôleur suivant (Fig. \ref{fig:controller}) dans une simulation cinématique du robot (on suppose un contrôle parfait de la vitesse des joints)
+%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.99\textwidth]{fig/controller.jpg}
+	\caption{Algorithme de suivi de trajectoire cinématique}
+	\label{fig:controller}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%
+avec comme objectif de suivre la trajectoire désirée suivante:
+%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.7\textwidth]{fig/traj2.jpg}
+	\caption{Trajectoire désirée}
+	\label{fig:traj2}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%
