@@ -73,7 +73,12 @@ Une profil de type trapézoïdal, voir Figure \ref{fig:trap_profile_speed}, est 
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Si on utilise le concept de la variable $s$ qui représente la fraction du chemin à parcourir (voir section \ref{sec:chemin}), l'intégrale du profile de vitesse $\dot{s}(t)$ doit être égal à 1 (100\% du chemin parcouru). Il reste donc seulement trois variable, donc seulement deux sont indépendantes, pour définir complètement le profile temporel de $s(t)$: la vitesse maximale $v_{max}$, l'accélération maximale $a_{max}$ et la durée totale $t_f$ du trajet. Il peut être intéressant de déterminer les contraintes $v_{max}$ et $a_{max}$ du profile basé sur les limites physiques d'un système et ainsi obtenir la trajectoire qui minimise $t_f$. 
+Si on utilise le concept de la variable $s$ qui représente la fraction du chemin à parcourir (voir section \ref{sec:chemin}), l'intégrale du profile de vitesse $\dot{s}(t)$ doit être égal à 1 (100\% du chemin parcouru). Il reste donc seulement trois variable, donc seulement deux sont indépendantes, pour définir complètement le profile temporel de $s(t)$: la vitesse maximale $v_{max}$, l'accélération maximale $a_{max}$ et la durée totale $t_f$ du trajet. Il peut être intéressant de déterminer les contraintes $v_{max}$ et $a_{max}$ du profile basé sur les limites physiques d'un système et ainsi obtenir la trajectoire qui minimise $t_f$:
+%%%%%%%%%%%%%%%%%%
+\begin{align}
+t_f = \frac{a_{max}+v_{max}^2}{a_{max} v_{max}} 
+\end{align}
+%%%%%%%%%%%%%%%%%
 
 Il est à noter que si $v_{max}^2/a_{max} > 1$ le système n'a pas le temps d'atteindre sa vitesse maximale de croisière et le profil est réduit à deux phases: accélération et décélération, voir Figure \ref{fig:trap_profile_triangle}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -123,6 +128,10 @@ s(t) = \frac{2 a_{max} v_{max} T - 2 v_{max}^2 - a_{max}^2(t-T)^2}{2 a_{max}}
 	\label{fig:trap_profile_triangle}
 \end{figure}
 %%%%%%%%%%%%%%%%%
+
+
+
+
 
 \subsubsection{Profil temporel polynomial d'ordre 3}
 
