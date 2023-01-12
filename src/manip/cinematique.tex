@@ -360,6 +360,31 @@ Il est donc possible d'utiliser le produit scalaire pour mesurer un angle entre 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %TODO ajouter figure pour la norme
 
+\subsection{Procédure d'utilisation pour le calcul de distances}
+La démarche utilisée pour calculer des positions avec les vecteurs géométriques se résume par les trois étapes suivantes:
+\begin{enumerate}
+	\item Par inspection, construire le vecteur position $\vec{r}$ d’intérêt comme une addition/soustraction de plusieurs vecteurs positions $\vec{r}_i$ avec des longueurs et orientations connues:
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\begin{equation}
+	\vec{r} = \sum_i \vec{r}_i
+	\end{equation} 
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\item Substituer les vecteurs positions symboliques $\vec{r}_i$ par des variables de distance $l_i$ et des vecteurs unitaires $\hat{n}_i$ représentant des directions qui peuvent être mesurées:
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\begin{equation}
+	\vec{r} = \sum_i l_i \hat{n}_i
+	\end{equation} 
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\item Calculer les distances désirées $d$ en effectuant un produit scalaire avec les vecteurs unitaires selon les axes désirés:
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\begin{align}
+	d_x = \vec{r} \bullet \hat{x} = \sum_i l_i ( \hat{n}_i \bullet \hat{x} ) =  \sum_i l_i \cos \angle (\hat{n}_{i},\hat{x}) \\ 
+	d_y = \vec{r} \bullet \hat{y} = \sum_i l_i ( \hat{n}_i \bullet \hat{y} ) =  \sum_i l_i \cos \angle (\hat{n}_{i},\hat{y}) \\ 
+	d_z = \vec{r} \bullet \hat{z} = \sum_i l_i ( \hat{n}_i \bullet \hat{z} ) =  \sum_i l_i \cos \angle (\hat{n}_{i},\hat{z}) 
+	\end{align} 
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{enumerate}
+
 \video{Exemple de calcul avec les vecteurs géométrique de position}{https://youtu.be/YqmyBJPJmP0}
 
 
@@ -434,30 +459,7 @@ Dans un cas simple planaire comme celui-ci il aurait été assez simple de calcu
 %TODO, faire exemple 3D vectoriel ici
 
 
-\subsection{Procédure d'utilisation pour le calcul de distances}
-La démarche utilisée pour calculer des positions avec les vecteurs géométriques se résume par les trois étapes suivantes:
-\begin{enumerate}
-	\item Par inspection, construire le vecteur position $\vec{r}$ d’intérêt comme une addition/soustraction de plusieurs vecteurs positions $\vec{r}_i$ avec des longueurs et orientations connues:
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\begin{equation}
-	\vec{r} = \sum_i \vec{r}_i
-	\end{equation} 
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\item Substituer les vecteurs positions symboliques $\vec{r}_i$ par des variables de distance $l_i$ et des vecteurs unitaires $\hat{n}_i$ représentant des directions qui peuvent être mesurées:
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\begin{equation}
-	\vec{r} = \sum_i l_i \hat{n}_i
-	\end{equation} 
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\item Calculer les distances désirées $d$ en effectuant un produit scalaire avec les vecteurs unitaires selon les axes désirés:
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\begin{align}
-	d_x = \vec{r} \bullet \hat{x} = \sum_i l_i ( \hat{n}_i \bullet \hat{x} ) =  \sum_i l_i \cos \angle (\hat{n}_{i},\hat{x}) \\ 
-	d_y = \vec{r} \bullet \hat{y} = \sum_i l_i ( \hat{n}_i \bullet \hat{y} ) =  \sum_i l_i \cos \angle (\hat{n}_{i},\hat{y}) \\ 
-	d_z = \vec{r} \bullet \hat{z} = \sum_i l_i ( \hat{n}_i \bullet \hat{z} ) =  \sum_i l_i \cos \angle (\hat{n}_{i},\hat{z}) 
-	\end{align} 
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\end{enumerate}
+
 
 
 
@@ -1072,6 +1074,7 @@ c_i &= \cos(\theta_i) \\
 s_{ijk} &=  \sin( \theta_i + \theta_j + \theta_k)
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%
+\vspace{-15pt}
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2998,6 +3001,8 @@ Si la position désirée ($x$,$y$) est sur la limite de l'espace de travail, il 
 \frac{ (x^2 + y^2) - (l_2^2 + l_3^2) }{2 l_2 l_3} \; = 1 \quad\Rightarrow\quad \text{Une solution:} \quad  \theta_2 = 0
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%
+En fait, techniquement il faudrait plutôt dire qu'il y a une infinité de solution périodique pour tout les facteurs entiers multiplicateurs de $2\pi$ , i.e. $\theta_2 = 2i \, \pi$ avec $i=0,1,-1,2,-2,...$, si on considère que le 2e joint du robot peut illimité pour sa plage  angulaires. 
+
 Si la position désirée ($x$, $y$) est dans l'espace de travail, il y a deux solutions comme illustré à la figure \ref{fig:invkin2}:
 %%%%%%%%%%%%%%%%%%%
 \begin{align}

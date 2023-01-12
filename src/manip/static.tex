@@ -3,6 +3,39 @@
 
 %Chapitre en construction!
 
+
+\section{Force}
+\label{sec:force}
+
+Une force est une quantité vectorielle avec une amplitude et une direction, comme pour les notions de cinématique, nous utiliserons une notion qui distingue le vecteur-géométrique $\Vec{f}$ et le vecteur-colonne de composantes $\col{f}^a$ dans une base $a$. Une force appliquée sur un corps $C1$ à un point $A$ sera notée: 
+%%%%%%%%%%%%%%%%
+\begin{align}
+\vec{f}_{C1_A}
+\end{align}
+%%%%%%%%%%%%%%%
+Le principe d'action/réaction indique que si une force est appliquée sur un corps $C1$ il y a nécessairement une réaction égale et opposée sur un corps $C2$. Ici une force agissant sur un corps $C1$ par un corps $C2$ ainsi
+%%%%%%%%%%%%%%%%
+\begin{align}
+\vec{f}_{C1_A/C2_B}
+\end{align}
+%%%%%%%%%%%%%%%
+et le principe d'action/réaction nous donne donc la propriété suivante:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\vec{f}_{C1_A/C2_B} = - \vec{f}_{C2_B/C1_A}
+\end{align}
+%%%%%%%%%%%%%%%
+Pour une force de contact le point est le même, mais certaine forces sont appliquée à distance comme la gravité. Cette notation sera utilisée lorsqu'il est question de forces d'interactions entre deux corps car le signe source de confusion lorsqu'on ne distingue pas la force appliquée \textit{sur} à la force appliqué \textit{par} un objet.
+
+Dans ce chapitre, nous définirons un vecteur $\vec{f}_{E}$ comme un force appliquée sur le robot à un point $E$ par l'environnement, lorsque le reste n'est pas précisé:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\vec{f}_{E} =\vec{f}_{robot_{Effecteur}/environment}
+\label{eq:staticmanipulator}
+\end{align}
+%%%%%%%%%%%%%%%
+
+
 \section{Relation entre les forces aux joints et les forces à l'effecteur pour un robot manipulateur}
 \label{sec:manipstatic}
 

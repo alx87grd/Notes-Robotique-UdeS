@@ -3,9 +3,15 @@
 
 Chapitre en construction!
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \video{Dynamique des robots manipulateurs}{https://youtu.be/6z3grrVNBj4}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Structure des équations des modèles dynamiques}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 La forme la plus générique (pour un système continu) des équations différentielles représentant l'évolution d'un système dynamique dans le temps est les équations d'états:
 %
 \begin{align}
@@ -45,7 +51,7 @@ d(\col{\dot{q}},\col{q})
 }_{\text{forces conservatrices}}
 = 
 \underbrace{
-B(\col{q}) \col{\tau} 
+B(\col{q}) \col{u} 
 }_{\text{effet des actionneurs}}
 +
 \underbrace{
@@ -58,15 +64,15 @@ Cette équation est parfois appelé l'équation des manipulateurs et cette repr�
 
 
 
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Équation des manipulateurs}
 \label{sec:manipeq}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 L'équation des manipulateur caractérise la dynamique d'un système robotique décrite dans l'espace des coordonnées des joints:
 %
 \begin{align}
-H(\col{q}) \col{\ddot{q}} + C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q}) = B(\col{q}) \col{\tau}  + J^T(\col{q}) \col{f}_e
+H(\col{q}) \col{\ddot{q}} + C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q}) = B(\col{q}) \col{u}  + J^T(\col{q}) \col{f}_e
 \label{eq:manipulator}
 \end{align}
 %
@@ -77,23 +83,24 @@ où $\col{q}$ est le vecteur des forces généralisée, $H$ est la matrice d'ine
 	\caption{Nomenclature pour la dynamique dans l'espace des joints}	% Table caption must be placed on top of the table %
 		\begin{tabular}{ c c l r }
         \hline \hline
-				\multicolumn{4}{c}{Scalaires} \\
+				\multicolumn{4}{c}{Entiers} \\
 				\hline \hline
-			$n$             &  :  & nombre de DDL                                          & \\
+			$n$             &  :  & nombre de DDL et de coordonnées généralisées                                         & \\
 			$m$             &  :  & nombre d'actionneur                                       & \\
 			$c$             &  :  & nombre de contraintes de contact                             & \\
 			$o$             &  :  & nombre de coordonnée de l'espace de la tâche                        & \\ 
 			\hline \hline
 			\multicolumn{4}{c}{Vecteurs} \\
 			\hline \hline
-			$\col{\tau}$    &  :  & Forces/couples des actionneurs                                   & $m$  \\
+			$\col{u}$    &  :  & Forces/couples des actionneurs                                   & $m$  \\
+            $\col{\tau}$    &  :  & Forces des actionneurs transformées en coordonnées généralisées                              & $n$  \\
 			$\col{q}$       &  :  & Coordonnées généralisée / espace des joints    & $n$  \\
 			$\col{c}$       &  :  & Force dissipatrices                             & $n$  \\
 			$\col{g}$       &  :  & Force conservatrices                              & $n$  \\
 			$\col{c}$       &  :  & Sommes des forces internes                 & $n$  \\
 			$\col{\phi}$    &  :  & Contraintes                                          & $c$  \\
 			$\col{f}_c$     &  :  & Forces de contact                                     & $c$  \\
-			$\col{f}_e$     &  :  & Forces à l'effecteur                       & $o$  \\
+			$\col{f}_{E_robot/env}$     &  :  & Forces cartésienne externe appliquée sur l'effecteur du robot                  & $o$  \\
 			$\col{r}$       &  :  & Position de l'effecteur / coordonnées de l'espace de la tâche                             & $o$  \\
 			\hline \hline
 			\multicolumn{4}{c}{Matrices} \\
@@ -109,16 +116,18 @@ où $\col{q}$ est le vecteur des forces généralisée, $H$ est la matrice d'ine
 \end{table}
 
 Parfois pour allégé la manipulation des équations, une version abrégée où $\col{c}$ est parfois utilisé pour regrouper toute les forces internes (qui sont des fonctions des états du systèmes):
+%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-c = C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q})
+\col{c} = C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q})
 \end{align}
-%
+%%%%%%%%%%%%%%%%%%%%%%%
 ce qui simplifie, pour un cas sans forces externes, l'équation des manipulateurs à:
-%
+%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-H \col{\ddot{q}} + \col{c} = B \col{\tau} 
+H \col{\ddot{q}} + \col{c} = \col{\tau} 
 \label{eq:manipulator_short}
 \end{align}
+%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
@@ -149,20 +158,30 @@ Si les relations cinématiques entre les coordonnées de ces espaces sont donné
 On pourrait utiliser ces relations pour inclure directement des forces dans l'espace des actionneurs $\col{f}_a$, et définir $\col{\tau}$ comme les couples moteurs plutôt celui rapporté au joint ainsi:
 %
 \begin{align}
-H \col{\ddot{q}} + C \col{\dot{q}} + D \col{\dot{q}} + \col{g} =  \underbrace{ J_a^T(\col{q}) R^T }_{B(\col{q})}  \col{\tau} + J_e^T(\col{q}) \col{f}_e + J_a^T(\col{q}) \col{f}_a
+H \col{\ddot{q}} + C \col{\dot{q}} + \col{d} + \col{g} =  \underbrace{ J_a^T(\col{q}) R^T }_{B(\col{q})}  \col{\tau} + J_e^T(\col{q}) \col{f}_e + J_a^T(\col{q}) \col{f}_a
 \label{eq:manipulator_gen}
 \end{align}
 
 \subsection{Matrice des actionneurs}
 
-%
+La matrice $B(q)$ est une matrice de transformation qui relie le vecteur $\tau$,  représentants les entrées de notre système, et les forces généralisées associées dans le systèmes de coordonnées $\col{q}$ utilisé pour décrire les équations. La Figure \ref{fig:actuatormatrix} illustre qualitativement divers architecture d'actionneurs qui mène à différentes structures pour $B$:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.90\textwidth]{fig/actuatormatrix.png}
+		\includegraphics[width=0.70\textwidth]{fig/actuatormatrix.png}
 	\caption{Matrice $B$ des actionneurs}%
 	\label{fig:actuatormatrix}
 \end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Le cas le plus simple est lorsque les entrées $\tau$ sont des forces colocalisées avec les coordonnées généralisées $\col{q}$, par exemple si $\tau$ représente des couples net aux joint d'un système alors la matrice $B$ est la matrice identité.
+
+La notion de puissance est utile pour définir cette matrice: le produit scalaire entre le vecteur vitesse des coordonnées généralisée $\col{\dot{q}}$ et les forces généralisées associées aux actionneurs $B\col{\tau}$ correspond à la puissance entrante fournit par les actionneurs:
 %
+\begin{align}
+P_{actionneur} = \col{\dot{q}}^T B\col{\tau}
+\end{align}
+
 
 \subsection{Forces externes}
 
@@ -183,7 +202,7 @@ Voir section \ref{sec:manipstaticconservative}.
 
 \subsection{Effets inertiels}
 %
-L'énergie cinématique du système est directement reliée à la matrice d'inertie $H$ et la vitesse des joints $\dot{\col{q}}$:
+L'énergie cinétique du système est directement reliée à la matrice d'inertie $H$ et la vitesse des joints $\dot{\col{q}}$:
 %
 \begin{align}
 \frac{1}{2} \col{\dot{q}}^T H(\col{q}) \col{\dot{q}} 
@@ -217,12 +236,41 @@ La matrice $C$ n'est pas une propriété indépendante du système, elle est en 
 
 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Équations avec la méthode de Lagrange}
+\label{sec:lagrange}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\video{Méthode de Lagrange pour déterminer les équations dynamiques}{https://youtu.be/AUcs0L85liM}
 
 
 
 \newpage
-\section{Contact}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Équations dans l'espace de la tâche}
+\label{sec:taskdynamics}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{align}
+H \col{\ddot{q}} + \col{c} = \col{\tau} 
+\label{eq:manipulator_short2}
+\end{align}
+
+%%%%%%%%%%%%%%%%
+\begin{align}
+\col{r} &= f\left( \, \col{q} \, \right) \\
+\col{\dot{r}} &= J\left( \, \col{q} \, \right) \, \col{\dot{q}} \\
+\col{\ddot{r}} &= J\left( \, \col{q} \, \right) \, \col{\ddot{q}}  + \dot{J} \left( \, \col{q}  , \col{\dot{q}} \, \right) \, \col{\dot{q}} 
+\end{align}
+%%%%%%%%%%%%%%%
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Manipulateur en contact avec l'environnement}
 \label{sec:contact}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Cette section présente les outils pour obtenir les équations du mouvement lorsqu'un système robotique est en contact avec l'environnement, ce qui contraint sont mouvement. 
 
@@ -359,12 +407,6 @@ A robot with a continuous dynamics but with a control law using discrete modes o
 
 
 
-
-
-\newpage
-\section{Méthode de Lagrange}
-
-\video{Méthode de Lagrange pour déterminer les équations dynamiques}{https://youtu.be/AUcs0L85liM}
 
 
 
