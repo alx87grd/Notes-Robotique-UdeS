@@ -824,6 +824,15 @@ Donc les singularités sont les configurations avec un angle $q_2$ égale à 0 o
 
 \end{example}
 
+\subsubsection{Limites de l'espace de travail}
+
+Un robot va nécessairement être sur une singularité aux limites de sont espace de travail, car par définition le robot est incapable de bouger son effecteur dans la direction normale à la surface qui définie la limite de l'espace de travail (sinon le robot pourrait sortir de l'espace de travail ce qui est une contradiction). Par exemple, les deux singularité du robot 2DDL de l'exemple précédant correspondent à des configurations où l'effecteur est à la limite intérieur de l'espace de travail ou à la limite extérieur de l'espace de travail. 
+
+
+\subsubsection{Types de singularités}
+
+Détails à venir!
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Cinématique différentielle inverse d'un robot redondant (situations sous-contraintes)}
@@ -997,11 +1006,75 @@ Un méthode pratique pour la cinématique inverse dans ce contexte est la métho
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Indice de manipulabilité d'un robot manipulateur}
+\subsection{Manipulabilité d'un robot manipulateur}
 
-Les indices de manipulabilité sont des fonctions scalaires qui ont comme objectif de caractériser si un robot dans une certaine configuration est proche d'une singularité. Même si un robot n'est pas parfaitement sur une singularité, certaines configurations peuvent nécessiter de très grandes vitesses aux joints pour satisfaire des vitesses cartésiennes de l'effecteur. Des indicateurs ont été développés pour analyser ces situations, et peuvent être utile lorsque qu'on conçoit la cinématique d'un robot ou lorsque qu'on programme des tâches avec un robot existant.
+Lorsqu'on désire effectuer une tâche avec l'effecteur d'un robot à une certaine position, la première question est: est-ce que le robot est capable d'atteindre cette position, i.e. est-ce que la position cible est dans l'espace de travail? Si la position est atteignable, une deuxième question doit être posée: est-ce que le robot est capable de bouger arbitrairement à cette position? Cette deuxième question est la notion de manipulabilité du robot manipulateur. 
+
+Comme discuté à la section \ref{sec:singu}, lorsque le robot est à une configuration singulière l'effecteur est incapable de bouger dans certaines directions. On considère donc que la manipulabilité d'un robot n'est pas bonne sur une singularité. Toutefois, il est utile d'avoir une notion non-binaire de la manipulabilité, car même si un robot n'est pas parfaitement sur une singularité, certaines configurations peuvent nécessiter de très grandes vitesses aux joints pour satisfaire des vitesses cartésiennes de l'effecteur. Donc en considérant les limites de vitesse des joints le robot est en fait incapable d'executer certain vecteur vitesse à son effecteur proche d'une singularité. Les indices de manipulabilité sont des fonctions scalaires qui ont comme objectif de caractériser si un robot dans une certaine configuration est proche d'une singularité.  Ces indicateurs peuvent être utile lorsque qu'on conçoit la cinématique d'un robot ou lorsque qu'on programme des tâches avec un robot existant.
+
+
+\subsubsection{Indices de manipulabilité d'un robot manipulateur}
+
+Pour les situations ou la matrice jacobienne $J$ du robot est carré, le déterminant est un bon indice de la manipulabilité du robot:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+m_1(\col{q})= det( J(\col{q}) )
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Le déterminant correspond au volume du prisme généré par les colonnes du jacobien qui correspondent à des vecteurs vitesses de l'effecteur pour des vitesses de joints unitaires de chacun des axes:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.75\textwidth]{fig/jacobianvolume.jpg}
+	\caption{Volume de la matrice jacobienne}
+	\label{fig:jacobianvolume}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Dès que un des vecteurs est très petit, ou bien quand les vecteurs sont colinéaires, le volume du prisme devient très petit ce qui correspond à une mauvaise manipulabilité.
+
+
+Un autre indicateur souvent utilisé est les valeurs singulières de la matrice jacobienne. Les valeurs singulières $\mu$ sont relié aux valeurs propres $\lambda$ du produit $J^TJ$
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\mu^2_{i}( J(\col{q}) ) = \lambda_i( J(\col{q})^T J(\col{q}) )\\
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Pour relié à un indice de manipulabilité, on peut surveillez la plus petite valeur singulière ou bien le ratio entre la plus petite et la plus grande:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+m_2(\col{q})= \mu_{min}( J(\col{q}) ) \\
+m_3(\col{q})= \frac{\mu_{min}( J(\col{q}) ) }{\mu_{max}( J(\col{q}) ) }\\
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+La valeur $\mu_{min}$ correspond à la norme minimal du vecteur vitesse de l'effecteur produit par un vecteur de vitesse aux joints unitaire.
+
+
+\subsubsection{Ellipsoïde de vitesse}
+
+L'ellipsoïde de vitesse d'un robot manipulateur est l'enveloppe de vecteur vitesse possible à l'effecteur pour un vecteur de vitesse des joints unitaires:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.85\textwidth]{fig/manipulabilityellipsoid.jpg}
+	\caption{Ellipsoïde de vitesse}
+	\label{fig:manipulabilityellipsoid}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+1 &= \dot{\col{q}}^T \dot{\col{q}} \\
+1 &= \dot{\col{r}}^T J^{-T} J^{-1} \dot{\col{r}} \\
+1 &= \dot{\col{r}}^T (J J^T)^{-1} \dot{\col{r}} \\
+1 &= \dot{\col{r}}^T A^{-1} \dot{\col{r}} \quad\quad \text{avec} \quad\quad A = J J^T
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Détails à venir!
+
+
+
+
 
 
 

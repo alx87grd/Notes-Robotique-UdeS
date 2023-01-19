@@ -3,50 +3,16 @@
 
 %Chapitre en construction!
 
+\section{Introduction}
 
-\section{Force}
-\label{sec:force}
-
-Une force est une quantité vectorielle avec une amplitude et une direction, comme pour les notions de cinématique, nous utiliserons une notion qui distingue le vecteur-géométrique $\Vec{f}$ et le vecteur-colonne de composantes $\col{f}^a$ dans une base $a$. Une force appliquée sur un corps $C1$ à un point $A$ sera notée: 
-%%%%%%%%%%%%%%%%
+Ce chapitre présente des méthodes pour déterminer les relations entre les divers forces agissant sur un robot manipulateur lorsque le système est à l'équilibre. La matrice jacobienne $J$, la même matrice de la relation de cinématique différentielle de l'équation \ref{eq:diffkinrel}, permet de transformer une force cartésienne $\col{f}_E$, que l'effecteur du robot applique sur l'environnement, en couples (ou force pour un joint prismatique) équivalents $\col{\tau}$ dans le domaine des joints:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-\vec{f}_{C1_A}
+\col{\tau} &= J\left( \, \col{q} \, \right)^T \, \col{f}_E
+\label{eq:static1}
 \end{align}
-%%%%%%%%%%%%%%%
-Le principe d'action/réaction indique que si une force est appliquée sur un corps $C1$ il y a nécessairement une réaction égale et opposée sur un corps $C2$. Ici une force agissant sur un corps $C1$ par un corps $C2$ ainsi
-%%%%%%%%%%%%%%%%
-\begin{align}
-\vec{f}_{C1_A/C2_B}
-\end{align}
-%%%%%%%%%%%%%%%
-et le principe d'action/réaction nous donne donc la propriété suivante:
-%%%%%%%%%%%%%%%%
-\begin{align}
-\vec{f}_{C1_A/C2_B} = - \vec{f}_{C2_B/C1_A}
-\end{align}
-%%%%%%%%%%%%%%%
-Pour une force de contact le point est le même, mais certaine forces sont appliquée à distance comme la gravité. Cette notation sera utilisée lorsqu'il est question de forces d'interactions entre deux corps car le signe source de confusion lorsqu'on ne distingue pas la force appliquée \textit{sur} à la force appliqué \textit{par} un objet.
-
-Dans ce chapitre, nous définirons un vecteur $\vec{f}_{E}$ comme un force appliquée sur le robot à un point $E$ par l'environnement, lorsque le reste n'est pas précisé:
-%%%%%%%%%%%%%%%%
-\begin{align}
-\vec{f}_{E} =\vec{f}_{robot_{Effecteur}/environment}
-\label{eq:staticmanipulator}
-\end{align}
-%%%%%%%%%%%%%%%
-
-
-\section{Relation entre les forces aux joints et les forces à l'effecteur pour un robot manipulateur}
-\label{sec:manipstatic}
-
-La relation entre les forces/couples dans l'espace des joints $\col{\tau}$ et un vecteur de forces externes $\vec{f}_e$ à l'effecteur d'un robot peut être décrite par la relation suivante:
-%%%%%%%%%%%%%%%%
-\begin{align}
-\col{\tau} &= J\left( \, \col{q} \, \right)^T \, \col{f}_e 
-\label{eq:staticmanipulator}
-\end{align}
-%%%%%%%%%%%%%%%
-où la matrice Jacobienne $J$ est la même matrice de la relation de cinématique différentielle de l'équation \ref{eq:diffkinrel}. Comme illustré à la Figure \ref{fig:controlvolume}, les variables de forces/couples doivent correspondent aux même dégrées de liberté que les variables vitesses associées à la relation de cinématique différentielle. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Cette relation permet de calculer les liens entre les forces externes et les forces produites par les actionneurs sans avoir à déterminer toutes les forces internes du systèmes, ce qui particulièrement utile pour les robots manipulateurs et sera exploité par les méthodes de ce chapitre. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
@@ -58,6 +24,62 @@ où la matrice Jacobienne $J$ est la même matrice de la relation de cinématiqu
 
 \video{Statique des robots manipulateurs}{https://youtu.be/klAfYgPYi0k}
 
+\section{Les vecteurs forces}
+\label{sec:force}
+
+Une force est une quantité vectorielle avec une amplitude et une direction. Comme pour les notions de cinématique, nous utiliserons une notation qui distingue le vecteur-géométrique $\Vec{f}$ et le vecteur-colonne de composantes $\col{f}^a$ dans une base $a$. De plus, une force appliquée sur un corps $C$ à un point $A$ sera notée: 
+%%%%%%%%%%%%%%%%
+\begin{align}
+\vec{f}_{C_A}
+\end{align}
+%%%%%%%%%%%%%%%%
+Le principe d'action/réaction indique que si une force est appliquée sur un corps $C1$ il y a nécessairement une réaction égale et opposée sur un corps $C2$. Une force agissant sur un corps $C1$ par un corps $C2$ sera notée:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\vec{f}_{C1/C2}
+\end{align}
+%%%%%%%%%%%%%%%
+et le principe d'action/réaction nous donne donc la propriété suivante:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\vec{f}_{C1/C2} = - \vec{f}_{C2/C1}
+\end{align}
+%%%%%%%%%%%%%%%
+Cette notation sera utilisée lorsqu'il est question de forces d'interactions entre deux corps car le signe source de confusion lorsqu'on ne distingue pas la force appliquée \textit{sur} à la force appliqué \textit{par} un objet.
+
+Dans ce chapitre, nous définirons un vecteur $\vec{f}_{R_E}$ comme un force appliquée sur le robot à un point $E$ (typiquement l'effecteur) par l'environnement, et $\vec{f}_{E}$ comme son inverse, i.e. la force que le robot applique sur l'environnement:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\vec{f}_{R_E} &=\vec{f}_{Robot/Environment} \\
+\vec{f}_{E}   &=\vec{f}_{Environment/Robot} = -\vec{f}_{R_E}
+\label{eq:contactforcenotation}
+\end{align}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.65\textwidth]{fig/force_ext_contact.jpg}
+	\caption{Action-réaction pour une force de contact}
+	\label{fig:contactforce}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Relation entre les forces aux joints et les forces à l'effecteur}
+\label{sec:manipstatic}
+
+La relation entre les forces/couples dans l'espace des joints $\col{\tau}$ et un vecteur de forces externes $\vec{f}_{R_E}$ appliquée sur l'effecteur d'un robot peut être décrite par la relation suivante:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\col{\tau} &= J\left( \, \col{q} \, \right)^T \, \col{f}_E = -J\left( \, \col{q} \, \right)^T \, \col{f}_{R_E}
+\label{eq:staticmanipulator}
+\end{align}
+%%%%%%%%%%%%%%%
+où la matrice Jacobienne $J$ est la même matrice de la relation de cinématique différentielle de l'équation \ref{eq:diffkinrel}. Comme illustré à la Figure \ref{fig:controlvolume}, les variables de forces/couples doivent correspondent aux même dégrées de liberté que les variables vitesses associées à la relation de cinématique différentielle. 
+
+
+
+
 \begin{proof}
 La relation statique qui implique le Jacobien (eq. \eqref{eq:staticmanipulator}) peut être déterminée à partir d'un bilan de puissance. Si on applique la 1ère loi de la thermodynamique au volume de contrôle indiqué à la Figure \ref{fig:controlvolume} pour calculer le bilan d'énergie:
 %%%%%%%%%%%%%%%%
@@ -65,27 +87,27 @@ La relation statique qui implique le Jacobien (eq. \eqref{eq:staticmanipulator})
 \frac{dE}{dt} = P_{in} - P_{out}
 \end{align}
 %%%%%%%%%%%%%%%
-Les forces internes inertielles et dissipatrices sont ici négligés pour trouver une relation valide dans des conditions quasi-statique. De plus considérons d'abord un cas sans force conservatrice (voir section \ref{sec:manipstaticconservative} pour ce cas) Dans ces conditions, il n'y a aucune accumulation d'énergie interne: les seules entrée/sorties de puissance dans le système sont le travail mécanique fait par les moteurs sur le robot, et le travail mécanique fait par le robot sur l'environnement. L'égalité du travail mécanique en entrée et sortie peut être convertie en relation matricielle:
+Les forces internes inertielles et dissipatrices sont ici négligés pour trouver une relation valide dans des conditions quasi-statique. De plus considérons d'abord un cas sans force conservatrice (voir section \ref{sec:manipstaticconservative} pour ce cas) Dans ces conditions, il n'y a aucune accumulation d'énergie interne: les seules entrée/sorties de puissance dans le système sont le travail mécanique fait par les actionneurs sur le robot, et le travail mécanique fait par le robot sur l'environnement. L'égalité du travail mécanique en entrée et sortie peut être convertie en relation matricielle:
 %%%%%%%%%%%%%%%%
 \begin{align}
 P_{in} &= P_{out} \\
-\dot{q}_1 \tau_1  + \dot{q}_2 \tau_2 + \hdots  &= \Vec{v} \bullet \Vec{f}_e \\
+\dot{q}_1 \tau_1  + \dot{q}_2 \tau_2 + \hdots  &= \Vec{v} \bullet \Vec{f}_E \\
 \left[ \begin{array}{c c c} 
 \dot{q}_1 & \dot{q}_2 & \hdots 
 \end{array} \right] \,
 \left[ \begin{array}{c} 
 \tau_1 \\ \tau_2 \\ \vdots 
-\end{array} \right] &= \col{\dot{r}}^T \col{f}_e \\
-\col{\dot{q}}^T \col{\tau} &= \col{\dot{r}}^T \col{f}_e \\
+\end{array} \right] &= \col{\dot{r}}^T \col{f}_E \\
+\col{\dot{q}}^T \col{\tau} &= \col{\dot{r}}^T \col{f}_E \\
 \end{align}
 %%%%%%%%%%%%%%%
 Ensuite, si on substitut les composantes du vecteur vitesse de l'effecteur $\col{\dot{r}}$ par l'équation de cinématique différentielle directe (eq. \eqref{eq:diffkinrel}), on obtient:
 %%%%%%%%%%%%%%%%
 \begin{align}
-\col{\dot{q}}^T \col{\tau} &= \left( J( \col{q}) \,  \col{\dot{q}}  \right)^T \col{f}_e \\
-\col{\dot{q}}^T \col{\tau} &= \col{\dot{q}}^T  J( \col{q})^T \col{f}_e    \\
-\col{\dot{q}}^T \Big( \col{\tau} \Big) &= \col{\dot{q}}^T  \Big( J( \col{q})^T \col{f}_e \Big)   
-\quad \Rightarrow \quad \col{\tau} = J\left( \, \col{q} \, \right)^T \, \col{f}_e 
+\col{\dot{q}}^T \col{\tau} &= \left( J( \col{q}) \,  \col{\dot{q}}  \right)^T \col{f}_E \\
+\col{\dot{q}}^T \col{\tau} &= \col{\dot{q}}^T  J( \col{q})^T \col{f}_E    \\
+\col{\dot{q}}^T \Big( \col{\tau} \Big) &= \col{\dot{q}}^T  \Big( J( \col{q})^T \col{f}_E \Big)   
+\quad \Rightarrow \quad \col{\tau} = J\left( \, \col{q} \, \right)^T \, \col{f}_E 
 \end{align}
 %%%%%%%%%%%%%%%
 Donc les deux termes qui multiplient (produit intérieur) le vecteur colonne $\col{\dot{q}}$ doivent nécessairement être égaux, se qui nous donne l'équation qui relie les forces dans l'espace des joints aux forces équivalentes dans l'espace de la tâche. 
@@ -177,7 +199,7 @@ Si la bilan d'énergie effectué à la section \ref{sec:manipstatic} est fait en
 
 %%%%%%%%%%%%%%%%
 \begin{align}
-\col{\tau} &= J\left( \, \col{q} \, \right)^T \, \col{f}_e +  g( \col{q} )
+\col{\tau} &= J\left( \, \col{q} \, \right)^T \, \col{f}_E +  g( \col{q} )
 \quad \quad \text{avec:  }
 \underbrace{ \col{g} ( \col{q} ) = 
 \frac{ \partial V(\col{q} ) }{\partial \col{q}^T } 
