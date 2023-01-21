@@ -1036,7 +1036,7 @@ Dès que un des vecteurs est très petit, ou bien quand les vecteurs sont colin�
 Un autre indicateur souvent utilisé est les valeurs singulières de la matrice jacobienne. Les valeurs singulières $\mu$ sont relié aux valeurs propres $\lambda$ du produit $J^TJ$
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-\mu^2_{i}( J(\col{q}) ) = \lambda_i( J(\col{q})^T J(\col{q}) )\\
+\mu^2_{i}( J(\col{q}) ) = \lambda_i( J(\col{q})^T J(\col{q}) )
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Pour relié à un indice de manipulabilité, on peut surveillez la plus petite valeur singulière ou bien le ratio entre la plus petite et la plus grande:
@@ -1051,7 +1051,6 @@ La valeur $\mu_{min}$ correspond à la norme minimal du vecteur vitesse de l'eff
 
 \subsubsection{Ellipsoïde de vitesse}
 
-L'ellipsoïde de vitesse d'un robot manipulateur est l'enveloppe de vecteur vitesse possible à l'effecteur pour un vecteur de vitesse des joints unitaires:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
@@ -1061,6 +1060,7 @@ L'ellipsoïde de vitesse d'un robot manipulateur est l'enveloppe de vecteur vite
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+L'ellipsoïde de vitesse d'un robot manipulateur est l'enveloppe des vecteurs vitesses possibles à l'effecteur pour des vecteurs de vitesse des joints unitaires, voir \ref{fig:manipulabilityellipsoid}. L'enveloppe de vitesses possibles à l'effecteur, résultant d'un vecteur de vitesse des joints unitaire, peut être calculer en débutant avec une équation qui contraint la norme du vecteur de la vitesse des joint et en substituant $\dot{\col{q}}$ par $J^{-1} \dot{\col{r}}$ dans l'équation:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 1 &= \dot{\col{q}}^T \dot{\col{q}} \\
@@ -1069,8 +1069,18 @@ L'ellipsoïde de vitesse d'un robot manipulateur est l'enveloppe de vecteur vite
 1 &= \dot{\col{r}}^T A^{-1} \dot{\col{r}} \quad\quad \text{avec} \quad\quad A = J J^T
 \end{align} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+On obtient donc une équation quadratique pour laquelle l'ensemble des solutions possibles forment une ellipse. Les axes principaux de l'ellipse correspondent aux valeurs propres et vecteurs propres de la matrice $J J^T$. 
 
-Détails à venir!
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		%\includegraphics[width=0.85\textwidth]{}
+	\caption{TODO: ellipse 3D}
+	%\label{fig:manipulabilityellipsoid}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Un lien peu aussi être fait directement avec les valeurs singulière de la matrice $J$. Détails à venir!
 
 
 

@@ -72,11 +72,11 @@ Cette équation est parfois appelé l'équation des manipulateurs et cette repr�
 L'équation des manipulateur caractérise la dynamique d'un système robotique décrite dans l'espace des coordonnées des joints:
 %
 \begin{align}
-H(\col{q}) \col{\ddot{q}} + C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q}) = B(\col{q}) \col{u}  + J^T(\col{q}) \col{f}_e
+H(\col{q}) \col{\ddot{q}} + C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q}) = B(\col{q}) \col{u}  + J^T(\col{q}) \col{f}_{R_E}
 \label{eq:manipulator}
 \end{align}
 %
-où $\col{q}$ est le vecteur des forces généralisée, $H$ est la matrice d'inertie, $C$ est la matrice des forces de Coriolis/centrifuge, $\col{d}$ est un vecteur de force dissipatrices, $\col{g}$ un vecteur de forces conservatrices (typiquement la gravité), $B$ est une matrice qui transforme le vecteur des forces des actionneurs $\col{\tau}$ en forces généralisée, et $J^T$ la transposée de la matrice jacobienne associée au point d'application d'une force externe $\col{f}_e$.
+où $\col{q}$ est le vecteur des forces généralisée, $H$ est la matrice d'inertie, $C$ est la matrice des forces de Coriolis/centrifuge, $\col{d}$ est un vecteur de force dissipatrices, $\col{g}$ un vecteur de forces conservatrices (typiquement la gravité), $B$ est une matrice qui transforme le vecteur des forces des actionneurs $\col{\tau}$ en forces généralisée, et $J^T$ la transposée de la matrice jacobienne associée au point d'application $E$ d'une force externe $\col{f}_{R_E}$.
 
 \begin{table}[htbp]
 	\centering
@@ -368,12 +368,24 @@ On peut alternativement résoudre le système de $n+c$ équations suivant pour o
 \end{align}
 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Manipulabilité dynamique}
+\label{sec:dynamicmanipulability}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+À la section \ref{sec:speedmanipulability}, la notion de manipulabilité définissait une enveloppe de vitesse possible à l'effecteur. Il est aussi possible d'analyser l'enveloppe d'accélérations cartésiennes possibles à l'effecteur pour un vecteur de couple des actionneurs unitaire. 
+
+Détails à venir!
 
 
 
 
 \newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Représentation des systèmes hybrides}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Hybrid dynamical system can be represented in the general form:
 %

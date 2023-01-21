@@ -147,7 +147,7 @@ w = R \dot{q} %\quad \quad  \col{w} &= R \col{q}
 et la dernière transformation est caractérisée par la matrice Jacobienne du robot $J$:
 %%%%%%%%%%%%%%%%
 \begin{align}
-\col{\tau} &= J^T \col{f}_e \\
+\col{\tau} &= J^T \col{f}_E \\
 \col{\dot{r}} &= J \col{\dot{q}}
 \end{align}
 %%%%%%%%%%%%%%%
@@ -195,7 +195,7 @@ Lorsqu'un robot manipulateur est sur une singularité, la transposée de la matr
 \section{Relation statique incluant les forces conservatrices}
 \label{sec:manipstaticconservative}
 
-Si la bilan d'énergie effectué à la section \ref{sec:manipstatic} est fait en incluant l'énergie potentielle, un terme de forces conservatrices $\col{g}$ doit être ajouté à l'équation de la balance des forces dans le systèmes. On nommera ici ce vecteur $\col{g}$ car pour les robots c'est souvent un vecteur de forces gravitationnelles. 
+Si la bilan d'énergie effectué à la section \ref{sec:manipstatic} est fait en incluant l'énergie potentielle, un terme de forces conservatrices $\col{g}$ doit être ajouté à l'équation de la balance des forces dans le systèmes. On nommera ici ce vecteur $\col{g}$ car pour les robots manipulateur, c'est généralement un vecteur de forces gravitationnelles. 
 
 %%%%%%%%%%%%%%%%
 \begin{align}
@@ -221,8 +221,8 @@ On obient alors:
 %%%%%%%%%%%%%%%%
 \begin{align}
 \frac{dE}{dt} &= P_{in} - P_{out} \\
-\frac{\partial V}{ \partial \col{q}} \, \col{\dot{q}} &=  \col{\dot{q}}^T \col{\tau} - \col{\dot{q}}^T  J( \col{q})^T \col{f}_e  \\
-\col{\dot{q}}^T  \, \Big(  \frac{\partial V}{ \partial \col{q}^T} \Big) &=  \col{\dot{q}}^T  \Big(\col{\tau} -  J( \col{q})^T \col{f}_e  \Big)
+\frac{\partial V}{ \partial \col{q}} \, \col{\dot{q}} &=  \col{\dot{q}}^T \col{\tau} - \col{\dot{q}}^T  J( \col{q})^T \col{f}_E  \\
+\col{\dot{q}}^T  \, \Big(  \frac{\partial V}{ \partial \col{q}^T} \Big) &=  \col{\dot{q}}^T  \Big(\col{\tau} -  J( \col{q})^T \col{f}_E  \Big)
 \end{align}
 %%%%%%%%%%%%%%%
 Donc pour que la relation de puissance soit respecté, les termes qui multiplie le vecteur-colonne de vitesses doivent être égaux, ce qui donne la relation entre les forces de l'équation \eqref{eq:staticgravity}.
@@ -296,14 +296,14 @@ Finalement, il est à noter que la matrice $C$ de compliance est singulière lor
 Relation force joints-effecteur:
 %%%%%%%%%%%%%%%%
 \begin{align}
-\col{\tau} &= J\left( \, \col{q} \, \right)^T \, \col{f}_e 
+\col{\tau} &= J\left( \, \col{q} \, \right)^T \, \col{f}_E 
 \end{align}
 %%%%%%%%%%%%%%%
 
 Équilibre statique:
 %%%%%%%%%%%%%%%%
 \begin{align}
-\col{\tau} &= J\left( \, \col{q} \, \right)^T \, \col{f}_e +  g( \col{q} )
+\col{\tau} &= J\left( \, \col{q} \, \right)^T \, \col{f}_E +  g( \col{q} )
 \quad \quad \text{avec:  }
 g( \col{q} ) = 
 \frac{ \partial V(\col{q} ) }{\partial \col{q} } 
