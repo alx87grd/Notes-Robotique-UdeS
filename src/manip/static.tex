@@ -185,7 +185,7 @@ Lorsqu'un robot manipulateur est sur une singularité, la transposée de la matr
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.30\textwidth]{fig/externalforcesingularity.jpg}
+		\includegraphics[width=0.45\textwidth]{fig/externalforcesingularity.jpg}
 	\caption{Relation statique sur une singularité}
 	\label{fig:externalforcesingularity}
 \end{figure}
@@ -242,7 +242,7 @@ Lorsque les robots sont contrôlé en position par des servo-moteurs à chaque j
 \delta \tau_i = k_i \delta q_i \quad \Rightarrow \quad \delta \col{\tau} = K_q \, \delta \col{q}
 \end{align}
 %%%%%%%%%%%%%%%
-où $K_q$ est une matrice de rigidité dans l'espace des joints. Il est ensuite intéressant de déterminer la rigidité d'un robot, comme illustré à la Figure \ref{fig:robotcompliance}, lorsqu'il subit une force externe en fonction de la rigidité angulaire de ces servo-moteurs.
+où $K_q$ est une matrice de rigidité dans l'espace des joints. Il est ensuite intéressant de déterminer la rigidité d'un robot, comme illustré à la Figure \ref{fig:robotcompliance}, lorsqu'il subit une force externe en fonction de la rigidité angulaire de ses servo-moteurs.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htbp]
 	\centering
@@ -251,19 +251,19 @@ où $K_q$ est une matrice de rigidité dans l'espace des joints. Il est ensuite 
 	\label{fig:robotcompliance}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-La variation de position de l'effecteur peut être reliée aux déplacement angulaire dans l'espace des joints, et la force externe peut-être ramener à des couples équivalent à chaque joint. En manipulant les équations on obtient:
+La variation de position de l'effecteur peut être reliée aux déplacement angulaire dans l'espace des joints, et la force externe peut être transformée en couples équivalents à chacun des joints (pour un équilibre statique). En manipulant les équations on obtient:
 %%%%%%%%%%%%%%%%
 \begin{align}
 \delta \col{r} = J \delta \col{q} = J K_q^{-1} \col{\tau} = 
 \underbrace{
 \left[ J K_q^{-1} J^T \right]
-}_{C_r} \,  \col{f}_e
+}_{C_r} \,  \col{f}_{R_E}
 \end{align}
 %%%%%%%%%%%%%%%
 où $C_r$ est une matrice de compliance à l'effecteur. La rigidité apparente à l'effecteur, due à un rigidité dans l'espace des joints, est donc donnée par une relation qui relie la variation de la position de l'effecteur à un force externe appliquée sur l'effecteur:
 %%%%%%%%%%%%%%%%
 \begin{align}
-\col{f}_e = K_r \delta \col{r} \quad \text{avec } K_r = C_r^{-1} = \left[ J K_q^{-1} J^T \right]^{-1}
+\col{f}_E = -\col{f}_{R_E} = - K_r \delta \col{r} \quad \text{avec } K_r = C_r^{-1} = \left[ J K_q^{-1} J^T \right]^{-1}
 \end{align}
 %%%%%%%%%%%%%%%
 Comme illustré à la Figure \ref{fig:robotcompliance_effector}, la matrice de rigidité dans l'espace des joints est généralement diagonale (les moteurs sont indépendents). Il est à noter que la matrice de rigidité à l'effecteur est dépendante de la configuration nominale du robot (i.e. $J$ est une fonction de $\col{q}$ en général).
@@ -292,6 +292,14 @@ Finalement, il est à noter que la matrice $C$ de compliance est singulière lor
 \newpage
 \section{Résumé du chapitre}
 
+Force externes à l'effecteur:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\col{f}_{R_E} &= - \col{f}_E \\
+\col{f}_{R_E} &= \text{Force appliquée sur l'effecteur du robot par l'environnement} \\
+\col{f}_E &= \text{Force appliquée sur l'environnement par le robot}
+\end{align}
+%%%%%%%%%%%%%%%
 
 Relation force joints-effecteur:
 %%%%%%%%%%%%%%%%
