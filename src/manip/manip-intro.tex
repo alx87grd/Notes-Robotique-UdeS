@@ -34,14 +34,14 @@ Un des défis est que pour certaines configurations du manipulateur la matrice $
 Pour les robots manipulateurs, les analyses de \textbf{statique} visent généralement à déterminer les forces/couples nécessaires aux moteurs/actionneurs d'un robot pour le maintenir en place en fonction des forces externes, ou vice-versa. Mathématique, l'analyse peut aussi utiliser la matrice Jacobienne pour faire la relation entre le vecteur-colonne de couples des moteurs $\col{\tau}$ et le vecteur-colonne des forces externes $\col{f}_{ext}$:
 %%%%%%%%%%%%%%%%
 \begin{equation}
-\text{Statique:} \quad \col{\tau} = J^T\left( \, \col{q} \, \right) \, \col{f}_{ext}   
+\text{Statique:} \quad \col{\tau} = J^T\left( \, \col{q} \, \right) \, \col{f}_{E}   
 \end{equation}
 %%%%%%%%%%%%%%%
 
 Finalement, la \textbf{dynamique} est le domaine qui vise à déterminer les équations différentielles qui représentent la relation entre l'accélération des joints d'un robot et les forces appliquées. Mathématiquement, l'analyse consiste à construire et analyser une équation différentielle non-linéaire (reliant les coordonnées des joints $\col{q}$, la vitesse des joints $\col{\dot{q}}$, l'accélération des joints $\col{\ddot{q}}$, les couples appliqués $\col{\tau}$ et les forces externes $\col{f}_{ext}$) qui prend la forme:
 %%%%%%%%%%%%%%%%
 \begin{align}
-\text{Dynamique:} \quad H(\col{q}) \col{\ddot{q}} + C(\col{q},\col{\dot{q}}) \col{\dot{q}} + D \col{\dot{q}} + \col{g}(\col{q}) = \col{\tau} - J^T(\col{q}) \, \col{f}_{ext}   
+\text{Dynamique:} \quad H(\col{q}) \col{\ddot{q}} + C(\col{q},\col{\dot{q}}) \col{\dot{q}} + D \col{\dot{q}} + \col{g}(\col{q}) = \col{\tau} - J^T(\col{q}) \, \col{f}_{E}   
 \label{eq:manipulator}
 \end{align}
 %%%%%%%%%%%%%%%

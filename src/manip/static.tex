@@ -289,6 +289,50 @@ Finalement, il est à noter que la matrice $C$ de compliance est singulière lor
 \video{Compliance et rigidité des robots manipulateurs}{https://youtu.be/U3fhFlkVoEg}
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Manipulabilité en force d'un robot manipulateur}
+\label{sec:manipforceelipse}
+
+L'ellipsoïde de force d'un robot manipulateur est l'enveloppe des vecteurs forces possibles à l'effecteur pour des vecteurs d'entrée $\tau$ unitaires (typiquement des couples moteurs), voir \ref{fig:manipulabilityellipsoid_force}. L'enveloppe de forces possibles à l'effecteur, résultant d'un vecteur de couples des joints unitaire, peut être calculer en débutant avec une équation qui contraint la norme du vecteur de couple des joint et en substituant $\col{\tau}$ par $J^{T} \col{f}_E$ dans l'équation:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+1 &= \col{\tau}^T \col{\tau} \\
+1 &= (J^{T} \col{f}_E)^T J^{T} \col{f}_E \\
+1 &= \col{f}_E^T \, (J J^{T} ) \, \col{f}_E \\
+1 &= \col{f}_E^T  \, A \, \col{f}_E \quad\quad \text{avec} \quad\quad A = J J^T
+\end{align} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+On voit donc que c'est la même matrice $J J^T$ qui caractérise l'ellipsoïde de manipulabilité en force que celle qui caractérise l'ellispoïde de vitesse (voir section \ref{sec:velocitymanipulability}, mais ici c'est l'inverse de la matrice qui apparaît. Les axes principaux sont donc les mêmes mais les amplitudes sont inversés par rapport à l'ellispoïde. Par exemple, si le vecteur de vitesse possible à l'effecteur est faible dans une certaine direction, les forces externes possible à soutenir dans cette même direction vont être grandes. De plus, sur une singularité, il y a des directions pour lesquelles le vecteur vitesse possible est nul, ce qui va correspondre à des direction pour lesquelles le vecteur force possible va tendre vers l'infini, ce qui correspond à une direction pour laquelle une force externe va être reprise par la structure sans effort requis par les actionneurs.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.90\textwidth]{fig/forcemanipulabilityellipsoid.jpg}
+	\caption{Ellispoïde de manipulabilité pour la force et la vitesse}
+	\label{fig:forcemanipulabilityellipsoid}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{example}[Exemples d'ellispoïdes de manipulabilité pour un robot 2DDL]
+
+La Figure \ref{fig:manipulabilityellipsoidexemples} illustre un robot 2DDL planaire dans quelques configurations. Lorsque le robot est dans une configuration avec le coude partiellement plié les capacités du robot sont le plus isotropique. Lorsque le coude est déplié le robot est capable de supporter des grande forces dans la direction radiale et l'inverse lorsque le coude est complètement plié. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.95\textwidth]{fig/manipulabilityellipsoidexemples.jpg}
+	\caption{Exemples d'ellispoïde de manipulabilité pour divers configration}
+	\label{fig:manipulabilityellipsoidexemples}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Notre expérience humaine peut nous aider à avoir une intuition à savoir comment des propriétés peuvent être exploitées. Comme exercice de pensée je vous suggère de réfléchir à divers tâches du quotidien, la configuration de nos bras et jambe naturellement utilisé et les requis en force/vitesse: Comment configurez vous votre coude pour pousser contre une lourde porte? Quelle est la configuration naturelle de votre bras pour écrire? Comment configurez vous votre bras pour lancer une balle le plus loin possible? Est-ce qu'il serait intéressant de marcher les genous pliés?
+\end{example}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \section{Résumé du chapitre}
 
