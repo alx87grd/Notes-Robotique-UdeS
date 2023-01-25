@@ -7,11 +7,11 @@
 \section{Introduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Ce chapitre traite de la relation entre la l'évolution temporelle de la position d'un robot et les divers forces appliquées sur celui-ci. Notre outil mathématique principal pour décrire cette relation est un système d'équations différentielles qui relie des variables d'accélération du robot aux autres variables qui influence les forces internes et externes impliqués.
+Ce chapitre traite de la relation entre la l'évolution temporelle de la position d'un robot et les forces appliquées sur celui-ci. Notre outil mathématique principal pour décrire cette relation est un système d'équations différentielles qui relie des variables d'accélération du robot aux autres variables qui influence les forces internes et externes impliqués. Obtenir cette relation est utile lorsqu'on désire prédire des capacités dynamiques d'un système, simuler numériquement l'évolution temporelle d'un système dans des conditions connues ou bien synthétiser des lois de commandes.
 
 \video{Dynamique des robots manipulateurs}{https://youtu.be/6z3grrVNBj4}
 
-Obtenir cette relation est utile lorsqu'on désire prédire des capacités dynamiques d'un système, simuler numériquement l'évolution temporelle d'un système dans des conditions connues ou bien synthétiser des lois de commandes.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Structure des équations}
@@ -70,46 +70,16 @@ J^T(\col{q}) \col{f}_{R_E}
 %%%%%%%%%%%%%%%%%%%%%%
 Cette équation est parfois appelé l'équation des manipulateurs et cette représentation est très utile pour analyser le comportement de système robotique et synthétiser des lois de commandes.
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Équation des manipulateurs}
-\label{sec:manipeq}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-L'équation des manipulateur caractérise la dynamique d'un système robotique décrite dans l'espace des coordonnées des joints:
-%
-\begin{align}
-H(\col{q}) \col{\ddot{q}} + C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q}) = B(\col{q}) \col{u}  + J^T(\col{q}) \col{f}_{R_E}
-\label{eq:manipulator}
-\end{align}
-%
-où $\col{q}$ est le vecteur des forces généralisée, $H$ est la matrice d'inertie, $C$ est la matrice des forces de Coriolis/centrifuge, $\col{d}$ est un vecteur de force dissipatrices, $\col{g}$ un vecteur de forces conservatrices (typiquement la gravité), $B$ est une matrice qui transforme le vecteur des forces des actionneurs $\col{u}$ (les entrées du système) en forces généralisée $\col{\tau}$, et $J^T$ la transposée de la matrice jacobienne associée au point d'application $E$ d'une force externe $\col{f}_{R_E}$.
-
-\subsection{Forme compacte}
-
-Parfois pour allégé la manipulation des équations, une version abrégée où $\col{c}$ est parfois utilisé pour regrouper toute les forces internes (qui sont des fonctions des états du systèmes):
-%%%%%%%%%%%%%%%%%%%%%%%
-\begin{align}
-\col{c} = C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q})
-\end{align}
-%%%%%%%%%%%%%%%%%%%%%%%
-ce qui simplifie, pour un cas sans forces externes, l'équation des manipulateurs à:
-%%%%%%%%%%%%%%%%%%%%%%%
-\begin{align}
-H \col{\ddot{q}} + \col{c} = \col{\tau} 
-\label{eq:manipulator_short}
-\end{align}
-%%%%%%%%%%%%%%%%%%%%%%%
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Variables, nomenclature et dimensions}
 \label{sec:dyamicnomenclature}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Le tableau ci-dessous présente les variables qui sont utilisée dans ce chapitre.
+
 \begin{table}[H]
 	\centering
-	\caption{Nomenclature pour la dynamique dans l'espace des joints}	% Table caption must be placed on top of the table %
+	\caption{Nomenclature pour la dynamique des manipulateurs}	% Table caption must be placed on top of the table %
 		\begin{tabular}{ c c l r }
         \hline \hline
 				\multicolumn{4}{c}{Dimensions} \\
@@ -153,10 +123,54 @@ H \col{\ddot{q}} + \col{c} = \col{\tau}
 
 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Équation des manipulateurs}
+\label{sec:manipeq}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+L'équation des manipulateur caractérise la dynamique d'un système robotique décrite dans l'espace des coordonnées des joints:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+H(\col{q}) \col{\ddot{q}} + C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q}) = B(\col{q}) \col{u}  + J^T(\col{q}) \col{f}_{R_E}
+\label{eq:manipulator}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+où $\col{q}$ est le vecteur des forces généralisée, $H$ est la matrice d'inertie, $C$ est la matrice des forces de Coriolis/centrifuge, $\col{d}$ est un vecteur de force dissipatrices, $\col{g}$ un vecteur de forces conservatrices (typiquement la gravité), $B$ est une matrice qui transforme le vecteur des forces des actionneurs $\col{u}$ (les entrées du système) en forces généralisée $\col{\tau}$, et $J^T$ la transposée de la matrice jacobienne associée au point d'application $E$ d'une force externe $\col{f}_{R_E}$.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Forces externes multiples}
+
+L'équation \eqref{eq:manipulator} est pour une situation ou une seule force externe est appliquée sur le robot, sur l'effectuer i.e. sur le point du robot dont la position est décrit par l'équation de la cinématique directe $\col{r} = f\col{q}$. Si plusieurs forces externes sont appliquées à divers points sur le robot, il serait possible de décrire cette situation avec une sommation:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+H(\col{q}) \col{\ddot{q}} + C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q}) = B(\col{q}) \col{u}  + \sum_i J_i^T(\col{q}) \col{f}_{R_i} 
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+où $\col{f}_{R_i}$ est une force externe appliquée sur le robot à un point $i$, et $J_i$ est une matrice jacobienne associé au mouvement du point $i$:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+J_i(\col{q}) = \frac{ \partial \col{r}_i(\col{q}) }{ \partial \col{q} }
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+où $\col{r}_i(\col{q})$ est la position du point $i$ exprimée comme une fonction des coordonnées $\col{q}$, i.e. la fonction de cinématique directe mais pour un point particulier. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.50\textwidth]{fig/multipleexternalforces.jpg}
+	\caption{Robot avec plusieurs forces externes}%
+	\label{fig:multipleexternalforces}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Matrice des actionneurs}
 
-La matrice $B(q)$ est une matrice de transformation qui relie le vecteur $u$,  représentants les entrées de notre système, et les forces généralisées $\col{\tau}$ associées dans le systèmes de coordonnées $\col{q}$ utilisé pour décrire les équations:
+La matrice $B(q)$ est une matrice de transformation qui relie le vecteur $\col{u}$,  représentants les entrées du système, et les forces généralisées $\col{\tau}$ associées dans le systèmes de coordonnées $\col{q}$ utilisé pour décrire les équations dans l'espace de la tache:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \col{\tau} =  B(\col{q})  \col{u} 
@@ -165,42 +179,63 @@ La matrice $B(q)$ est une matrice de transformation qui relie le vecteur $u$,  r
 
 \note{Note:}{Dans le chapitre sur la statique (\ref{sec:static}), les divers équations et analyses étaient présentés en assumant qu'on nos actionneurs permettent de commander le vecteur $\col{\tau}$ directement. Ici dans ce chapitre nous incluons une matrice de transformation $B$ pour avoir une représentation plus englobante.}
 
-La Figure \ref{fig:actuatormatrix} illustre qualitativement divers architecture d'actionneurs qui mène à différentes structures pour $B$:
+La Figure \ref{fig:actuatormatrix} illustre qualitativement divers architecture d'actionneurs qui mène à différentes structures pour $B$. Le cas le plus simple est lorsque les entrées $\tau$ sont des forces colocalisées avec les coordonnées généralisées $\col{q}$, par exemple si $\col{u}$ représente des couples net aux joint d'un système alors la matrice $B$ est la matrice identité car les entrée $\col{u}$ sont directement des forces généralisée aux joints $\col{\tau}$. Si on désire que les entrée $\col{u}$ soit directement les couples des moteurs électriques d'un robot alors la matrice $B$ va représenter les ratios de réduction des actionneurs. Ensuite, si les actionneurs ne sont pas colocalisés avec les coordonnées généralisée, alors la matrice $B$ fait le pont entre les forces aux actionneurs et les forces généralisées qu'ils génèrent. Finalement, si il y a moins d'actionneurs que de DDL alors la matrice $B$ ne sera pas carrée. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
+\begin{figure}[ht]
 	\centering
-		\includegraphics[width=0.70\textwidth]{fig/actuatormatrix.png}
+		\includegraphics[width=0.99\textwidth]{fig/actuatormatrix.jpg}
 	\caption{Matrice $B$ des actionneurs}%
 	\label{fig:actuatormatrix}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Le cas le plus simple est lorsque les entrées $\tau$ sont des forces colocalisées avec les coordonnées généralisées $\col{q}$, par exemple si $\tau$ représente des couples net aux joint d'un système alors la matrice $B$ est la matrice identité.
-
 La notion de puissance est utile pour définir cette matrice: le produit scalaire entre le vecteur vitesse des coordonnées généralisée $\col{\dot{q}}$ et les forces généralisées associées aux actionneurs $B\col{\tau}$ correspond à la puissance entrante fournit par les actionneurs:
-%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-P_{actionneur} = \col{\dot{q}}^T B\col{\tau}
+P_{actionneur} = \col{\dot{q}}^T \col{\tau} = \col{\dot{q}}^T B(\col{q}) \col{u}
 \end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\subsection{Forces externes}
-
-Voir section \ref{sec:manipstatic}. 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Forces conservatrices}
 
-Voir section \ref{sec:manipstaticconservative}. 
+Le vecteur de force conservatrice est défini comme le gradient de l'énergie potentiel par rapport au vecteur de coordonnées généralisée:
+%%%%%%%%%%%%%%%%
+\begin{align}
+ \col{g} ( \col{q} ) = 
+\frac{ \partial V(\col{q} ) }{\partial \col{q}^T } 
+\end{align}
+%%%%%%%%%%%%%%%
+de sorte que le taux de variation de l'énergie potentiel soit donnée par
+%%%%%%%%%%%%%%%%
+\begin{align}
+\dot{V} = \frac{\partial V}{ \partial \col{q}} \, \col{\dot{q}} =  \col{g}^T \col{\dot{q}}
+\end{align}
+%%%%%%%%%%%%%%%%
+voir section \ref{sec:manipstaticconservative} pour le détail. 
 
+Dans ce chapitre ce vecteur est noté $\col{g}$ car typiquement la seule énergie potentielle significative est l'énergie gravitationnelle et les forces conservatrices sont les forces gravitationnelles. L'énergie potentielle gravitationnelle peut être calculé comme la sommation de l'énergie potentielle de chacun des liens rigides du robot:
+%%%%%%%%%%%%%%%%
+\begin{align}
+V_g(\col{q}) = \sum_i m_i g h_i(\col{q})
+\end{align}
+%%%%%%%%%%%%%%%
+où $m_i$ est la masse du lien $i$, $g$ la constante gravitationnelle et $h_i(\col{q})$ est la hauteur du c.g. du lien $i$ exprimée en fonction des coordonnées généralisées.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Forces dissipatrices}
 
-%
+
+
+%%%%%%%%%%%%%%%%
 \begin{align}
 \dot{Q}_{out} = \dot{\col{q}}^T \col{d}
 \end{align}
-%
+%%%%%%%%%%%%%%%%
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Effets inertiels}
 %
 L'énergie cinétique du système est directement reliée à la matrice d'inertie $H$ et la vitesse des joints $\dot{\col{q}}$:
@@ -219,6 +254,23 @@ La matrice $C$ n'est pas une propriété indépendante du système, elle est en 
 
 %
 % TODO la version indicielle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Forme compacte}
+
+Parfois pour allégé la manipulation des équations, une version abrégée où $\col{c}$ est parfois utilisé pour regrouper toute les forces internes (qui sont des fonctions des états du systèmes):
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{c} = C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q})
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%
+ce qui simplifie, pour un cas sans forces externes, l'équation des manipulateurs à:
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+H \col{\ddot{q}} + \col{c} = \col{\tau} 
+\label{eq:manipulator_short}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \newpage
@@ -304,7 +356,7 @@ Détails à venir!
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Équations avec la méthode de Lagrange}
+\section{Dérivation des équations avec la méthode de Lagrange}
 \label{sec:lagrange}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -434,6 +486,11 @@ On peut alternativement résoudre le système de $n+c$ équations suivant pour o
 \end{align}
 
 
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Dynamique des actionneurs et effet des ratios de réduction}
+\label{sec:actuatordynamic}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
