@@ -353,6 +353,7 @@ H \col{\ddot{q}} + \col{h} = \col{\tau}
 
 TODO: Uniformiser le nom des variables pour cette section.
 
+\newline
 Parfois il peut être utile de travailler avec des systèmes de coordonnées supplémentaire à l'espace des joints. La Figure \ref{fig:coord} montre quelques espaces supplémentaires qui peuvent être utilisés. 
 %
 \begin{figure}[H]
@@ -386,19 +387,26 @@ H \col{\ddot{q}} + C \col{\dot{q}} + \col{d} + \col{g} =  \underbrace{ J_a^T(\co
 \section{Conservation de l'énergie}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Détails à venir!
-
+Si on reprend le bilan d'énergie avec le volume de contrôle de la figure \ref{fig:controlvolume}, mais cette fois çi en incluant aussi l'énergie cinétique dans l'énergie interne $E$ et les pertes thermiques dues aux forces dissipatrices $\dot{Q}$, on trouve avec la première loi de la thermodynamique:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \frac{dE}{dt}     &= P_{in} - P_{out} \\
 \dot{T} + \dot{V}  &= \sum \tau_i \dot{q}_i  - \sum f_i \dot{r}_i - \dot{Q} \\
-\frac{d}{dt}\left( \frac{1}{2} \col{\dot{q}}^T H \col{\dot{q}} \right) + \frac{\partial V}{\partial \col{q}^T} \dot{\col{q}} &= \col{\tau}^T \col{\dot{q}}  - \col{f}_e^T J \col{\dot{q}} - \col{d}^T \col{\dot{q}}
+\frac{d}{dt}\left( \frac{1}{2} \col{\dot{q}}^T H \col{\dot{q}} \right) + \frac{\partial V}{\partial \col{q}^T} \dot{\col{q}} &= \col{\tau}^T \col{\dot{q}}  - \col{f}_E^T J \col{\dot{q}} - \col{d}^T \col{\dot{q}} \\
+\dot{\col{q}}^T H \col{\ddot{q}} + \dot{\col{q}}^T \frac{1}{2}\dot{H}\dot{\col{q}} + \dot{\col{q}}^T \col{g} &=  \dot{\col{q}}^T B\col{u} + \dot{\col{q}}^T J^T \col{f}_{R_E}  - \dot{\col{q}}^T \col{d}
 \end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+On peut donc voir toute l'expression comme un produit scalaire entre le vecteur et les termes restant qui peuvent être simplifier si on substitue par notre définition de l'équation des manipulateurs. Les seules termes qui ne s'annulent pas sont $\dot{H}$ et $C$, ce qui mène à une relation entre les deux:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-\dot{\col{q}}^T \left[ H \col{\ddot{q}} + \frac{1}{2}\dot{H}\dot{\col{q}} + \frac{\partial V}{\partial \col{q}^T} + \col{d} - \col{\tau} - J^T \col{f}_e  \right] &= 0 \\
+\dot{\col{q}}^T \left[ H \col{\ddot{q}} + \frac{1}{2}\dot{H}\dot{\col{q}} + \col{g} + \col{d} - \col{\tau} - J^T \col{f}_E  \right] &= 0 \\
 \dot{\col{q}}^T \left[ \frac{1}{2}\dot{H} - C \right] \dot{\col{q}} &= 0
 \end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Cette expression va toujours être égale à zéro si $\dot{H} = C + C^T$, une condition qui correspond donc d'un certain sens à une condition pour la conservation de l'énergie pour le système.
 
+\note{Matrice anti-symétrique}{Une matrice est dit anti-symétrique, \textit{skew-symetric }en anglais, si ...}
 
 %\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -415,7 +423,7 @@ L'équation des manipulateurs détermine des forces généralisée $\col{\tau}$ 
 ou en version longue:
 %%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-\col{\ddot{q}}  = H^{-1} \left( B(\col{q}) \col{u}  + J^T(\col{q}) \col{f}_{R_E} - C(\col{q},\col{\dot{q}}) \col{\dot{q}} - d(\col{q}, \col{\dot{q}}) - \col{g}(\col{q})  \right)
+\col{\ddot{q}}  = H^{-1}(\col{q}) \left( B(\col{q}) \col{u}  + J^T(\col{q}) \col{f}_{R_E} - C(\col{q},\col{\dot{q}}) \col{\dot{q}} - d(\col{q}, \col{\dot{q}}) - \col{g}(\col{q})  \right)
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%
 Comme la matrice d'inertie $H$ est symétrique et définie positive, sont inverse existe toujours et donc cette équation a toujours une solution.
