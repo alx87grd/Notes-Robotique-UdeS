@@ -458,7 +458,45 @@ Détails à venir!
 \label{sec:lagrange}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Pour des systèmes robotiques et mécanismes articulés relativement simpleS, la méthode de Lagrange est un outil bien adapté pour calculé rapidement analytiquement les équations du mouvement. Pour utiliser cette méthode, il suffit de déterminer les expressions pour l'énergie cinétique et potentielle en fonction des coordonnées généralisée.:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\mathcal{L} &= T - V = 
+\underbrace{T(\col{q},\col{\dot{q}})}_{\text{Énergie cinétique}}
+- 
+\underbrace{V(\col{q})}_{\text{Énergie potentielle}}
+\end{align}
+%%%%%%%%%%%%%%%
+Ensuite il suffit d'appliquer une "recette de cuisine" qui consiste a effectuer des dérivées pour obtenir les équations de la dynamique. Chaque ligne $i$ de l'équation des manipulateurs peut être déterminée avec l'expression suivante:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\forall i \quad \quad \frac{d}{dt}\left(\frac{\partial \mathcal{L}}{\partial \dot{q}_i}\right) - \frac{\partial \mathcal{L}}{\partial q_i} = \sum \tau_i
+\end{align}
+%%%%%%%%%%%%%%%
+qui est aussi équivalente à:
+%%%%%%%%%%%%%%%%
+\begin{align}
+\forall i \quad \quad 
+\underbrace{
+\frac{d}{dt}(\frac{\partial T}{\partial \dot{q}_i}) 
+- 
+\frac{\partial T}{\partial q_i} 
+}_{\text{Effets inertiels}}
++
+\underbrace{
+\frac{\partial V}{\partial q_i} 
+}_{\text{Force conservatrices}}
+= 
+\underbrace{
+\sum \tau_i
+}_{\text{Forces dissipatrices, externes et actionneurs}}
+\end{align}
+%%%%%%%%%%%%%%%
+On voit donc que cette méthode est surtout intéressante pour déterminer les termes inertiels et les forces conservatives, est ne guide pas vraiment la détermination des autres forces ni leur expression comme des forces généralisées. L'avantage de cette méthode est qu'il est possible d'ignorer les forces de contraintes dans la démarche, versus la méthode classique qui demanderait de débuter par des diagrammes de corps libres (DCL), appliqué $f=ma$ sur tout les axes et faire un processus d'élimination des forces de contrainte. 
+
 \video{Méthode de Lagrange pour déterminer les équations dynamiques}{https://youtu.be/AUcs0L85liM}
+
+\note{Note: }{Il est a noté que la méthode de Lagrange n'est pas un type de modèle mais bien une méthodologie, i.e. une recette de cuisine pour déterminer les équations dynamiques d'un système de corps rigides. En utilisant la méthode classique (DCL + lois de Newtons) ou n'importe quelle autre méthode, si on part des mêmes hypothèses de modélisation on va trouver exactement les mêmes équations.}
 
 
 
@@ -479,7 +517,12 @@ Ensuite si on utilise ces équations pour remplacer les variables de l'espace de
 %%%%%%%%%%%%%%%%
 \begin{align}
 H \col{\ddot{q}} + \col{c} &= \col{\tau} + J^T \col{f}_{R_E} \\
-H J^{-1} (\col{\ddot{r}} - \dot{J} \col{\dot{q}}) + \col{h} &= \col{\tau} + J^T \col{f}_{R_E} \\
+H J^{-1} (\col{\ddot{r}} - \dot{J} \col{\dot{q}}) + \col{h} &= \col{\tau} + J^T \col{f}_{R_E}
+\end{align}
+%%%%%%%%%%%%%%%%
+et qu'on multiplie ensuite par la droite par l'inverse du jacobien transposé ($J^{-T}=(J^T)^{-1}$), nous obtenons:
+%%%%%%%%%%%%%%%%
+\begin{align}
 J^{-T} H J^{-1} \col{\ddot{r}} -  J^{-T} H J^{-1} \dot{J} \col{\dot{q}} + J^{-T} \col{h} &= J^{-T} B \col{u} + J^{-T} J^T \col{f}_{R_E} \\
 \underbrace{
 J^{-T} H J^{-1} 
@@ -499,7 +542,7 @@ B
 \col{u} + \col{f}_{R_E} 
 \end{align}
 %%%%%%%%%%%%%%%%
-Nous pouvons réorganiser les termes pour obtenir une nouvelle équation la même forme originale mais avec tout les termes par rapport aux coordonnées de la tâche:
+Nous pouvons ensuite réorganiser les termes pour obtenir une nouvelle équation, qui a la même forme originale que l'équation des manipulateurs dans l'espace des joints, mais avec tout les termes par rapport aux coordonnées de la tâche:
 %%%%%%%%%%%%%%%%
 \begin{align}
 H^r
@@ -531,97 +574,99 @@ Cette section présente les outils pour obtenir les équations du mouvement lors
 
 \subsubsection{Contraintes cinématique}
 \label{sec:constraints}
-%
-SI un robot manipulateur est en contact avec un objet fixe, il pert certains DDL. Dans le cas de contraintes bilatérales, la contrainte peut être décrite par une fonction:
+%%%%%%%%%%%%%%%%%%%%%%%%
+Si un robot manipulateur est en contact avec un objet fixe, il pert certains DDL. Dans le cas de contraintes bilatérales, la contrainte peut être décrite par une fonction:
 \begin{align}
 \col{\phi}( \col{ q } ) = 0
 \label{eq:constraint}
 \end{align}
-%
+%%%%%%%%%%%%%%%%%%%%%%%%
 Si on dérive cette fonction par rapport au temps, il est possible d'obtenir des conditions pour la vitesse et l'accélération du système:
+%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-\frac{d \col{\phi}( \col{ q } ) }{dt}     &= J_c( \col{ q } ) \col{\dot{q}}  = 0 \\
-\frac{d^2 \col{\phi}( \col{ q } ) }{dt^2} &= J_c( \col{ q } ) \col{\ddot{q}}  + \dot{J}_c( \col{ q } ) \col{\dot{q}} = 0 
+\frac{d \col{\phi}( \col{ q } ) }{dt}     &= J_C( \col{ q } ) \col{\dot{q}}  = 0 \\
+\frac{d^2 \col{\phi}( \col{ q } ) }{dt^2} &= J_C( \col{ q } ) \col{\ddot{q}}  + \dot{J}_C( \col{ q } ) \col{\dot{q}} = 0 
 \label{eq:constraint_diff}
 \end{align}
-%
-où $J_c$ est le jacobien des contraintes:
-%
+%%%%%%%%%%%%%%%%%%%%%%%%
+où $J_C$ est le jacobien des contraintes:
+%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-J_c( \col{ q } )                    &= \frac{d \col{\phi}( \col{ q } ) }{d\col{ q }}
+J_C( \col{ q } )                    &= \frac{d \col{\phi}( \col{ q } ) }{d\col{ q }}
 \label{eq:constraint_jaco}
 \end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsubsection{Forces de contraintes}
 \label{sec:constraint_forces}
 
-Le jacobien des contraintes peut être utilisé pour transformer des forces de contact cartésiennes $\col{f}_c$ en force généralisée au joint dans l'équation des manipulateurs:
-%
+Le jacobien des contraintes peut être utilisé pour transformer des forces de contact cartésiennes $\col{f}_C$ en force généralisée au joint dans l'équation des manipulateurs:
+%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-H \col{\ddot{q}} + \col{c} = B \col{\tau} + J_c( \col{ q } )^T  \col{f}_c
+H \col{\ddot{q}} + \col{h} = B \col{\tau} + J_C( \col{ q } )^T  \col{f}_C
 \label{eq:manipulator_constraint}
 \end{align}
-%
+%%%%%%%%%%%%%%%%%%%%%%%%
 Si on isole $\col{\ddot{q}}$ dans l'équation \eqref{eq:manipulator_constraint} pour ensuite substituer dans l'équation \eqref{eq:constraint_diff}, on retrouve une expression des forces de contraintes qui dépend des états actuel du système et des forces/couples aux actionneurs:
-%
+%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-\col{f}_c = \left( J_c H^{-1} J_c^T \right)^{-1} \left(  J_c H^{-1} [\col{c} - B \col{\tau} ] - \dot{J}_c( \col{ q } ) \col{\dot{q}}   \right)
+\col{f}_C = \left( J_C H^{-1} J_C^T \right)^{-1} \left(  J_C H^{-1} [\col{h} - B \col{\tau} ] - \dot{J}_C( \col{ q } ) \col{\dot{q}}   \right)
 \label{eq:const_forces}
 \end{align}
-%
-Alternativement il est possible, pour trouver l'accélération $\col{\ddot{q}}$ et les forces de contact $\col{f}_c$ simultanément, de résoudre le système d'équation suivant:
-%
+%%%%%%%%%%%%%%%%%%%%%%%%
+Alternativement il est possible, pour trouver l'accélération $\col{\ddot{q}}$ et les forces de contact $\col{f}_C$ simultanément, de résoudre le système d'équation suivant:
+%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-\left[ \begin{array}{c c } 	H & -J_c^T  \\ J_c 	& 0  	\end{array} \right] \left[ \begin{array}{c} \col{\ddot{q}}  \\ \col{f}_c \end{array} \right] = \left[ \begin{array}{c}  B \col{\tau} - \col{c}   \\ -\dot{J}_c \col{\dot{q}}  \end{array} \right]
+\left[ \begin{array}{c c } 	H & -J_C^T  \\ J_C 	& 0  	\end{array} \right] \left[ \begin{array}{c} \col{\ddot{q}}  \\ \col{f}_C \end{array} \right] = \left[ \begin{array}{c}  B \col{\tau} - \col{h}   \\ -\dot{J}_C \col{\dot{q}}  \end{array} \right]
 \label{eq:manipulator_constraint_eom}
 \end{align}
-
+%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsubsection{Impulsion lors d'un impact}
 \label{sec:impact}
-%
+%%%%%%%%%%%%%%%%%%%%%%%%
 Quand le robot rentre en contact avec un objet fixe très rigide (frapper le sol par exemple), des forces de contact impulsives vont agir sur le système. Si on intègre l'équation \eqref{eq:manipulator_constraint} sur une période infinitésimal de temps $dt$ donne:
-%
+%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-\int{ ( H \col{\ddot{q}} + \col{c} ) dt } &= \int{ ( B \col{\tau} + J_c( \col{ q } )^T  \col{f}_c ) dt } \\
-H \col{\dot{q}}^+ - H \col{\dot{q}}^- &= J_c( \col{ q } )^T  \int{  \col{f}_c dt }
+\int{ ( H \col{\ddot{q}} + \col{h} ) dt } &= \int{ ( B \col{\tau} + J_C( \col{ q } )^T  \col{f}_C ) dt } \\
+H \col{\dot{q}}^+ - H \col{\dot{q}}^- &= J_C( \col{ q } )^T  \int{  \col{f}_C dt }
 \label{eq:manipulator_impact}
 \end{align}
-%
-où la contribution des forces non-impulsive est négligée. Si on projette ces équations sur les coordonnées contraintes en multipliant par $J_c H^{-1}$ on trouve:
-%
+%%%%%%%%%%%%%%%%%%%%%%%%
+où la contribution des forces non-impulsive est négligée. Si on projette ces équations sur les coordonnées contraintes en multipliant par $J_C H^{-1}$ on trouve:
+%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-J_c \col{\dot{q}}^+ - J_c \col{\dot{q}}^- &= J_c H^{-1} J_c^T  \int{  \col{f}_c dt }
+J_C \col{\dot{q}}^+ - J_C \col{\dot{q}}^- &= J_C H^{-1} J_C^T  \int{  \col{f}_C dt }
 \label{eq:manipulator_impact2}
 \end{align}
-%
-Si on fait l'hypothèse d'une collision complètement inélastique (sans rebond), la contrainte est respectée à l'instant $t^+$ qui suit immédiatement l'impact. Dons comme $J_c \col{\dot{q}}^+=0$, il est ensuite possible de résoudre pour obtenir l'impulsion due au contact dans ces conditions:
+%%%%%%%%%%%%%%%%%%%%%%%%
+Si on fait l'hypothèse d'une collision complètement inélastique (sans rebond), la contrainte est respectée à l'instant $t^+$ qui suit immédiatement l'impact. Dons comme $J_C \col{\dot{q}}^+=0$, il est ensuite possible de résoudre pour obtenir l'impulsion due au contact dans ces conditions:
 \begin{align}
-\int{  \col{f}_c dt } &= - \left( J_c H^{-1} J_c^T \right)^{-1}  J_c \col{\dot{q}}^-
+\int{  \col{f}_C dt } &= - \left( J_C H^{-1} J_C^T \right)^{-1}  J_C \col{\dot{q}}^-
 \label{eq:manipulator_impact_force}
 \end{align}
-%
+%%%%%%%%%%%%%%%%%%%%%%%%
 et pour la vitesse des joints qui va suivre immédiatement l'impact:
-%
+%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-\col{\dot{q}}^+ &= - \Big[ I - H^{-1} J_c^T \left( J_c H^{-1} J_c^T \right)^{-1} J_c \Big] \col{\dot{q}}^-
+\col{\dot{q}}^+ &= - \Big[ I - H^{-1} J_C^T \left( J_C H^{-1} J_C^T \right)^{-1} J_C \Big] \col{\dot{q}}^-
 \label{eq:manipulator_impact_velocity}
 \end{align}
-%
+%%%%%%%%%%%%%%%%%%%%%%%%
 ou pour la variation de vitesse durant l'impulsion:
-%
+%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-\Delta \col{\dot{q}} &=  \Big[ H^{-1} J_c^T \left( J_c H^{-1} J_c^T \right)^{-1} J_c \Big] \col{\dot{q}}^-
+\Delta \col{\dot{q}} &=  \Big[ H^{-1} J_C^T \left( J_C H^{-1} J_C^T \right)^{-1} J_C \Big] \col{\dot{q}}^-
 \label{eq:manipulator_impact_velocity_delta}
 \end{align}
-%
+%%%%%%%%%%%%%%%%%%%%%%%%
 On peut alternativement résoudre le système de $n+c$ équations suivant pour obtenir ces résultats simultanément:
-%
+%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-\left[ \begin{array}{c c } 	H & -J_c^T  \\ J_c 	& 0  	\end{array} \right] \left[ \begin{array}{c} \col{\dot{q}}^+  \\ \int{ \col{f}_c dt }\end{array} \right] = \left[ \begin{array}{c}  	H \col{\dot{q}}^-   \\ 0  \end{array} \right]
+\left[ \begin{array}{c c } 	H & -J_C^T  \\ J_C 	& 0  	\end{array} \right] \left[ \begin{array}{c} \col{\dot{q}}^+  \\ \int{ \col{f}_C dt }\end{array} \right] = \left[ \begin{array}{c}  	H \col{\dot{q}}^-   \\ 0  \end{array} \right]
 \label{eq:manipulator_impact_eom}
 \end{align}
-
+%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -629,7 +674,30 @@ On peut alternativement résoudre le système de $n+c$ équations suivant pour o
 \label{sec:actuatordynamic}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Jusqu'à maintenant les équations étaient développées en supposant que l'entrée sur le système robotique était une source de force pure. La plupart des robots sont actionnés par des moteurs électriques, pour lesquels le couple appliqué par le moteur est relativement proportionnel au courant qui circule dans le moteur qu'il est possible d'asservir avec de l'électronique de puissance adapté. Toutefois, l'inertie et la friction interne de ces moteurs va avoir un gros impact sur la dynamique des robots lorsque de grands ratios de réductions sont utilisés comme c'est le cas pour les manipulateurs industriels.
 
+Pour illustré ce phénomène, débutons avec un modèle simple de dynamique de moteur qui aurait une inertie $I$, de la friction visceuse $b$, un couple transmis net $\tau_{net}$ et comme entrée un couple électromagnétique $\tau_{mag}$. La dynamique serait donnée par:
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+I \dot{w} + b w  = \tau_{mag} - \tau_{net}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%
+Si un ratio de réduction $R$ est utilisé entre le moteur et le joint du robot, alors le couplage entre le bras robotique et le moteur est donné par ces deux équations:
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\tau &= R \tau_{net} \\
+ w   &= R \dot{q}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[ht]
+	\centering
+		\includegraphics[width=0.70\textwidth]{fig/actuator_dynamic.jpg}
+	\caption{Dynamique d'un moteur électrique couplé avec un joint robotique}%
+	\label{fig:actuator_dynamic}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \newpage
@@ -704,10 +772,10 @@ Conservation of energy also give the following relation:
 \label{eq:cener}
 \end{align}
 %
-On occasion, dependence notation is dropped and $\col{c}$ is used to represent all state dependent forces, leading to the short form:
+On occasion, dependence notation is dropped and $\col{h}$ is used to represent all state dependent forces, leading to the short form:
 %
 \begin{align}
-H \col{\ddot{q}} + \col{c} = B \col{\tau} 
+H \col{\ddot{q}} + \col{h} = B \col{\tau} 
 \label{eq:manipulator_short}
 \end{align}
 
@@ -730,9 +798,9 @@ H \col{\ddot{q}} + \col{c} = B \col{\tau}
 			$\col{q}$       &  :  & Joint coordinates position vector                          & $n$  \\
 			$\col{w}$       &  :  & Actuator coordinates velocity vector                          & $m$  \\ 
 			$\col{g}$       &  :  & Gravitational forces vector                                & $n$  \\
-			$\col{c}$       &  :  & Sum of state-dependent generalized forces                  & $n$  \\
+			$\col{h}$       &  :  & Sum of state-dependent generalized forces                  & $n$  \\
 			$\col{\phi}$    &  :  & Constraint vector                                          & $c$  \\
-			$\col{f}_c$     &  :  & Contact forces vector                                      & $c$  \\
+			$\col{f}_C$     &  :  & Contact forces vector                                      & $c$  \\
 			$\col{f}_e$     &  :  & End-effector external forces vector                        & $o$  \\
 			$\col{r}$       &  :  & End-effector position vector                               & $o$  \\
 			\hline \hline
@@ -744,7 +812,7 @@ H \col{\ddot{q}} + \col{c} = B \col{\tau}
 			$B$             &  :  & Generalized forces matrix                                  & $n$ x $m$ \\
 			$J_a$           &  :  & Actuator coordinates / joint coordinates Jacobian matrix   & $m$ x $n$ \\
 			$J_e$           &  :  & Task-space coordinates / joint coordinates Jacobian matrix & $o$ x $n$ \\
-			$J_c$           &  :  & Contact constraints Jacobian matrix                        & $c$ x $n$  \\
+			$J_C$           &  :  & Contact constraints Jacobian matrix                        & $c$ x $n$  \\
 		\hline \hline
         \end{tabular}		
 	\label{tab:nom}
@@ -775,7 +843,7 @@ Where coordinates transforms are defined by:
 The following equation represents the most general case:
 %
 \begin{align}
-H \col{\ddot{q}} + C \col{\dot{q}} + D \col{\dot{q}} + \col{g} =  \underbrace{ J_a^T(\col{q}) R^T }_{B(\col{q})}  \col{\tau} + J_e^T(\col{q}) \col{f}_e + J_c^T(\col{q}) \col{f}_c
+H \col{\ddot{q}} + C \col{\dot{q}} + D \col{\dot{q}} + \col{g} =  \underbrace{ J_a^T(\col{q}) R^T }_{B(\col{q})}  \col{\tau} + J_e^T(\col{q}) \col{f}_e + J_C^T(\col{q}) \col{f}_C
 \label{eq:manipulator_gen}
 \end{align}
 
@@ -797,39 +865,39 @@ If a robotic manipulator enter contact with a fixed object, then some DoF are co
 %
 The time-derivative of the constraint must also be equal to zero, which gives some constraints in terms of velocity and acceleration:
 \begin{align}
-\frac{d \col{\phi}( \col{ q } ) }{dt}     &= J_c( \col{ q } ) \col{\dot{q}}  = 0 \\
-\frac{d^2 \col{\phi}( \col{ q } ) }{dt^2} &= J_c( \col{ q } ) \col{\ddot{q}}  + \dot{J}_c( \col{ q } ) \col{\dot{q}} = 0 
+\frac{d \col{\phi}( \col{ q } ) }{dt}     &= J_C( \col{ q } ) \col{\dot{q}}  = 0 \\
+\frac{d^2 \col{\phi}( \col{ q } ) }{dt^2} &= J_C( \col{ q } ) \col{\ddot{q}}  + \dot{J}_C( \col{ q } ) \col{\dot{q}} = 0 
 \label{eq:constraint_diff}
 \end{align}
 %
-when $J_c$ is the constraint Jacobian:
+when $J_C$ is the constraint Jacobian:
 %
 \begin{align}
-J_c( \col{ q } )                    &= \frac{d \col{\phi}( \col{ q } ) }{d\col{ q }}
+J_C( \col{ q } )                    &= \frac{d \col{\phi}( \col{ q } ) }{d\col{ q }}
 \label{eq:constraint_jaco}
 \end{align}
 
 \subsubsection{Constraint forces}
 \label{sec:constraint_forces}
 
-The constraint Jacobian can be used to map constraint forces $\col{f}_c$ to generalized forces in the EoM:
+The constraint Jacobian can be used to map constraint forces $\col{f}_C$ to generalized forces in the EoM:
 %
 \begin{align}
-H \col{\ddot{q}} + \col{c} = B \col{\tau} + J_c( \col{ q } )^T  \col{f}_c
+H \col{\ddot{q}} + \col{h} = B \col{\tau} + J_C( \col{ q } )^T  \col{f}_C
 \label{eq:manipulator_constraint}
 \end{align}
 %
-Solving for $\col{\ddot{q}}$ in eq. \eqref{eq:manipulator_constraint} and substituting in eq. \eqref{eq:constraint_diff}, it is possible to get and expression for the constraint forces $\col{f}_c$ as a function of states and applied torques:
+Solving for $\col{\ddot{q}}$ in eq. \eqref{eq:manipulator_constraint} and substituting in eq. \eqref{eq:constraint_diff}, it is possible to get and expression for the constraint forces $\col{f}_C$ as a function of states and applied torques:
 %
 \begin{align}
-\col{f}_c = \left( J_c H^{-1} J_c^T \right)^{-1} \left(  J_c H^{-1} [\col{c} - B \col{\tau} ] - \dot{J}_c( \col{ q } ) \col{\dot{q}}   \right)
+\col{f}_C = \left( J_C H^{-1} J_C^T \right)^{-1} \left(  J_C H^{-1} [\col{h} - B \col{\tau} ] - \dot{J}_C( \col{ q } ) \col{\dot{q}}   \right)
 \label{eq:const_forces}
 \end{align}
 %
-Alternatively, it possible to solve for acceleration $\col{\ddot{q}}$ and constraints forces $\col{f}_c$ simultaneously by solving the following system of equations:
+Alternatively, it possible to solve for acceleration $\col{\ddot{q}}$ and constraints forces $\col{f}_C$ simultaneously by solving the following system of equations:
 %
 \begin{align}
-\left[ \begin{array}{c c } 	H & -J_c^T  \\ J_c 	& 0  	\end{array} \right] \left[ \begin{array}{c} \col{\ddot{q}}  \\ \col{f}_c \end{array} \right] = \left[ \begin{array}{c}  B \col{\tau} - \col{c}   \\ -\dot{J}_c \col{\dot{q}}  \end{array} \right]
+\left[ \begin{array}{c c } 	H & -J_C^T  \\ J_C 	& 0  	\end{array} \right] \left[ \begin{array}{c} \col{\ddot{q}}  \\ \col{f}_C \end{array} \right] = \left[ \begin{array}{c}  B \col{\tau} - \col{h}   \\ -\dot{J}_C \col{\dot{q}}  \end{array} \right]
 \label{eq:manipulator_constraint_eom}
 \end{align}
 
@@ -840,44 +908,44 @@ Alternatively, it possible to solve for acceleration $\col{\ddot{q}}$ and constr
 When the robot first enters contact with a fixed object, impulsive contact forces will act on the system. Integrating eq. \eqref{eq:manipulator_constraint} over the short impact interval gives:
 %
 \begin{align}
-\int{ ( H \col{\ddot{q}} + \col{c} ) dt } &= \int{ ( B \col{\tau} + J_c( \col{ q } )^T  \col{f}_c ) dt } \\
-H \col{\dot{q}}^+ - H \col{\dot{q}}^- &= J_c( \col{ q } )^T  \int{  \col{f}_c dt }
+\int{ ( H \col{\ddot{q}} + \col{h} ) dt } &= \int{ ( B \col{\tau} + J_C( \col{ q } )^T  \col{f}_C ) dt } \\
+H \col{\dot{q}}^+ - H \col{\dot{q}}^- &= J_C( \col{ q } )^T  \int{  \col{f}_C dt }
 \label{eq:manipulator_impact}
 \end{align}
 %
-where any non-impulsive forces are neglected during the short impact interval. Projecting onto constrained coordinates (multiplying by $J_c H^{-1}$) gives:
+where any non-impulsive forces are neglected during the short impact interval. Projecting onto constrained coordinates (multiplying by $J_C H^{-1}$) gives:
 %
 \begin{align}
-J_c \col{\dot{q}}^+ - J_c \col{\dot{q}}^- &= J_c H^{-1} J_c^T  \int{  \col{f}_c dt }
+J_C \col{\dot{q}}^+ - J_C \col{\dot{q}}^- &= J_C H^{-1} J_C^T  \int{  \col{f}_C dt }
 \label{eq:manipulator_impact2}
 \end{align}
 %
-Then assuming a sticky inelastic impact (no bouncing), then the constraint is respected after the impact ($J_c \col{\dot{q}}^+=0$) and it is possible to solve for the impact force:
+Then assuming a sticky inelastic impact (no bouncing), then the constraint is respected after the impact ($J_C \col{\dot{q}}^+=0$) and it is possible to solve for the impact force:
 %
 \begin{align}
-\int{  \col{f}_c dt } &= - \left( J_c H^{-1} J_c^T \right)^{-1}  J_c \col{\dot{q}}^-
+\int{  \col{f}_C dt } &= - \left( J_C H^{-1} J_C^T \right)^{-1}  J_C \col{\dot{q}}^-
 \label{eq:manipulator_impact_force}
 \end{align}
 %
 and also for the velocity after the impact:
 %
 \begin{align}
-\col{\dot{q}}^+ &= - \Big[ I - H^{-1} J_c^T \left( J_c H^{-1} J_c^T \right)^{-1} J_c \Big] \col{\dot{q}}^-
+\col{\dot{q}}^+ &= - \Big[ I - H^{-1} J_C^T \left( J_C H^{-1} J_C^T \right)^{-1} J_C \Big] \col{\dot{q}}^-
 \label{eq:manipulator_impact_velocity}
 \end{align}
 %
 Or change in velocity:
 %
 \begin{align}
-\Delta \col{\dot{q}} &=  \Big[ H^{-1} J_c^T \left( J_c H^{-1} J_c^T \right)^{-1} J_c \Big] \col{\dot{q}}^-
+\Delta \col{\dot{q}} &=  \Big[ H^{-1} J_C^T \left( J_C H^{-1} J_C^T \right)^{-1} J_C \Big] \col{\dot{q}}^-
 \label{eq:manipulator_impact_velocity_delta}
 \end{align}
 %
 
-Alternatively, it possible to solve for velocity $\col{\dot{q}}^+$ and impulsive forces $\int{ \col{f}_c dt }$ simultaneously by solving the following system of $n+c$ equations:
+Alternatively, it possible to solve for velocity $\col{\dot{q}}^+$ and impulsive forces $\int{ \col{f}_C dt }$ simultaneously by solving the following system of $n+c$ equations:
 %
 \begin{align}
-\left[ \begin{array}{c c } 	H & -J_c^T  \\ J_c 	& 0  	\end{array} \right] \left[ \begin{array}{c} \col{\dot{q}}^+  \\ \int{ \col{f}_c dt }\end{array} \right] = \left[ \begin{array}{c}  	H \col{\dot{q}}^-   \\ 0  \end{array} \right]
+\left[ \begin{array}{c c } 	H & -J_C^T  \\ J_C 	& 0  	\end{array} \right] \left[ \begin{array}{c} \col{\dot{q}}^+  \\ \int{ \col{f}_C dt }\end{array} \right] = \left[ \begin{array}{c}  	H \col{\dot{q}}^-   \\ 0  \end{array} \right]
 \label{eq:manipulator_impact_eom}
 \end{align}
 
