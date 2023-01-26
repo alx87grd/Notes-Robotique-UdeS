@@ -101,7 +101,7 @@ Le tableau ci-dessous présente les variables qui sont utilisée dans ce chapitr
 			$\col{q}$       &  :  & Coordonnées généralisée / espace des joints    & $n$  \\
 			$\col{d}$       &  :  & Somme de force dissipatrices dans l'espace des joints                             & $n$  \\
 			$\col{g}$       &  :  & Somme des force conservatrices dans l'espace des joints                             & $n$  \\
-			$\col{c}$       &  :  & Sommes des forces internes dans l'espace des joints               & $n$  \\
+			$\col{h}$       &  :  & Sommes des forces internes dans l'espace des joints               & $n$  \\
 			$\col{\phi}_C$    &  :  & Fonction de contraintes pour un point de contact $C$                                          & $c$  \\
 			$\col{f}_{R_C}$     &  :  & Forces cartésienne de contact appliquée au point $C$                                  & $c$  \\
 			$\col{f}_{R_E}$     &  :  & Forces cartésienne externe appliquée sur l'effecteur du robot                  & $o$  \\
@@ -143,7 +143,7 @@ où $\col{q}$ est le vecteur des forces généralisée, $H$ est la matrice d'ine
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Forces externes multiples}
 
-L'équation \eqref{eq:manipulator} est pour une situation ou une seule force externe est appliquée sur le robot, sur l'effectuer i.e. sur le point du robot dont la position est décrit par l'équation de la cinématique directe $\col{r} = f\col{q}$. Si plusieurs forces externes sont appliquées à divers points sur le robot, il serait possible de décrire cette situation avec une sommation:
+L'équation \eqref{eq:manipulator} est pour une situation ou une seule force externe est appliquée sur le robot, sur l'effectuer i.e. sur le point du robot dont la position est décrit par l'équation de la cinématique directe $\col{r} = f(\col{q})$. Si plusieurs forces externes sont appliquées à divers points sur le robot, il serait possible de décrire cette situation avec une sommation:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 H(\col{q}) \col{\ddot{q}} + C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q}) = B(\col{q}) \col{u}  + \sum_i J_i^T(\col{q}) \col{f}_{R_i} 
@@ -215,77 +215,143 @@ de sorte que le taux de variation de l'énergie potentiel soit donnée par
 %%%%%%%%%%%%%%%%
 voir section \ref{sec:manipstaticconservative} pour le détail. 
 
-Dans ce chapitre ce vecteur est noté $\col{g}$ car typiquement la seule énergie potentielle significative est l'énergie gravitationnelle et les forces conservatrices sont les forces gravitationnelles. L'énergie potentielle gravitationnelle peut être calculé comme la sommation de l'énergie potentielle de chacun des liens rigides du robot:
+
+\textbf{Gravité:} Dans ce chapitre ce vecteur est noté $\col{g}$ car typiquement la seule énergie potentielle significative est l'énergie gravitationnelle et les forces conservatrices sont les forces gravitationnelles. L'énergie potentielle gravitationnelle peut être calculé comme la sommation de l'énergie potentielle de chacun des liens rigides du robot:
 %%%%%%%%%%%%%%%%
 \begin{align}
 V_g(\col{q}) = \sum_i m_i g h_i(\col{q})
 \end{align}
 %%%%%%%%%%%%%%%
-où $m_i$ est la masse du lien $i$, $g$ la constante gravitationnelle et $h_i(\col{q})$ est la hauteur du c.g. du lien $i$ exprimée en fonction des coordonnées généralisées.
+où $m_i$ est la masse du lien $i$, $g$ la constante gravitationnelle et $h_i(\col{q})$ est la hauteur du centre de gravité (c.g.) du lien $i$ exprimée en fonction des coordonnées généralisées, comme illustré à la Figure \ref{fig:gravitycg}. Il est à noter qu'on doit généralement introduire des paramètres géométriques additionnel pour décrire la position des c.g., ici notés avec l'indice $c$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[ht]
+	\centering
+		\includegraphics[width=0.50\textwidth]{fig/gravitycg.jpg}
+	\caption{La hauteur des centres de gravité des liens rigides}%
+	\label{fig:gravitycg}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Forces dissipatrices}
 
-
-
+Les forces dissipatrices représentent les phénomènes qui transforment l'énergie du mouvement mécaniques en pertes thermiques et phénomènes irréversibles. Pour être incluse dans l'équation des manipulateurs, ces force doivent être exprimée comme des forces associées aux coordonnées généralisée de sorte que le puissance dissipée soit égale au produit scalaire entre le vecteur de ces forces et le vecteur vitesse:
 %%%%%%%%%%%%%%%%
 \begin{align}
 \dot{Q}_{out} = \dot{\col{q}}^T \col{d}
 \end{align}
 %%%%%%%%%%%%%%%%
 
+Pour les robots manipulateurs, la principale source de dissipation vient des joints et des actionneurs, ce qui amène généralement à faire l'hypothèse que la force de dissipation $d_i$ est seulement un fonction de la vitesse du joint associé $\dot{q}_i$:
+%%%%%%%%%%%%%%%%
+\begin{align}
+d_i = f_d( \dot{q}_i ) \approx b_s \sgn{(\dot{q}_i)} + b_v \dot{q}_i + \frac{1}{2}\rho C_d A \sgn{(\dot{q}_i)} \dot{q}_i^2
+\end{align}
+%%%%%%%%%%%%%%%%
+Modéliser les phénomènes complexes de friction est une science imparfaite, c'est généralement l'aspect du modèle dynamique d'un robot qui est le moins précis et qui limite la fidélité du modèle. Selon l'objectif de modélisation il va y avoir un compromis à faire entre simplicité et fidélité. Dans un contexte de conception, analyse et/ou développement de loi de commande, on se contente normalement d'approximer la friction comme une combinaison de friction sèche, friction visceuse et friction quadratique, voir Figure \ref{fig:frictionmodels}, mais c'est une grosse approximation de phénomène microscopique de contact complexes. Comme illustré à la Figure \ref{fig:frictionreal}, le comportement observé réel serait typiquement plus complexe et caractérisé par de l'hystérésis.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[ht]
+	\centering
+		\includegraphics[width=0.99\textwidth]{fig/frictionmodels.jpg}
+	\caption{Modèles simples de friction}%
+	\label{fig:frictionmodels}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[ht]
+	\centering
+		\includegraphics[width=0.40\textwidth]{fig/frictionreal.jpg}
+	\caption{Friction: comportement réel}%
+	\label{fig:frictionreal}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Effets inertiels}
 %
-L'énergie cinétique du système est directement reliée à la matrice d'inertie $H$ et la vitesse des joints $\dot{\col{q}}$:
-%
+
+Les termes $H(\col{q}) \col{\ddot{q}}$ et $C(\col{q},\col{\dot{q}})\col{\dot{q}}$ dans l'équation des manipulateur sont l'équivalent du terme $ma$ dans l'équation $f=ma$ alors que tout les autres termes sont des forces. Ici le terme $ma$ prend cette forme particulière car il est exprimé dans les coordonnées généralisée du système relié à l'espace des joints. Le terme $H(\col{q}) \col{\ddot{q}}$ représente la "force" inertielle nécessaire pour obtenir une accélération $\col{\ddot{q}}$ à un configuration $\col{q}$, alors que le terme $C(\col{q},\col{\dot{q}})$ représente une "force" inertielle nécessaire pour maintenir une certaine vitesse $\col{\dot{q}}$ à la configuration $\col{q}$, comme l'effet centrifuge ou de coriolis. Le second terme existe seulement lorsque la matrice $H$ varie dans le temps, lorsque de momentum peut varier sans avoir une variation de vitesse dans l'espace des joints. 
+
+\subsubsection{Energie cinétique: }
+L'énergie cinétique $T$ du système est directement reliée à la matrice d'inertie $H$ et la vitesse des joints $\dot{\col{q}}$. L'équivalent multi-dimension de l'équation de l'énergie cinémique scalaire $\frac{1}{2}mv^2$ est donné par:
+%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-\frac{1}{2} \col{\dot{q}}^T H(\col{q}) \col{\dot{q}} 
+T(\col{q},\col{\dot{q}}) = \frac{1}{2} \col{\dot{q}}^T H(\col{q}) \col{\dot{q}}  =
+\frac{1}{2} \sum_i \sum_j H_{ij} \dot{q}_i \dot{q}_j
 \label{eq:kinetic}
 \end{align}
-%
-La matrice $C$ n'est pas une propriété indépendante du système, elle est en fait reliée à la variation temporelle de la matrice $H$:
-%
+%%%%%%%%%%%%%%%%%%%%
+\note{Propriété de la matrice $H$: }{Il est a noté que la matrice d'inertie est une matrice $n$ x $n$ ($n$ est le nombre de DDL), toujours symétrique et définie positive (ce qui veux dire que l'équation ci-dessus ne peut jamais prendre de valeur négative peut importe le vecteur vitesse $\col{\dot{q}}$). Cela implique que l'inverse $H^{-1}$ va toujours exister, une propriété qui sera utile pour la suite!}
+
+La matrice $C$, souvent appelé la matrice de coriolis, n'est pas une propriété indépendante du système, elle est en fait reliée à la variation temporelle de la matrice $H$:
+%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \dot{H} = C + C^T
 \label{eq:cener}
 \end{align}
+%%%%%%%%%%%%%%%%%%%%
+On peut en fait aussi définir directement la matrice $C$ connaissant l'expression de la matrice $H$ en utilisant la relation suivante:
+%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+C_{ij} = \sum_k \Gamma_{ijk} \dot{q}_k \quad \text{avec} \quad \Gamma_{ijk} = \frac{1}{2}\left(  \frac{\partial H_{ij}}{\partial q_k} + \frac{\partial H_{ik}}{\partial q_j} - \frac{\partial H_{jk}}{\partial q_i}   \right)
+\end{align}
+%%%%%%%%%%%%%%%%%%%%
+Si on définie $\col{c}$ comme le vecteur résultant du terme $C(\col{q},\col{\dot{q}})\col{\dot{q}}$, on peut aussi obtenir la relation sous cette forme:
+%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+c_i &= \sum_j \sum_k \Gamma_{ijk} \dot{q}_j \dot{q}_k \\ 
+\col{c} &= C(\col{q},\col{\dot{q}})\col{\dot{q}} = \col{\dot{q}}^T \Gamma(\col{q}) \col{\dot{q}}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%
+
+\begin{proof}
+À venir!! voir photo ipad alex 26 janvier 2023
+\end{proof}
 
 %
 % TODO la version indicielle
 
+%\subsubsection{Momentum:}
+%Le momentum du système serait ici une quantitée vectorielle donnée par:
+%%%%%%%%%%%%%%%%%%%%
+%\begin{align}
+%\col{p} = H(\col{q}) \col{\dot{q}}
+%\end{align}
+%%%%%%%%%%%%%%%%%%%%
+
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Forme compacte}
+\subsection{Forme compacte des équations des manipulateurs}
 
 Parfois pour allégé la manipulation des équations, une version abrégée où $\col{c}$ est parfois utilisé pour regrouper toute les forces internes (qui sont des fonctions des états du systèmes):
 %%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-\col{c} = C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q})
+\col{h} = C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q})
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%
 ce qui simplifie, pour un cas sans forces externes, l'équation des manipulateurs à:
 %%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-H \col{\ddot{q}} + \col{c} = \col{\tau} 
+H \col{\ddot{q}} + \col{h} = \col{\tau} 
 \label{eq:manipulator_short}
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%
 
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Systèmes sous-actionnés vs. complètement actionnés}
-\label{sec:underactuated}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-\newpage
+%\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Systèmes de coordonnées additionnels}
 \label{sec:coord}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+TODO: Uniformiser le nom des variables pour cette section.
 
 Parfois il peut être utile de travailler avec des systèmes de coordonnées supplémentaire à l'espace des joints. La Figure \ref{fig:coord} montre quelques espaces supplémentaires qui peuvent être utilisés. 
 %
@@ -317,8 +383,10 @@ H \col{\ddot{q}} + C \col{\dot{q}} + \col{d} + \col{g} =  \underbrace{ J_a^T(\co
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Conservation de l'énergie}
+\section{Conservation de l'énergie}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Détails à venir!
 
 \begin{align}
 \frac{dE}{dt}     &= P_{in} - P_{out} \\
@@ -332,23 +400,45 @@ H \col{\ddot{q}} + C \col{\dot{q}} + \col{d} + \col{g} =  \underbrace{ J_a^T(\co
 \end{align}
 
 
-\newpage
+%\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Dynamique inverse}
 \label{sec:inversedynamic}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+L'équation des manipulateurs détermine des forces généralisée $\col{\tau}$ pour une configuration $\col{q}$, une vitesse $\col{\dot{q}}$ et une accélération $\col{\ddot{q}}$. La dynamique inverse représente la même équation mais lorsqu'on isole le vecteur accélération comme une fonction de toute les forces internes et externes, c'est en fait le seul normal de la causalité. En version compacte on peut retrouver:
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{\ddot{q}}  = H^{-1} \left( \col{\tau} - \col{h} \right)
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%
+ou en version longue:
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{\ddot{q}}  = H^{-1} \left( B(\col{q}) \col{u}  + J^T(\col{q}) \col{f}_{R_E} - C(\col{q},\col{\dot{q}}) \col{\dot{q}} - d(\col{q}, \col{\dot{q}}) - \col{g}(\col{q})  \right)
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%
+Comme la matrice d'inertie $H$ est symétrique et définie positive, sont inverse existe toujours et donc cette équation a toujours une solution.
 
-Détails à venir!
+%\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Systèmes sous-actionnés vs. complètement actionnés}
+\label{sec:underactuated}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Une caractéristique importante pour déterminer les capabilités physique d'un robot manipulateur est de déterminer si le système est pleinement ou sous-actionné. Un système pleinement actionné a la capacité (théorique) d'imposer un vecteur d'accélération $\col{\ddot{q}}$ arbitraire si on suppose que le vecteur d'entrée $\col{u}$ peut prendre des valeurs arbitraires (pas de maximum ou minimum). La condition mathématique pour être pleinement actionné est que le rang (rangé si la matrice n'est pas carrée) de $B$ doit être égal à $n$, le nombre de DDL. On dira alors que le système est sous-actionné si
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+rang\left( B(\col{q}) \right) < n = dim( \col{q} )
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%
 
-\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Manipulabilité dynamique}
 \label{sec:dynamicmanipulability}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-À la section \ref{sec:speedmanipulability}, la notion de manipulabilité définissait une enveloppe de vitesse possible à l'effecteur. Il est aussi possible d'analyser l'enveloppe d'accélérations cartésiennes possibles à l'effecteur pour un vecteur de couple des actionneurs unitaire. 
+À la section \ref{sec:velocitymanipulability}, la notion de manipulabilité définissait une enveloppe de vitesse possible à l'effecteur. Il est aussi possible d'analyser l'enveloppe d'accélérations cartésiennes possibles à l'effecteur pour un vecteur de couple des actionneurs unitaire. 
 
 Détails à venir!
 
@@ -370,18 +460,57 @@ Détails à venir!
 \label{sec:taskdynamics}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{align}
-H \col{\ddot{q}} + \col{c} = \col{\tau} 
-\label{eq:manipulator_short2}
-\end{align}
-
+En dérivant la relation de cinématique différentielle il est possible d'obtenir des relations entre les vitesses et accélérations:
 %%%%%%%%%%%%%%%%
 \begin{align}
-\col{r} &= f\left( \, \col{q} \, \right) \\
-\col{\dot{r}} &= J\left( \, \col{q} \, \right) \, \col{\dot{q}} \\
-\col{\ddot{r}} &= J\left( \, \col{q} \, \right) \, \col{\ddot{q}}  + \dot{J} \left( \, \col{q}  , \col{\dot{q}} \, \right) \, \col{\dot{q}} 
+\col{\dot{r}} &= J \col{\dot{q}} \\
+\col{\ddot{r}} &= J \col{\ddot{q}}  + \dot{J} \col{\dot{q}} 
 \end{align}
 %%%%%%%%%%%%%%%
+Ensuite si on utilise ces équations pour remplacer les variables de l'espace des joints par ceux dans l'espace de la tâche dans l'équation des manipulateurs:
+%%%%%%%%%%%%%%%%
+\begin{align}
+H \col{\ddot{q}} + \col{c} &= \col{\tau} + J^T \col{f}_{R_E} \\
+H J^{-1} (\col{\ddot{r}} - \dot{J} \col{\dot{q}}) + \col{h} &= \col{\tau} + J^T \col{f}_{R_E} \\
+J^{-T} H J^{-1} \col{\ddot{r}} -  J^{-T} H J^{-1} \dot{J} \col{\dot{q}} + J^{-T} \col{h} &= J^{-T} B \col{u} + J^{-T} J^T \col{f}_{R_E} \\
+\underbrace{
+J^{-T} H J^{-1} 
+}_{H^r}
+\col{\ddot{r}} +  
+\underbrace{
+J^{-T} \col{h} 
+-
+J^{-T} H J^{-1} \dot{J} J^{-1} 
+\col{\dot{r}} 
+}_{\col{h}^r}
+&= 
+\underbrace{
+J^{-T} 
+B
+}_{B^r}
+\col{u} + \col{f}_{R_E} 
+\end{align}
+%%%%%%%%%%%%%%%%
+Nous pouvons réorganiser les termes pour obtenir une nouvelle équation la même forme originale mais avec tout les termes par rapport aux coordonnées de la tâche:
+%%%%%%%%%%%%%%%%
+\begin{align}
+H^r
+\col{\ddot{r}} +  
+\col{h}^r
+&= B^{r} \col{u} + \col{f}_{R_E} 
+\end{align}
+%%%%%%%%%%%%%%%%
+où
+%%%%%%%%%%%%%%%%
+\begin{align}
+H^r & = J^{-T} H J^{-1} \\
+\col{h}^r & = J^{-T} \col{h}  - H^r \dot{J} J^{-1} \col{\dot{r}}  \\
+B^r & = J^{-T} B
+\end{align}
+%%%%%%%%%%%%%%%%
+Cette équation représente la même dynamique mais exprimée avec les coordonnées de l'espace de la tâche directement. Il est à noter que cette transformation de coordonnées n'est pas possible sur une singularité. Si l'espace de la tâche représente des coordonnées cartésienne de l'outil du robot, alors la matrice $H^r$ représente l'inertie ressentie lorsqu'on pousse sur l'effecteur. Le terme $H^r_{11}$ est la masse ressentie dans la direction de l'axe 1. 
+
+
 
 
 \newpage
