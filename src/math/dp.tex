@@ -1,18 +1,35 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Main text
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Programmation dynamique: La science des prises de décisions optimales}
+\label{sec:decision}
+% {\hypersetup{linkcolor=black}
+% \parttoc
+% }
+
+% \iftoggle{EN}{%
+
+% \section*{
+% Foreword
+% }
+% These notes aims to provide the theoretical background to unify various decision making schemes under the dynamic programming framework. %It is aim to make links with approches from the control engineering field and those from the field of operationnel research and reinforcement learning.
 
 
-\chapter{Programmation dynamique}
+% Video lectures (in french) are available here:
+% }{%
+
+Cette section des notes présente les diverses approches pour prendre des décisions intelligentes sous un cadre théorique unifié basé sur le principe de la programmation dynamique. Elle vise d'abord a établir les liens entre les approches issues du domaine de l'ingénierie (la science des asservissements et la commande optimale) et les approches issues des sciences informatiques (recherche opérationnelle et l'apprentissage par renforcement) qui ont en fait les même bases mathématiques. Ces notes visent principalement à donner à un lecteur issue du domaine de l'ingénierie les bases pour comprendre et utiliser les approches numériques issues des sciences informatiques. 
+
+\video{Capsules vidéos sur la programmation dynamique}{https://youtube.com/playlist?list=PL6adNeJ0A8UtNslNQfAHAzcjHcQixBSnu}
 
 
-\iftoggle{EN}{%
-Dynamic programming (DP) is a mathematical principle to optimize decision that are taken in sequence after observing the state of a system. DP can be used for analyzing classical feedback control problems, such as controling the position of an electric motor by choosing the input voltage, but also for analyzing decisions in a stochastic context, for instance buying or not a stock, or even for progamming the AI of a computer game that must select the move in a chess game after observing the board state.
-}{%
+
+\section{Introduction}
+% \iftoggle{EN}{%
+% Dynamic programming (DP) is a mathematical principle to optimize decision that are taken in sequence after observing the state of a system. DP can be used for analyzing classical feedback control problems, such as controling the position of an electric motor by choosing the input voltage, but also for analyzing decisions in a stochastic context, for instance buying or not a stock, or even for progamming the AI of a computer game that must select the move in a chess game after observing the board state.
+% }{%
 La programmation dynamique est un principe mathématique pour optimiser des décisions qui sont prises en séquence après avoir observé l'état d'un système. Le principe peut être utilisé autant pour analyser un système asservis classique, comme contrôler la position d'un moteur en choisissant la tension appliquée à ses bornes, que pour des problèmes probabiliste dans un contexte de finance, comme choisir quand acheter ou vendre une action en observant l'évolution de son prix, ou bien un problème d'IA comme choisir la pièce à déplacer lors d'une partie d'échec en observant la position des pièces sur l'échiquier.
-}
+% }
 
-\section{Formulation du problème}
+\subsection{Formulation du problème}
 
 \paragraph{Un comportement défini par une loi de commande à concevoir}
 On s'intéresse au problème de concevoir une \textbf{une loi de commande}, qui consiste en une fonction $c$ qui détermine l'action $u$ à prendre en fonction de l'état $x$ d'un système observé, et possiblement du temps $t$:
@@ -54,6 +71,8 @@ où $g$ est un coût cumulatif sur la trajectoire du système, $h$ est un coût 
 	%\vspace{-10pt}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\video{Introduction et formulation du problème}{https://youtu.be/1ThWOUnkVyY}
 
 \note{Minimiser un coût ou maximiser une récompense?}{On peut alternativement formuler l'objectif comme le problème de maximiser une récompense. Les deux approches sont équivalentes et interchangeables. Typiquement le domaine de la commande optimale utilise la formulation de minimiser un coût, qui est souvent relié à l'erreur par rapport à une trajectoire cible. Alternativement, le domaine de l'apprentissage par renforcement préfère optimiser une récompense, qui est souvent par exemple le pointage dans un jeux pour lequel une IA est développé.}
 
@@ -166,7 +185,7 @@ Fonction scalaire qui définit le coût final en fonction de l'état terminal.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Principe d'optimalité}
+\subsection{Principe d'optimalité}
 
 Si une trajectoire est optimale de $x_0$ à $x_N$ en passant par $x_i$. Alors nécessairement la séquence de fin de cette trajectoire correspond aussi à la solution optimale d'une trajectoire qui débuterait à $x_i$ pour aller à $x_N$.
 %%%%%%%%%%%%%%%%
@@ -178,9 +197,11 @@ Si une trajectoire est optimale de $x_0$ à $x_N$ en passant par $x_i$. Alors n�
 \end{align}
 %%%%%%%%%%%%%%%%
 
+\video{Le principe d'optimalité}{https://youtu.be/EMkpkyMTg4U}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Programmation dynamique excate}
+\subsection{Programmation dynamique excate}
 
 
 
@@ -212,16 +233,21 @@ f_k(x_k , u_k )
 \end{align} 
 %%%%%%%%%%%%%%%%%
 
+\video{L'algorithme de programmation dynamique exacte}{https://youtu.be/dfz9k3BGrH0}
+
 \subsection{Exemples}
 
 \subsubsection{Système de chauffage optimal}
+
+\video{Exemple de commande optimale pour un système de chauffage}{https://youtu.be/QwXjiAzDENs}
+
 
 \subsubsection{Navigation optimale}
 
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Variations sur un thème de programmation dynamique}
+\subsection{Variations sur un thème de programmation dynamique}
 
 \paragraph{Stochastique}
 
@@ -317,5 +343,247 @@ f(x , u , t) )
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Approches de programmation dynamique approximée}
+\subsection{Approches de programmation dynamique approximée}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problèmes déterministes discrets}
+Lorsqu'on travail avec un problème où les états et actions possibles sont discrets, c'est à dire qu'il peuvent prendre un nombre fini de valeurs. Par exemple, pour une automobile la transmission a généralement autour de 6 options discrètes (marche arrière, neutre, 1ère vitesse, 2e vitesse, etc.) tandis que la commande d'accélération est une variable continue qui peut prendre n'importe quel valeur à l'intérieur d'une certaine plage. Pour les systèmes ou tout est discret, il est possible de représenter les états comme des noeuds sur un graphe et les actions possible comme des arcs qui nous mène vers un autre état. Dans ce contexte on peut simplifier la notation.
+
+
+%%%%%%%%%%%%%%%%
+\begin{align}
+J^*_k(i) &= 
+\operatornamewithlimits{min}\limits_{j \in U(i)}
+%\mathbb{E}
+\left[
+a_{ij}^k + J^*_{k+1}(j)
+\right] \\
+j^*_k(i) &= 
+\operatornamewithlimits{argmin}\limits_{j \in U(i)}
+%\mathbb{E}
+\left[
+a_{ij}^k + J^*_{k+1}(j)
+\right] 
+\label{eq:exactdpgraph}
+\end{align} 
+%%%%%%%%%%%%%%%%%
+
+À venir!
+
+\video{Programmation dynamique pour les systèmes discrets et problème du chemin le plus court sur un graphe}{https://youtu.be/QwXjiAzDENs}
+
+\video{Exemple de solution pour le chemin le plus court sur un graphe}{https://youtu.be/1GXUNWVgZOU}
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problèmes stochastique}
+
+
+On cherche donc ici à minimiser l'espérance du coûts-à-venir:
+\begin{align}
+    J = \large{E} \left\{ \sum_{k=0}^{N-1} g_k(x_k, u_k , w_k) + g_N( x_N ) \right\}
+\end{align}
+avec l'algorithme de programmation dynamique suivant:
+%%%%%%%%%%%%%%%%
+\begin{align}
+J^*_k(x_k) = 
+\operatornamewithlimits{min}\limits_{u_k}
+\operatornamewithlimits{E}\limits_{w_k}
+%\mathbb{E}
+\left[
+g_k(x_k , u_k , w_k ) + J^*_{k+1}( 
+\underbrace{
+f_k(x_k , u_k , w_k ) 
+}_{x_{k+1}}
+)
+\right] \\
+u^*_k(x_k) = 
+\operatornamewithlimits{argmin}\limits_{u_k}
+\operatornamewithlimits{E}\limits_{w_k}
+%\mathbb{E}
+\left[
+g_k(x_k , u_k , w_k) + J^*_{k+1}( 
+\underbrace{
+f_k(x_k , u_k , w_k) 
+}_{x_{k+1}}
+)
+\right] 
+\end{align} 
+%%%%%%%%%%%%%%%%%
+
+\video{Commande stochastique}{https://youtu.be/1GXUNWVgZOU}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Chaînes de Markov}
+
+\video{Programmation dynamique pour un processus de Markov}{https://youtu.be/xHoLePda478}
+
+
+
+À venir!
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Robustesse et approche minimax}
+
+À venir!
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Optimisation sur un horizon de temps infini}
+
+\begin{align}
+    J = 
+    \lim_{N\rightarrow \infty}
+    \e{ \sum_{k=0}^{N} 
+    \alpha^k
+    g_k
+    }
+\end{align}
+
+\subsection{Équation de Bellman}
+
+À venir!
+
+\video{Équation de Bellman}{https://youtu.be/WbpSBaChigQ}
+
+\video{Éléments de l'équation de Bellman}{https://youtu.be/18KrNlHHT3E}
+
+\video{Variantes de l'équation de Bellman}{https://youtu.be/98I0SI_jWyY}
+
+
+\subsection{Méthodes de résolutions}
+
+\video{Aperçu des méthodes pour calculer des lois de commandes optimales}{https://youtu.be/jWP9yiIL7gY}
+
+
+
+\subsection{Algorithme d'itération de valeurs (\textit{Value-iteration})}
+
+À venir!
+
+\video{Algorithme d'itération de valeurs}{https://youtu.be/SpWKHB4GupU}
+
+\subsection{Algorithme d'itération de loi de commande (\textit{policy-iteration})}
+
+À venir!
+
+\video{Algorithme d'itération de politiques}{https://youtu.be/5b1o88O8e44}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Solution LQR}
+
+Dans le contexte d'un système dynamique linéaire à états/actions continus représenté par:
+\begin{align}
+    \col{x}_{k+1} = f_k(\col{x}_k , \col{u}_k , \col{w}_k )  = A_k \col{x}_k + B_k \col{u}_k + \col{w}_k
+\end{align}
+où $\col{x}_k$ et $\col{w}_k$ sont des vecteurs de dimension $n$ et $\col{w}_k$ un vecteur de dimension $m$. Le vecteur $\col{w}_k$ représente des perturbations aléatoires, indépendantes de l'état actuel, de l'action actuelle et de tous les états passés, et avec des distributions centrées autour de zéro: 
+\begin{align}
+    \e{\col{w}_k} = \col{0} %\quad \quad \e{w_i w_j} = 0 \; \forall \; i \neq j
+\end{align}
+
+Si on cherche donc à minimiser l'espérance du coût-à-venir:
+\begin{align}
+    J = \e{ \sum_{k=0}^{N-1} 
+    \left(
+    \underbrace{
+    \col{x}_k^T Q_k \col{x}_k + \col{u}_k^T R_k \col{u}_k
+    }_{ g_k( \col{x}_k, \col{u}_k , \col{w}_k ) }
+    \right)
+    +
+    \underbrace{
+    \col{x}_N^T Q_N \col{x}_N
+    }_{ g_N( \col{x}_N )  }
+    }
+\end{align}
+où les matrices $Q_k$ et $R_k$ sont symétriques et définies positives:
+\begin{align}
+    Q_k \geq 0 \quad \quad R_k > 0 
+\end{align}
+
+En appliquant l'algorithme de programmation dynamique (pour l'étape $N\rightarrow N-1$ ou une étape générique $k+1 \rightarrow k$), on trouve que:
+1) le coût-à-venir d'un état $\col{x}_k$ a la forme quadratique suivante:
+\begin{align}
+    J_k^*( \col{x}_k ) = \col{x}_k^T S_k \col{x}_k + c
+\end{align}
+où $S_k$ est une matrice symétrique qui caractérise le coût-à-venir à l'état $\col{x}_k$ et $c$ est une constante qui ne dépent pas de l'état actuel.
+2) la loi de commande optimale a la forme linéaire suivante:
+\begin{align}
+    \col{u}_k^* = c_k^*( \col{x}_k ) = - K_k \col{x}_k
+\end{align}
+où $K_k$ est la matrice de gain égale à
+\begin{align}
+    K_k = \left[ R_k + B_k^T S_{k+1} B_k \right]^{-1} B_k S_{k+1} A_k
+\end{align}
+
+3) la matrice $S_k$ dans les équations précédentes peut être calculée en partant du coût final à $k=N$ et en remontant dans le temps avec la récursion suivante:
+\begin{align}
+    S_k = Q_k + A_k^T \left( S_{k+1} - S_{k+1}^T B_k^T  \left[ R_k + B_k^T S_{k+1} B_k \right]^{-1} B_k S_{k+1} \right) A_k
+\end{align}
+
+
+\video{Solution LQR (temps discret)}{https://youtu.be/gg0IYkQwXWs}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Apprentissage par renforcement}
+
+
+À venir!
+
+\video{De la commande optimale à l'apprentissage par renforcement}{https://youtu.be/eyUcnKOpwsE}
+
+\subsection{TD-Learning}
+
+\subsection{Q-Learning}
+
+\subsection{Sarsa}
+
+
+\subsection{Approximation de fonctions}
+
+\video{Apprentissage par renforcement avec une approximation de fonction}{https://youtu.be/CGbdEDGsJnU}
+
+\video{Méthodes d'approximation de fonctions}{https://youtu.be/p8BizsV8apQ}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Formulation en temps continu}
+\label{sec:dp_cont}
+
+À venir!
+
+\subsection{Hamilton–Jacobi–Bellman equation}
+
+%%%%%%%%%%%%%%%%
+\begin{align}
+0 =
+\operatornamewithlimits{min}\limits_{\col{u}}
+%\mathbb{E}
+\left[
+g(\col{x} , \col{u} ) + \frac{\partial	J^*(\col{x},t)}{\partial \col{x} }
+\underbrace{
+f(\col{x} , \col{u} , t) )
+}_{\dot{\col{x}}}
+\right]
+\label{eq:hjb}
+\end{align} 
+%%%%%%%%%%%%%%%%%

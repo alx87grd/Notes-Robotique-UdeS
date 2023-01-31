@@ -36,31 +36,28 @@
 % \include{src/control_intro}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\part{Modélisation et analyse des robots manipulateurs}
+\part{Les robots manipulateurs}
 \label{sec:manip}
 % {\hypersetup{linkcolor=black}
 % \parttoc
 % }
 
-\include{src/manip/manip-intro}
-\include{src/manip/manip-lexique}
-\include{src/manip/manip}
-\include{src/manip/cinematique}
-\include{src/manip/mouvement}
-\include{src/manip/static}
-\include{src/manip/dynamic}
+\include{src/manipulator/manip-intro}
+\include{src/manipulator/manip-lexique}
+\include{src/manipulator/manip}
+\include{src/manipulator/cinematique}
+\include{src/manipulator/mouvement}
+\include{src/manipulator/static}
+\include{src/manipulator/dynamic}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\part{Commande des robots manipulateurs}
-\label{sec:manip_control}
-% {\hypersetup{linkcolor=black}
-% \parttoc
-% }
+%\part{Commande des robots manipulateurs}
+
 \include{src/control_intro}
-\include{src/control/robotcontrolstatic}
-\include{src/control/robotcontroldynamic}
-\include{src/control/planif}
-% \include{src/control/actuatorcontrol}
+\include{src/manipulator/robotcontrolstatic}
+\include{src/manipulator/robotcontroldynamic}
+\include{src/manipulator/planif}
+\include{src/manipulator/actuatorcontrol}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \part{Conception des systèmes robotisés}
@@ -70,38 +67,13 @@
 % \chapter{Actionneurs}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \part{Véhicules robotisées}
-% \label{sec:mobilerobot}
-% \chapter{Voitures}
-% \chapter{Drones}
-% \chapter{Avions}
+\part{Les véhicules robotisés}
+\label{sec:mobilerobot}
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \part{La science des systèmes asservis}
-% \label{sec:feedback}
-% {\hypersetup{linkcolor=black}
-% \parttoc
-% }
+\include{src/vehicle/vehiclemodeling}
 
-% \include{src/feedback/classic}
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \part{Programmation dynamique: La science des prises de décisions optimales}
-% \label{sec:decision}
-% {\hypersetup{linkcolor=black}
-% \parttoc
-% }
-
-% \include{src/dp/dp_preface}
-% \include{src/dp/dp_intro}
-% \include{src/dp/dp_det}
-% \include{src/dp/dp_sto}
-% \include{src/dp/dp_rob}
-% \include{src/dp/dp_inf}
-% \include{src/dp/dp_lqr}
-% \include{src/dp/dp_rl}
-% \include{src/dp/dp_con}
-
+\chapter{Navigation}
+\chapter{Planification}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \part{Boîte à outils mathématique}
@@ -110,10 +82,12 @@
 % \parttoc
 % }
 
-\include{src/math/lin}
+\include{src/math/modeling}
+\include{src/math/dp}
 \include{src/math/geo}
+\include{src/math/lin}
 \include{src/math/optimisation}
-\include{src/appendix/trigo}
+\include{src/math/trigo}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

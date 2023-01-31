@@ -1,0 +1,57 @@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Méthodes de modélisation}
+\label{sec:modeling}
+
+
+
+\section{Types de modèles mathématiques}
+
+\video{Types d'équations pour modéliser un système dynamique}{https://youtu.be/D_HLuoPrD4w}
+
+\subsection{Équations différentielles}
+
+\video{Grandes familles d'équation différentielles}{https://youtu.be/2ifsprEkJYU}
+
+\subsection{Équations différentielles partielles}
+
+\subsection{Équations de différences}
+
+\subsection{Chaînes de Markov}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Représentation des systèmes hybrides}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Hybrid dynamical system can be represented in the general form:
+%
+\begin{align}
+\text{Continuous evolution: } \left(  \dot{\col{x}} , \dot{k} \right) &=  \left( \, f_k( \col{x} , \col{u} , \col{d} ) \, , \, 0 \, \right) \\
+\text{Discrete jumps: } \left(  \col{x}^+ , k^+ \right) &=  \left( h_{ij}( \col{x}^- , \col{u}^- ) , j \right) \quad\text{if}\quad \left(  \col{x} , k , \col{u} \right) \in D_{ij}  
+\end{align}
+%
+where $\col{x}$ is a continuous state vector, and $k$ is a discrete mode and $D_{ij}$ is the domain mapping conditions leading to a transition $k:i \rightarrow j$. For robotic systems, the discrete mode can represent discrete configurations of the robot , like discrete modes in the control law or contact/non-contact conditions. The jump map then represents the impulsive response when contact is made. 
+
+\subsection{Switched system}
+
+A restricted class of hybrid system, called switched system, are hybrid systems for which the jump map for continuous state is the identify function:
+%
+\begin{align}
+\text{Continuous evolution: } \left(  \dot{\col{x}} , \dot{k} \right) &=  \left( \, f_k( \col{x} , \col{u} , \col{d} ) \, , \, 0 \, \right) \\
+\text{Discrete jumps: } \left(  \col{x}^+ , k^+ \right) &=  \left( \col{x}^- , j \right) \quad\text{if}\quad \left(  \col{x} , k , \col{u} \right) \in D_{ij} 
+\end{align}
+%
+
+\subsubsection{Switched system where the discrete mode is a control input}
+
+In the situation where the discrete operating mode $k$ is a control input, then there is no need to keep track of discrete mode evolution and only the piece-wise continuous differential equations are sufficient to model the system evolution:
+%
+\begin{align}
+\dot{\col{x}} = f_k( \col{x} , \col{u} , \col{d} ) 
+\end{align}
+%
+A robot with a continuous dynamics but with a control law using discrete modes of operation would be of this category. 
+
+
+
+%\section{Types de modèles mathématiques}

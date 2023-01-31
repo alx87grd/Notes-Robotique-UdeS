@@ -1,18 +1,22 @@
 \chapter{Algèbre linéaire}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Opérations matricielles}
+\label{sec:opmat}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 L'algèbre linéaire, c'est à la base une collection d'outils mathématique pour traiter plusieurs fonctions/opérations en parallèle. 
 
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=0.70\textwidth]{calculmatriciel.png}
+		\includegraphics[width=0.60\textwidth]{calculmatriciel.png}
 	\caption{Calcul matriciel }
 	\label{fig:calculmatriciel}
 \end{figure}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
-\section{Système d’équations}
+\subsection{Système d’équations}
 \label{sec:syseq}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -58,7 +62,7 @@ n: \quad \text{nombre de colonnes} \quad&=\quad \text{nombre de variables / entr
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Combinaison de vecteur-colonnes}
+\subsection{Combinaison de vecteur-colonnes}
 \label{sec:combveccol}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -130,7 +134,7 @@ De façon générale, le vecteur-colonne $\col{y}$ résultant d'une multiplicati
 %
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Produits scalaires avec les rangés de la matrice} 
+\subsection{Produits scalaires avec les rangés de la matrice} 
 \label{sec:combveccol}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -183,7 +187,7 @@ y_j
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Opérations matricielles en termes d'indices et de composantes}
+\subsection{Opérations matricielles en termes d'indices et de composantes}
 \label{sec:opmatind}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -216,8 +220,56 @@ A_{ik} = \sum_j{B_{ij} C_{jk} }
 %%%%%%%%%%%%%%%%%%%%
 
 
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Espace colonne}
+\section{Les quatre espaces fondamentaux}
+\label{sec:4espfond}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+La figure \ref{fig:4spaces} résume les quatre espaces fondamentaux d'une matrice, deux sont caractérisent les entrées et deux espaces caractérisent les sorties. La figure \ref{fig:4spaces2} illustre comment les dimensions de ces espaces sont reliés au rang et dimensions d'une matrice.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.80\textwidth]{linalgebra_4spaces.png}
+	\caption{Quatres espaces fondamentaux d'une matrice}
+	\label{fig:4spaces}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.60\textwidth]{linalgebra_4spaces2.png}
+	\caption{Dimensions des quatre espaces fondamentaux d'une matrice}
+	\label{fig:4spaces2}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{example}[Espace-nul de la matrice jacobienne d'un robot manipulateur]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.80\textwidth]{linalgebra_4spaces_ex1.png}
+	\caption{Exemple de l'espace nul d'une matrice}
+	\label{fig:4spaces_ex1}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{example}
+
+\begin{example}[Espace-nul gauche de la matrice jacobienne d'un robot manipulateur]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.80\textwidth]{linalgebra_4spaces_ex2.png}
+	\caption{Exemple de l'espace-nul gauche d'une matrice}
+	\label{fig:4spaces_ex2}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{example}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Espace colonne}
 \label{sec:espcol}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -249,7 +301,7 @@ col(A) =
 Lorsque la matrice $A$ est inversible, i.e. de rang plein, l'espace colonne correspond à $\re^m$, ou $m$ est le nombre de variables de sortie.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Espace rangée}
+\subsection{Espace rangée}
 \label{sec:esprow}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -266,95 +318,74 @@ row(A) =  col(A^T) =
 Lorsque la matrice $A$ est inversible, i.e. de rang plein, l'espace rangé correspond à $\re^n$, ou $n$ est le nombre de variables de sortie.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Factorisation LU}
-\label{sec:lu}
+\subsection{Espace nul}
+\label{sec:nullspace}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Une matrice $A$ peut-etre factorise en deux matrices (triangulaires lorsque $A$ est une matrice inversible):
+L'espace nul (\textit{Nullspace}) d'une matrice $A$, noté $N(A)$ correspond a l'ensemble de tous les vecteur-colonnes $\col{x}$ pour lesquels la multiplication avec la matrice $A$ donne un vecteur-colonne nulle $\col{0}$ :
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+N(A) = \left\{ \col{x} \in \mathbb{R}^n \,|\, A\col{x} = \col{0} \right\}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Tous les vecteur-colonnes entrées $\col{x}$ pour une matrice appartiennent soit à l'espace rangé soit à l'espace nul:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{x} \in \re^n = col(A^T) \; \cup \; N(A) %\quad \text{et} \quad
+%n     = dim( row(A) ) + dim( N(A) ) 
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\textbf{Les vecteur-colonnes appartenant à l'espace rangé influencent la sortie alors que les vecteur-colonnes appartenant à l'espace nul n'influent pas la sortie.} 
+
+Une matrice $A$ va avoir un espace nul seulement lorsqu'elle a une rang déficient, donc des colonnes linéairement dépendantes. La présence d'un espace nul indique un système sous-contraint ou il y a un surplus de variables, donc plusieurs solutions possibles d'entrées $\col{x}$ pour obtenir une même sortie $\col{y}$. 
 %
-\begin{align}
-A = LU 
-\end{align}
+%\textbf{Utilisation} Une utilité du \textit{Nullspace} est que si on connaît un solution $\col{x}_s$ tel que: 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{align}
+%A \col{x}_s = \col{y}
+%\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Il est possible de trouver les autres solutions possible directement si on connaît le \textit{Nullspace}, car une addition de la solution connue et d'un vecteur-colonne appartenant au \textit{Nullspace} ($\col{x}_n \in N(A) $)  est aussi une solution: 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{align}
+%A ( \col{x}_s + \col{x}_n) = A \col{x}_s + 
+%\underbrace{
+%A \col{x}_n 
+%}_{ \col{0} }
+%= A \col{x}_s = \col{y}
+%\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-ou la matrice $U$ est une matrice ou tout les coefficients sous la diagonale sont nuls et la matrice $L$ correspond aux opérations sur les ranges conduites dans le cadre d'une élimination Gauss-Jordan. Par exemple pour une matrice 3x3 inversible:
+La figure \ref{fig:4spaces_ex1} illustre la signification physique de l'espace nul d'une matrice qui relie la vitesse des joints d'un robot manipulateur à la vitesse de son effecteur. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Espace nul gauche}
+\label{sec:leftnullspace}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+L'espace nul gauche (\textit{Left-Nullspace}) d'une matrice $A$, noté $N(A^T)$ correspond a l'ensemble de tous les vecteur-colonnes $\col{y}$ pour lesquels la multiplication avec la matrice $A^T$ donne un vecteur-colonne nulle $\col{0}$ :
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+N(A^T) = \left\{ \col{y} \in \mathbb{R}^m \,|\, A^T\col{y} = \col{0} \right\}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Tous les vecteur-colonnes sorties $\col{y}$ appartiennent soit à l'espace colonne soit à espace nul gauche:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{y} \in \re^m = col(A) \; \cup \; N(A^T) %\quad \text{et} \quad
+%n     = dim( row(A) ) + dim( N(A) ) 
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\textbf{Les vecteur-colonnes $\col{y}$ appartenant à l'espace colonne ont une solution $\col{x}$ possible, tandis que ceux appartenant à l'espace nul gauche n'ont aucune solution exacte $\col{x}$ possible}.
 %
-\begin{align}
-L= 
-\left[ \begin{array}{c c c } 
-1      &   0       & 0   \\ 
-l_{21} &   1       & 0   \\  
-l_{31} & l_{32}    & 1
-\end{array} \right]
-\quad\quad
-U = 
-\left[ \begin{array}{c c c c c } 
-p_{1} & u_{12} &  u_{13} \\ 
-0     & p_{2}  &  u_{23}  \\ 
-0     & 0      &  p_{3}
-\end{array} \right]
-\end{align}
-%
-Les coefficients non-nuls $p_i$ sur la diagonale de la matrice $U$ sont appeles les pivots.
+Une matrice $A$ va avoir un espace nul gauche seulement lorsqu'elle a une rang déficient. La présence d'un espace nul gauche indique un système sur-contraint, i.e. un surplus d'équations. Il y aura donc plusieurs sorties $\col{y}$ pour lesquelles il n'y a pas de solutions $\col{x}$.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Indépendance linéaire}
-\label{sec:lindep}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Un vecteur est dit linéairement dépendant d'un autre vecteur (ou un ensemble de vecteurs), lorsque celui-ci peut être exprimé comme un combinaison pondéré des autres. 
-
-%TODO figure
-
-Un ensemble de vecteurs $\left\{ \col{v}_1, \col{v}_2, \hdots, \col{v}_n \right\}$ est \textbf{linéairement dépendant} s'il existe des coefficients non nuls $x_i$ tels que la somme pondérée des vecteurs est nulle:
-%%%%%%%%%%%%%%%%%%%%%%
-\begin{align}
-\col{0} = x_1 \col{v}_1 + x_2 \col{v}_2 + ... + x_n \col{v}_n
-\end{align}
-%%%%%%%%%%%%%%%%%%%%%%%
-
-Inversement, un ensemble de vecteurs $\left\{ \col{v}_1, \col{v}_2, \hdots, \col{v}_n \right\}$ est \textbf{linéairement indépendant} si:
-%%%%%%%%%%%%%%%%%%%%%%
-\begin{align}
-\col{0} = x_1 \col{v}_1 + x_2 \col{v}_2 + ... + x_n \col{v}_n
-\quad
-\text{implique que:}
-\quad
-0 = x_1 = x_2 = ... = x_n 
-\end{align}
-%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Base}
-\label{sec:base}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-Un ensemble $\{ \col{v}_1 \; \col{v}_2 \; \hdots \; \col{v}_n \}$ de vecteurs de dimensions $m$ dans un espace vectoriel appartenant à $\re^m$, forme une base de cet espace si: \textbf{1)} les vecteurs $\col{v}_1 \; \col{v}_2 \; \hdots \; \col{v}_n$ sont linéairement indépendants et \textbf{2)} tout vecteur $\col{w}$ de cet espace peut être exprimé comme une combinaison linéaire de ces vecteurs:
-%%%%%%%%%%%%%%%%%%%%%%
-\begin{align}
-\col{w} = x_1 \col{v}_1 + x_2 \col{v}_2 + ... + x_n \col{v}_n
-\end{align}
-%%%%%%%%%%%%%%%%%%%%%%%
-
-Par exemple, dans un espace tri-dimensionnel qui correspond à des coordonnées $
-\left[
-\begin{array}{c}
-x \\ y \\ z
-\end{array}
-\right]
-$, les vecteur-colonnes $\left\{ 
-\left[
-\begin{array}{c}
-1 \\ 0 \\ 0
-\end{array}
-\right],
-\left[
-\begin{array}{c}
-0 \\ 1 \\ 0
-\end{array}
-\right]
-\right\}$
-forment une base pour le sous-espace qui correspond au plan $z=0$.
-
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Rang d'une matrice}
 \label{sec:rang}
@@ -381,7 +412,7 @@ Dans le cas d'une matrice carré ($m=n$), il est possible de déterminer si la m
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Rang plein vs. Trop de variables vs. Trop d’équations}
+\subsection{Quatre situations possibles pour un système d'équations}
 \label{sec:rangpleinvstrop}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -442,122 +473,104 @@ Les grandes catégories de situations possibles illustrés à la figure \ref{fig
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{example}
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
-\section{Espace nul}
-\label{sec:nullspace}
+\subsection{Factorisation LU}
+\label{sec:lu}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-L'espace nul (\textit{Nullspace}) d'une matrice $A$, noté $N(A)$ correspond a l'ensemble de tous les vecteur-colonnes $\col{x}$ pour lesquels la multiplication avec la matrice $A$ donne un vecteur-colonne nulle $\col{0}$ :
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{align}
-N(A) = \left\{ \col{x} \in \mathbb{R}^n \,|\, A\col{x} = \col{0} \right\}
-\end{align}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-Tous les vecteur-colonnes entrées $\col{x}$ pour une matrice appartiennent soit à l'espace rangé soit à l'espace nul:
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{align}
-\col{x} \in \re^n = col(A^T) \; \cup \; N(A) %\quad \text{et} \quad
-%n     = dim( row(A) ) + dim( N(A) ) 
-\end{align}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\textbf{Les vecteur-colonnes appartenant à l'espace rangé influencent la sortie alors que les vecteur-colonnes appartenant à l'espace nul n'influent pas la sortie.} 
-
-Une matrice $A$ va avoir un espace nul seulement lorsqu'elle a une rang déficient, donc des colonnes linéairement dépendantes. La présence d'un espace nul indique un système sous-contraint ou il y a un surplus de variables, donc plusieurs solutions possibles d'entrées $\col{x}$ pour obtenir une même sortie $\col{y}$. 
+Une matrice $A$ peut-etre factorise en deux matrices (triangulaires lorsque $A$ est une matrice inversible):
 %
-%\textbf{Utilisation} Une utilité du \textit{Nullspace} est que si on connaît un solution $\col{x}_s$ tel que: 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\begin{align}
-%A \col{x}_s = \col{y}
-%\end{align}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Il est possible de trouver les autres solutions possible directement si on connaît le \textit{Nullspace}, car une addition de la solution connue et d'un vecteur-colonne appartenant au \textit{Nullspace} ($\col{x}_n \in N(A) $)  est aussi une solution: 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\begin{align}
-%A ( \col{x}_s + \col{x}_n) = A \col{x}_s + 
-%\underbrace{
-%A \col{x}_n 
-%}_{ \col{0} }
-%= A \col{x}_s = \col{y}
-%\end{align}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-La figure \ref{fig:4spaces_ex1} illustre la signification physique de l'espace nul d'une matrice qui relie la vitesse des joints d'un robot manipulateur à la vitesse de son effecteur. 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Espace nul gauche}
-\label{sec:leftnullspace}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-L'espace nul gauche (\textit{Left-Nullspace}) d'une matrice $A$, noté $N(A^T)$ correspond a l'ensemble de tous les vecteur-colonnes $\col{y}$ pour lesquels la multiplication avec la matrice $A^T$ donne un vecteur-colonne nulle $\col{0}$ :
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-N(A^T) = \left\{ \col{y} \in \mathbb{R}^m \,|\, A^T\col{y} = \col{0} \right\}
+A = LU 
 \end{align}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-Tous les vecteur-colonnes sorties $\col{y}$ appartiennent soit à l'espace colonne soit à espace nul gauche:
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{align}
-\col{y} \in \re^m = col(A) \; \cup \; N(A^T) %\quad \text{et} \quad
-%n     = dim( row(A) ) + dim( N(A) ) 
-\end{align}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\textbf{Les vecteur-colonnes $\col{y}$ appartenant à l'espace colonne ont une solution $\col{x}$ possible, tandis que ceux appartenant à l'espace nul gauche n'ont aucune solution exacte $\col{x}$ possible}.
 %
-Une matrice $A$ va avoir un espace nul gauche seulement lorsqu'elle a une rang déficient. La présence d'un espace nul gauche indique un système sur-contraint, i.e. un surplus d'équations. Il y aura donc plusieurs sorties $\col{y}$ pour lesquelles il n'y a pas de solutions $\col{x}$.
+ou la matrice $U$ est une matrice ou tout les coefficients sous la diagonale sont nuls et la matrice $L$ correspond aux opérations sur les ranges conduites dans le cadre d'une élimination Gauss-Jordan. Par exemple pour une matrice 3x3 inversible:
+%
+\begin{align}
+L= 
+\left[ \begin{array}{c c c } 
+1      &   0       & 0   \\ 
+l_{21} &   1       & 0   \\  
+l_{31} & l_{32}    & 1
+\end{array} \right]
+\quad\quad
+U = 
+\left[ \begin{array}{c c c c c } 
+p_{1} & u_{12} &  u_{13} \\ 
+0     & p_{2}  &  u_{23}  \\ 
+0     & 0      &  p_{3}
+\end{array} \right]
+\end{align}
+%
+Les coefficients non-nuls $p_i$ sur la diagonale de la matrice $U$ sont appeles les pivots.
 
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Les quatre espaces fondamentaux}
-\label{sec:4espfond}
+\section{Base}
+\label{sec:base}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-La figure \ref{fig:4spaces} résume les quatre espaces fondamentaux d'une matrice, deux sont caractérisent les entrées et deux espaces caractérisent les sorties. La figure \ref{fig:4spaces2} illustre comment les dimensions de ces espaces sont reliés au rang et dimensions d'une matrice.
+Un ensemble $\{ \col{v}_1 \; \col{v}_2 \; \hdots \; \col{v}_n \}$ de vecteurs de dimensions $m$ dans un espace vectoriel appartenant à $\re^m$, forme une base de cet espace si: \textbf{1)} les vecteurs $\col{v}_1 \; \col{v}_2 \; \hdots \; \col{v}_n$ sont linéairement indépendants et \textbf{2)} tout vecteur $\col{w}$ de cet espace peut être exprimé comme une combinaison linéaire de ces vecteurs:
+%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{w} = x_1 \col{v}_1 + x_2 \col{v}_2 + ... + x_n \col{v}_n
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
-	\centering
-		\includegraphics[width=0.80\textwidth]{linalgebra_4spaces.png}
-	\caption{Quatres espaces fondamentaux d'une matrice}
-	\label{fig:4spaces}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Par exemple, dans un espace tri-dimensionnel qui correspond à des coordonnées $
+\left[
+\begin{array}{c}
+x \\ y \\ z
+\end{array}
+\right]
+$, les vecteur-colonnes $\left\{ 
+\left[
+\begin{array}{c}
+1 \\ 0 \\ 0
+\end{array}
+\right],
+\left[
+\begin{array}{c}
+0 \\ 1 \\ 0
+\end{array}
+\right]
+\right\}$
+forment une base pour le sous-espace qui correspond au plan $z=0$.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
-	\centering
-		\includegraphics[width=0.60\textwidth]{linalgebra_4spaces2.png}
-	\caption{Dimensions des quatre espaces fondamentaux d'une matrice}
-	\label{fig:4spaces2}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Indépendance linéaire}
+\label{sec:lindep}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{example}[Espace-nul de la matrice jacobienne d'un robot manipulateur]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
-	\centering
-		\includegraphics[width=0.80\textwidth]{linalgebra_4spaces_ex1.png}
-	\caption{Exemple de l'espace nul d'une matrice}
-	\label{fig:4spaces_ex1}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\end{example}
+Un vecteur est dit linéairement dépendant d'un autre vecteur (ou un ensemble de vecteurs), lorsque celui-ci peut être exprimé comme un combinaison pondéré des autres. 
 
-\begin{example}[Espace-nul gauche de la matrice jacobienne d'un robot manipulateur]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
-	\centering
-		\includegraphics[width=0.80\textwidth]{linalgebra_4spaces_ex2.png}
-	\caption{Exemple de l'espace-nul gauche d'une matrice}
-	\label{fig:4spaces_ex2}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\end{example}
+%TODO figure
+
+Un ensemble de vecteurs $\left\{ \col{v}_1, \col{v}_2, \hdots, \col{v}_n \right\}$ est \textbf{linéairement dépendant} s'il existe des coefficients non nuls $x_i$ tels que la somme pondérée des vecteurs est nulle:
+%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{0} = x_1 \col{v}_1 + x_2 \col{v}_2 + ... + x_n \col{v}_n
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+Inversement, un ensemble de vecteurs $\left\{ \col{v}_1, \col{v}_2, \hdots, \col{v}_n \right\}$ est \textbf{linéairement indépendant} si:
+%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{0} = x_1 \col{v}_1 + x_2 \col{v}_2 + ... + x_n \col{v}_n
+\quad
+\text{implique que:}
+\quad
+0 = x_1 = x_2 = ... = x_n 
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Projection}
@@ -819,13 +832,7 @@ Pour cet exemple, un robot doit produire un force de 14 N sur un mur. Pour y par
 
 
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Base orthonormale}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-À venir!
-
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Déterminants}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -838,8 +845,9 @@ det(A) = det(U) = p_1 p_2 ... p_n
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%
 
+\newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Vecteurs et valeurs propres (eigen values/vectors)}
+\section{Vecteurs et valeurs propres}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Pour les matrices carrées ($m=n$), une autre caractéristique utile est l'ensemble de ses vecteurs et valeurs propres. Un vecteur $\col{x}$ est un vecteur propre d'une matrice $A$ si le résultat $\col{y} = A \col{x}$ est parallèle à l'entrée $\col{x}$, autrement dit s'il existe un scalaire $\lambda$ (appelé valeur propre) tel que:
@@ -901,7 +909,7 @@ Il est à noté que pour chaque valeur propre, le vecteur propre n'est pas uniqu
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Diagonalisation}
+\subsection{Diagonalisation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Si une matrice a $n$ vecteurs propres indépendants, alors la matrice peut être diagonalisée, c'est à dire décomposée sous la forme:
@@ -1013,7 +1021,7 @@ c\theta &   s\theta \\
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Puissance d'une matrice}
+\subsection{Puissance d'une matrice}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 La puissance $p$ d'une matrice est définie comme la multiplication répété de $p$ copie de cette matrice. Si la matrice est diagonalisable, la puissance de la matrice $A$ est égale à
@@ -1209,7 +1217,7 @@ f_p = \frac{\lambda_1^{p+1}}{\lambda_1 - \lambda_2} = \frac{1.618^{(p+1)}}{\sqrt
 \end{example}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Exponentiel de matrice}
+\subsection{Exponentiel de matrice}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 À venir!
