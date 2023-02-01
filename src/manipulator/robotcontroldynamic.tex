@@ -57,10 +57,10 @@ H(\col{q}) \col{\ddot{q}} &= H(\col{q}) \col{\ddot{q}}_r \\
 \col{\ddot{q}} &= \col{\ddot{q}}_r
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%
-on obtient comme résultat que l'accélération du système peut être directement commandée. 
+on obtient comme résultat que l'accélération du système peut être directement commandée. Comme illustré à la figure \ref{fig:computedtorque}, avec cette loi de commande, la relation entre la référence $\col{\ddot{q}}_r$ et la variable à contrôler $\col{q}$ est réduite à une relation linéaire, ici un double intégrateur. On réfère aussi parfois à cette méthode comme une boucle linéarisante.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
+\begin{figure}[htp]
 	\centering
 		\includegraphics[width=0.75\textwidth]{fig/computedtorque.jpg}
 	\caption{Couple calculé et boucle linéarisante}
@@ -98,7 +98,7 @@ puisqu'on obtient $\col{\ddot{q}} = \col{\ddot{q}}_r$ avec la méthode du couple
 ce qui représente une équation de la dynamique pour l'erreur d'ordre 2 qui converge exponentiellement vers zéro, ce qui implique que la trajectoire du robot va converger sur la trajectoire désirée.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
+\begin{figure}[htp]
 	\centering
 		\includegraphics[width=0.99\textwidth]{fig/computedtorquetraj.jpg}
 	\caption{Commande par couple calculé pour suivre une trajectoire}
@@ -107,7 +107,7 @@ ce qui représente une équation de la dynamique pour l'erreur d'ordre 2 qui con
 %%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
+\begin{figure}[htp]
 	\centering
 		\includegraphics[width=0.50\textwidth]{fig/errordynamic.jpg}
 	\caption{Dynamique de l'erreur et convergence sur la trajectoire}
