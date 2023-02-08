@@ -95,13 +95,18 @@ puisqu'on obtient $\col{\ddot{q}} = \col{\ddot{q}}_r$ avec la méthode du couple
 \label{eq:computedtorqueerrordynamic}
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%
-ce qui représente une équation de la dynamique pour l'erreur d'ordre 2 qui converge exponentiellement vers zéro si on choisi $w^2>0$ et $2 \zeta w > 0$, ce qui implique que la trajectoire du robot va converger sur la trajectoire désirée. On voit ici selon cette équation que ces paramètres dans la loi de commande ont été intégré de sorte qu'ils correspondent directement aux paramètres de fréquence naturelle et d'amortissement pour la forme standard d'une équation différentielle d'ordre deux. Ici $\zeta$ serait un paramètre de la loi de commande directement relié au dépassement et au temps d'établissement de l'erreur du système en boucle fermée et le $w$ au temps de monté et la bande passante du système en boucle fermée. De façon plus général, dans l'équation \eqref{eq:computedtorqueerrordynamic} le terme scalaire $w^2$ pourrait être remplacé par une matrice $K_p$ et le terme $2 \zeta w $ par une matrice $K_d$. Plutôt qu'avoir alors une dynamique d'erreur identique pour chaque DDL, on pourrait paramétrer des comportements plus varié. Par exemple, on pourrait choisir des matrices diagonales et les termes indépendants sur leur diagonale correspondraient à des valeurs de $w$ et $\zeta$ qui pourraient être choisi indépendemment pour chaque DDL du robot.
+ce qui représente une équation de la dynamique pour l'erreur d'ordre 2 qui converge exponentiellement vers zéro si on choisi $w^2>0$ et $2 \zeta w > 0$, ce qui implique que la trajectoire du robot va converger sur la trajectoire désirée. 
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htp]
+	\centering
+		\includegraphics[width=0.50\textwidth]{fig/errordynamic.jpg}
+	\caption{Dynamique de l'erreur et convergence sur la trajectoire}
+	\label{fig:errordynamic}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%
 
 
-Donc pour résumé, en assumant que notre modèle dynamique est parfait et que nous avons aussi des mesures exacte pour $\col{q}$ et $\col{\dot{q}}$, il est possible d'imposer une accélération instantanée $\col{\ddot{q}}_r$ arbitraire (si on ignore les limites des actionneurs pour le moment). Ensuite, connaissant la trajectoire cible $\col{q}_d(t)$ et ses dérivées d'ordre 1 et 2, il est possible d'imposer une accélération de sorte à avoir une erreur par rapport à la trajectoire $\col{q}_e(t)$qui tend vers zéro.
-
-
-
+On voit ici selon cette équation que ces paramètres dans la loi de commande ont été intégré de sorte qu'ils correspondent directement aux paramètres de fréquence naturelle et d'amortissement pour la forme standard d'une équation différentielle d'ordre deux. Ici $\zeta$ serait un paramètre de la loi de commande directement relié au dépassement et au temps d'établissement de l'erreur du système en boucle fermée et le $w$ au temps de monté et la bande passante du système en boucle fermée. De façon plus général, dans l'équation \eqref{eq:computedtorqueerrordynamic} le terme scalaire $w^2$ pourrait être remplacé par une matrice $K_p$ et le terme $2 \zeta w $ par une matrice $K_d$. Plutôt qu'avoir alors une dynamique d'erreur identique pour chaque DDL, on pourrait paramétrer des comportements plus varié. Par exemple, on pourrait choisir des matrices diagonales et les termes indépendants sur leur diagonale correspondraient à des valeurs de $w$ et $\zeta$ qui pourraient être choisi indépendemment pour chaque DDL du robot.
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htp]
 	\centering
@@ -111,14 +116,13 @@ Donc pour résumé, en assumant que notre modèle dynamique est parfait et que n
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[htp]
-	\centering
-		\includegraphics[width=0.50\textwidth]{fig/errordynamic.jpg}
-	\caption{Dynamique de l'erreur et convergence sur la trajectoire}
-	\label{fig:errordynamic}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%
+Donc pour résumé, en assumant que notre modèle dynamique est parfait et que nous avons aussi des mesures exacte pour $\col{q}$ et $\col{\dot{q}}$, il est possible d'imposer une accélération instantanée $\col{\ddot{q}}_r$ arbitraire (si on ignore les limites des actionneurs pour le moment). Ensuite, connaissant la trajectoire cible $\col{q}_d(t)$ et ses dérivées d'ordre 1 et 2, il est possible d'imposer une accélération de sorte à avoir une erreur par rapport à la trajectoire $\col{q}_e(t)$qui tend vers zéro.
+
+
+
+
+
+
 
 Si on regarde comment l'erreur est relié à une force demandée par la loi de commande, on peut interprété cette relation comme une matrice de rigidité, de même que pour un la relation avec la dérivé de l'erreur qui peut être interprété comme une matrice d'amortissement. Les autres termes qui ne sont pas relié à l'erreur ou l'accélération de la trajectoire cible ont tous comme rôle d'annuler des forces internes. Donc si on décortique la loi de commande, on peut regrouper les termes ansi:
 %%%%%%%%%%%%%%%%%%%%%%%
@@ -147,6 +151,15 @@ et comparer à une loi de commande plus simple d'impédance dans le domaine des 
 \subsection{Compensation de la friction}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htp]
+	\centering
+		\includegraphics[width=0.99\textwidth]{fig/friction_compensation.jpg}
+	\caption{Modèle de compensation de friction}
+	\label{fig:friction_compensation}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%
+
 
 \subsection{Suivi d'une trajectoire définie dans l'espace de la tâche}
 
@@ -167,6 +180,12 @@ La commande robuste est la science de gérer l'incertitude lors de la conception
 
 \subsection{Approches pour modéliser l'incertitude}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+H(\col{q}) \col{\ddot{q}} + C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q}) = B(\col{q}) \col{u}  + \col{w}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \video{Grandes familles de méthodes de commande pour gérer l'incertitude}{https://youtu.be/hbZBF-OEZEw}
 
 \subsection{Méthode du mode glissant}
@@ -176,6 +195,15 @@ La méthode du mode glissant est une approche de commande qui a comme principal 
 \video{Commande avec le mode glissant}{https://youtu.be/0Asg81SBjmk}
 
 Premièrement, 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htp]
+	\centering
+		\includegraphics[width=0.99\textwidth]{fig/slidingmode.jpg}
+	\caption{Surface glissante}
+	\label{fig:slidingmode}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%
 
 
 \newpage
