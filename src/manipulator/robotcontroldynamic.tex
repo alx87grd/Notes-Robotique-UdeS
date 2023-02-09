@@ -62,7 +62,7 @@ on obtient comme résultat que l'accélération du système peut être directeme
 \begin{figure}[htp]
 	\centering
 		\includegraphics[width=0.75\textwidth]{fig/computedtorque.jpg}
-	\caption{Couple calculé et boucle linéarisante. TODO Manque B}
+	\caption{Couple calculé et boucle linéarisante.}
 	\label{fig:computedtorque}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%
@@ -97,7 +97,7 @@ puisqu'on obtient $\col{\ddot{q}} = \col{\ddot{q}}_r$ avec la méthode du couple
 %%%%%%%%%%%%%%%%%%%%%%%
 ce qui représente une équation de la dynamique pour l'erreur d'ordre 2 qui converge exponentiellement vers zéro si on choisi $w^2>0$ et $2 \zeta w > 0$, ce qui implique que la trajectoire du robot va converger sur la trajectoire désirée. 
 %%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[htp]
+\begin{figure}[ht]
 	\centering
 		\includegraphics[width=0.50\textwidth]{fig/errordynamic.jpg}
 	\caption{Dynamique de l'erreur et convergence sur la trajectoire}
@@ -111,7 +111,7 @@ On voit ici selon cette équation que ces paramètres dans la loi de commande on
 \begin{figure}[htp]
 	\centering
 		\includegraphics[width=0.99\textwidth]{fig/computedtorquetraj.jpg}
-	\caption{Commande par couple calculé pour suivre une trajectoire. TODO manque B}
+	\caption{Commande par couple calculé pour suivre une trajectoire.}
 	\label{fig:computedtorquetraj}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%
@@ -150,15 +150,33 @@ et comparer à une loi de commande plus simple d'impédance dans le domaine des 
 
 \subsection{Compensation de la friction}
 
+Dans les méthodes de commande comme celle du couple calculé, la loi de commande vise à compenser pour tous les termes dynamiques, incluant les forces dissipatives comme la friction qui sont difficiles à modéliser. Il faut toutefois prendre garde de de pas sur-estimé l'amplitude de des forces de friction dans une boucle de compensation car cela peut rendre le système instable. Les forces dissipatives aident naturellement à la stabilité d'un système, ils dissipent de l'énergie mécanique et donc forcent le système tranquillement vers un état ou l'énergie est minimum. Une compensation de friction annule donc l'effet dissipatif de cette force, mais le problème est surtout si on surestime de niveau de friction que notre contrôleur compense trop. Dans ce cas l'effet net de la vrai friction plus la compensation par le contrôleur est une injection d'énergie dans le système, la force net pousse dans le même sense que la vitesse, ce qui risque de rendre le système instable.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htp]
 	\centering
-		\includegraphics[width=0.99\textwidth]{fig/friction_compensation.jpg}
+		\includegraphics[width=0.75\textwidth]{fig/friction_compensation.jpg}
 	\caption{Modèle de compensation de friction}
 	\label{fig:friction_compensation}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%
+
+Une approche pour éviter cette situation est de toujours avoir un modèle de compensation de friction qui sous-estime l'amplitude de la force de friction de façon conservateur, comme illustré à la figure \ref{fig:friction_compensation}. Mathématiquement, pour garantir que la compensation de friction ne déstabilise pas le système, on peut choisi un modèle de compensation de friction $\hat{d}$ avec une amplitude toujours inférieur à la vrai force de friction $d$ pour tout les conditions. Lorsqu'on a un modèle de friciton pour chaque joint $i$ qui dépend juste de la vitesse de ce même joint, cette condition s'exprime par:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\left| \hat{d}_i(\dot{q}_i) \right| < \left| d_i(\dot{q}_i) \right| \quad \forall \dot{q}_i \quad \forall i
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+p_{dis} &= \dot{q}_i * ( d_i(\dot{q}_i) - \hat{d}_i(\dot{q}_i) ) \\
+p_{dis} &= 
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Sous estimer la friction dans la loi de commande du couple calculé, ou bien ne pas inclure cette compensation, ne met pas typiquement pas en péril la convergence du système sur la cible. La dynamique de l'erreur va toutefois être affecté, les propriétés d'amortissements vont être affectés. Une approche de conception peut être de retirer le terme dérivé $K_d$ de la loi de commande et le terme de compensation de friction, pour laisser la friction naturelle du système s'occuper de l'amortissement du système.  
+
 
 
 \subsection{Suivi d'une trajectoire définie dans l'espace de la tâche}

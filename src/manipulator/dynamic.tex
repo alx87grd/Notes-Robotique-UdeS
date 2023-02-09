@@ -576,7 +576,7 @@ Cette équation représente la même dynamique mais exprimée avec les coordonn�
 
 Cette section présente les outils pour obtenir les équations du mouvement lorsqu'un système robotique est en contact avec l'environnement, ce qui contraint sont mouvement. 
 
-\subsubsection{Contraintes cinématique}
+\subsection{Contraintes cinématique}
 \label{sec:constraints}
 %%%%%%%%%%%%%%%%%%%%%%%%
 Si un robot manipulateur est en contact avec un objet fixe, il pert certains DDL. Dans le cas de contraintes bilatérales, la contrainte peut être décrite par une fonction:
@@ -601,7 +601,7 @@ J_C( \col{ q } )                    &= \frac{d \col{\phi}( \col{ q } ) }{d\col{ 
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection{Forces de contraintes}
+\subsection{Forces de contraintes}
 \label{sec:constraint_forces}
 
 Le jacobien des contraintes peut être utilisé pour transformer des forces de contact cartésiennes $\col{f}_C$ en force généralisée au joint dans l'équation des manipulateurs:
@@ -626,7 +626,7 @@ Alternativement il est possible, pour trouver l'accélération $\col{\ddot{q}}$ 
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection{Impulsion lors d'un impact}
+\subsection{Impulsion lors d'un impact}
 \label{sec:impact}
 %%%%%%%%%%%%%%%%%%%%%%%%
 Quand le robot rentre en contact avec un objet fixe très rigide (frapper le sol par exemple), des forces de contact impulsives vont agir sur le système. Si on intègre l'équation \eqref{eq:manipulator_constraint} sur une période infinitésimal de temps $dt$ donne:
@@ -672,6 +672,8 @@ On peut alternativement résoudre le système de $n+c$ équations suivant pour o
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%
 
+
+
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Dynamique des actionneurs et effet des ratios de réduction}
@@ -693,6 +695,8 @@ Si un ratio de réduction $R$ est utilisé entre le moteur et le joint du robot,
  w   &= R \dot{q}
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%
+
+détails à venir!
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[ht]
