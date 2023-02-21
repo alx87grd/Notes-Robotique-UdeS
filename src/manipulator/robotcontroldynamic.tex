@@ -1,4 +1,5 @@
 \chapter{Commande des robots manipulateurs II: dynamique}
+\label{sec:robotcontroldynamic}
 
 Ce chapitre présente des techniques de commande qui s'applique pour les systèmes robotisés où les entrées du système sont des forces ou couples produites par les actionneurs. Dans ce contexte, le système peut être modéliser comme un système d'équations différentielles non-linéaire d'ordre deux et être représentés par l'équation des manipulateurs décrite au chapitre \ref{sec:dynamic}.  Les vidéos suivants présentent une introduction, avec un point de vue graphique dans l'espace des phases, aux méthodes pour se contexte:
 
@@ -340,6 +341,9 @@ La commande dite adaptative, est une méthode de alternative pour gérer l'incer
 
 \video{Exemple de loi de commande adaptative}{https://youtu.be/vmYjad6SOmU}
 
+
+\note{Apprentissage machine: }{Le principe d'adaptation peut être vue comme un forme d'apprentissage machine en ligne. Avec une loi de commande adaptative, on chercher à "apprendre" automatiquement les bons paramètres d'une loi de commande (vecteur-colonne $\col{a}$) à l'aide des données observées. La matrice $P$ de gain d'adaptation peut être vue comme des paramètres de taux d'apprentissage.}
+
 \subsection{Approche pour modéliser l'incertitude}
 
 Dans cette section, la méthode de commande présentée est basée sur une modélisation de l'incertitude ou on considère que des paramètres dans le modèle dynamique sont des approximations inexactes dans notre loi de commande $\hat{a}_i$. Par exemple, la masse d'un robot ou la longueur sont toujours approximé à un certain degrée lorsqu'on code une loi de commande. On va ici noter les paramètres exactes $a_i$, les approximations $\hat{a}_i$, et l'erreur sur un paramètre sera ${a_e}_i$. Les paramètres seront regroupés des vecteur-colonnes:
@@ -571,17 +575,13 @@ p_1 &0&0 \\ 0& p_2 &0 \\ 0& 0& p_3
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Estimation avec les moindres carrés}
-
-À venir!
 
 Pourquoi ne pas plutôt estimer les paramètres avec un schéma des moindres carrés? Est-ce qu'il y a un enjeux de stabilité?
 
-\subsection{Apprentissage machine}
-
-Le principe d'adaptation peut être vue comme un forme d'apprentissage machine en ligne. Avec une loi de commande adaptative, on chercher à "apprendre" automatiquement les bons paramètres $\col{a}$ à l'aide des données observées. La matrice $P$ peut être vue comme une forme de paramètres de taux d'apprentissage.
-
 À venir!
+
 
 \subsection{Adaptation à des erreurs dans la matrice jacobienne}
 
@@ -594,13 +594,19 @@ Le principe d'adaptation peut être vue comme un forme d'apprentissage machine e
 \section{Commande hybride en position et force}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+À venir!
+
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Analyse de stabilité}
+\section{Méthodes d'analyse de la stabilité}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+
 \video{Introduction à l'analyse de stabilité pour les systèmes non-linéaires}{https://youtu.be/q0Oqa5J3zEk}
+
+À venir!
 
 
 \newpage
@@ -608,8 +614,36 @@ Le principe d'adaptation peut être vue comme un forme d'apprentissage machine e
 \section{Commande optimale}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Jusqu'à maintenant, les méthodes de commande présentées la section \ref{sec:staticcontrol} et la section \ref{sec:robotcontroldynamic},  étaient basé sur l'hypothèse qu'on pourrait résumé à dire que \textbf{les actionneurs du système étaient suffisamment nombreux, bien positionnés et puissants pour imposer une accélération arbitraire au système robotique}. Si cette condition n'est pas remplie, le problème de conception d'une loi de commande devient plus compliqué. Dans cette situation il faut gérer \textbf{une planification de l'évolution du système sur un horizon de temps futur} et une méthodologie appropriée pour accomplir cela est appelée la \textbf{commande optimale} où les effets long-termes des consignes choisies par une loi de commande sont encodés dans une fonction de coût. De plus, même si le robot à commander rencontre les conditions pour utiliser les techniques qui imposent un accélération, la commande optimale est aussi un outils pertinent à utiliser aussi si on désire utiliser avec parcimonie les actionneurs pour, par exemple, \textbf{accomplir une tâche en utilisant un minimum d'énergie}.
+
+La plupart des méthodes de commande optimale sont conçus pour travailler avec la forme plus générale des équations différentiels :
+%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\dot{\col{x}} = f( \col{x}, \col{u})
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%
+des contraintes sur les états et les consignes:
+%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{x} \in X_{ok} \\
+\col{u} \in U_{ok} \\
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%
+et un objectif caractérisé par une fonction de coût à minimiser:
+%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+J = \int( g(\col{x},\col{u} )dt + h( \col{x}_f )
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%
+
+Voici quelques liens vers des introductions à la commande optimale appliqué aux systèmes robotiques.
+
 \video{Exemple de loi de commande optimale pour un double intégrateur}{https://youtu.be/wKjEAXFvXlQ}
 
 \video{Exemple de loi de commande optimale pour un pendule}{https://youtu.be/iUlkKdEK_dU}
 
 \colab{Démo d'introduction aux méthodes de commande optimales}{https://colab.research.google.com/drive/1wXmlIqNGC2LrJkmyj56Y109b5ZDHVboq?usp=sharing}
+
+Détails à venir!
+
+\note{Note sur la séquence de lecture: }{ Comme les méthodes de commande optimale s'applique à une classe de systèmes plus large, incluant les véhicules et autres système robotique pour lesquels il est impossible d'imposer une accélération avec les actionneurs, ce sujet est reporté à un chapitre ultérieur après ceux qui introduisent les véhicules. Le cadre théorique générique de ces outils est aussi présenté en annexe au chapitre \ref{sec:decision}}
