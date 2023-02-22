@@ -4,8 +4,10 @@
 Ce chapitre présente des techniques de commande qui s'applique pour les systèmes robotisés où les entrées du système sont des forces ou couples produites par les actionneurs. Dans ce contexte, le système peut être modéliser comme un système d'équations différentielles non-linéaire d'ordre deux et être représentés par l'équation des manipulateurs décrite au chapitre \ref{sec:dynamic}.  Les vidéos suivants présentent une introduction, avec un point de vue graphique dans l'espace des phases, aux méthodes pour se contexte:
 
 \video{Introduction à la commande des robots}{https://youtu.be/eL6i319X_w4}
-\video{L'espace des phases}{https://youtu.be/eL6i319X_w4}
-\video{Tour d'horizon des méthodes de commande dans l'espace des phases}{https://youtu.be/eL6i319X_w4}
+
+\video{L'espace des phases}{https://youtu.be/QGPVxZrZq44}
+
+\video{Tour d'horizon des méthodes de commande dans l'espace des phases}{https://youtu.be/wiY-Wjj9-zs}
 
 Au lien suivant, une amorce de code pour tester des lois de commande sur un robot manipulateur à 2 DDL:
 \colab{Testez votre loi de commande pour un manipulateur}{https://colab.research.google.com/drive/1bnJ9v5kHRFFhnNOZx-_Kcht2l5sTOHxr?usp=sharing}
@@ -15,14 +17,28 @@ Au lien suivant, une amorce de code pour tester des lois de commande sur un robo
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Commande dé-localisée}
+\section{Commande dé-localisée joint par joint}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Dans certains situations, il est possible de traiter le problème de commande joint par joint avec des méthodes de commande classique comme des lois de commandes de type PID. Cette approche peut bien fonctionner surtout lorsque le système robotique a des actionneurs avec des grands ratios de réduction, ce qui minimise le couplage dynamique entre les divers DDL. Plus les effets inertiels et plus on désire suivre précisément des trajectoires dynamiques, moins ce type d'approche va être performante.
 
+Si on utilise des lois de commandes indépendantes de type PID pour chaque joint, mais avec le terme intégral à zéro, alors l'approche de commande est équivalente à définir une matrice d'impédance diagonale dans le domaine des joints comme discuté à la section \ref{sec:jointimpcontrol}. Une telle approche va être stable mais avec comme principal inconvénient une erreur finale non-nulle, typiquement due à la gravité et/ou de la friction sèche. On a vu qu'il était possible d'ajouter un terme de compensation de gravité mais cela implique de centraliser les calculs et un bon modèle du système. Une alternative intéressante est d'utiliser l'effet intégrateur des PIDs sur chaque joint pour annuler les erreurs finales en position pour chaque joint du à ces effets. L'effet intégrateur va ajouter toutefois une dynamique supplémentaire qui peut créer des oscillations et déstabiliser le système. Il y a donc un compromis entre avec des grands gains intégrateurs pour réduire l'erreur finale rapidement vs. minimiser les oscillations et le risque d'instabilité. L'exercice suivant permet d'explorer ce compromis:
+
 \colab{Simulation d'un manipulateur avec des PIDs }{https://colab.research.google.com/drive/1qaCNY2ohQIbC6dV2ZW4KY6FDM9NhJzH2?usp=sharing}
 
-Détails à venir!
+Il serait possible de faire une analyse de stabilité locale en linéarisant la dynamique d'un robot autour du point d'opération et de faire le choix des gains PIDs avec les outils d'asservissement classique. L'analyse serait toutefois limité à décrire le comportement du robot très proche de se point d'opération. Si on utilise le robot sur une grande plage d'opération qui implique des grande non-linéarités, alors il est beaucoup plus difficile de garantir la stabilité du système et aussi tout simplement d'avoir des gains de PIDs qui vont bien fonctionner pour une grande plage de conditions initiales et positions cibles. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[ht]
+	\centering
+		\includegraphics[width=0.80\textwidth]{fig/jointpids.jpg}
+	\caption{Schéma bloc d'un robot avec de PIDs délocalisés}
+	\label{fig:jointpids}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%
+
+
+Un avantage non-négligeable pratico-pratique lors de l'implémentation d'une telle approche délocalisée, est que les boucle d'asservissement de chaque joints peuvent être implémenté directement dans l'électronique de puissance des moteurs puisse que les calculs sont indépendants. Typiquement, l'électronique de puissance permet d'avoir des délais de boucle très court, dans l'ordre des dizaines de kHz, alors un ordinateur qui centralise l'information de tous les joints implique généralement plus de délais et des boucles moins rapide. 
 
 
 \newpage
