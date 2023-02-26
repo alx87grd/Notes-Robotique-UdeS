@@ -1,34 +1,41 @@
 \chapter{Algèbre linéaire}
 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Opérations matricielles}
 \label{sec:opmat}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-L'algèbre linéaire, c'est à la base une collection d'outils mathématique pour traiter plusieurs fonctions/opérations en parallèle. 
-
-\begin{figure}[htbp]
-	\centering
-		\includegraphics[width=0.60\textwidth]{calculmatriciel.png}
-	\caption{Calcul matriciel }
-	\label{fig:calculmatriciel}
-\end{figure}
-
+L'algèbre linéaire, c'est à la base une collection d'outils mathématique pour traiter plusieurs fonctions/opérations en parallèle.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Système d’équations}
+\section{L'opération $\col{y} = A \col{x}$}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ L'opération $\col{y} = A \col{x}$ est un outils mathématique pour faire $m$ opérations linéaires sur les variables $x_i$ dans le vecteur-colonne $\col{x}$. Les outils de l'algèbre linéaire sont donc particulièrement utiles pour travailler avec des quantités multivariables comme des vecteurs 3D de position, vitesse, forces, etc.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.50\textwidth]{calculmatriciel.png}
+	\caption{L'opération matricielle $\col{y} = A \col{x}$}
+	\label{fig:calculmatriciel}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Système d’équations}
 \label{sec:syseq}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Les opérations matricielles permettent de traiter plusieurs fonctions (linéaires) en parallèle. Par exemple, deux fonctions linéaires, $f_1$ et $f_2$, de deux variables (entrées), $x_1$ et $x_2$, peuvent s’écrire :
-%
+L'opération matricielle $\col{y} = A \col{x}$ peut d'abord être vue comme un système de $m$ équations linéaires.  Par exemple, deux fonctions linéaires, $f_1$ et $f_2$, de deux variables (entrées), $x_1$ et $x_2$, peuvent s’écrire :
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 y_1 = f_1(x_1,x_2) = a_{11} \, x_1 + a_{12} \, x_2   \\
 y_2 = f_2(x_1,x_2) = a_{21} \, x_1 + a_{22} \, x_2
 \end{align}
-%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ou $y_1$ et $y_2$ sont les variables résultats (sorties) des fonctions, et $a_{ii}$ les paramètres internes des fonctions. Ces équations, avec la notation matricielle prennent la forme:
-%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \left[ \begin{array}{c} 
 	y_1 \\ y_2
@@ -41,7 +48,7 @@ a_{11} & a_{12} \\ a_{21} & a_{22}
 \end{array} \right] \quad \leftrightarrow \quad  \col{y}  =   A  \col{x} 
 \label{eq:sys2}
 \end{align}
-%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ou $\col{y}$ et $\col{x}$ sont des vecteur-colonnes de dimension 2 et $A$ est une matrice 2x2. De façon générale, une matrice d'un tel système d’équation a une largeur $n$, correspondant au nombre de variable dans les équations, et une hauteur $m$, correspondant au nombre d’équations.
 %
 \begin{align}
@@ -62,7 +69,7 @@ n: \quad \text{nombre de colonnes} \quad&=\quad \text{nombre de variables / entr
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Combinaison de vecteur-colonnes}
+\subsubsection{Combinaison de vecteur-colonnes}
 \label{sec:combveccol}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -100,7 +107,7 @@ Graphiquement, tel illustré à la figure \ref{fig:lincomb}, la multiplication d
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 De façon générale, le vecteur-colonne $\col{y}$ résultant d'une multiplication d'une matrice $A$ avec un vecteur-colonne $\col{x}$, peut-être exprimée comme une combinaison linéaire des colonnes de la matrice $A$:
-%
+%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 %
 \left[ \begin{array}{c} 
@@ -131,15 +138,15 @@ De façon générale, le vecteur-colonne $\col{y}$ résultant d'une multiplicati
 \col{y}
 &= \sum_{i=1}^{n}{ \col{c}_i x_i}
 \end{align}
-%
+%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Produits scalaires avec les rangés de la matrice} 
+\subsubsection{Produits scalaires avec les rangés de la matrice} 
 \label{sec:combveccol}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Une autre interprétation de l'opération matricielle $\col{y} = A \col{x}$ est que chaque élément $y_j$ du résultat correspond au produit scalaire du vecteur-rangé $j$ avec le vecteur colonne $\col{x}$. L'équation \eqref{eq:sys2} peut prendre la forme:
-%
+%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \left[ \begin{array}{c} 
 	y_1 \\ y_2
@@ -176,23 +183,22 @@ a_{21} & a_{22}
 \vec{r}_2 \bullet \vec{x}
 \end{array} \right]
 \end{align}
-%
+%%%%%%%%%%%%%%%%%%%%%%
 De façon générale, chaque élément du $y_j$ vecteur-colonne $\col{y}$ résultant d'une multiplication d'une matrice $A$ avec un vecteur-colonne $\col{x}$, peut-être exprimé comme le résultat du produit scalaire entre le vecteur-rangé $\col{r}_j$ et le vecteur-colonne $\col{x}$:
-%
+%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 y_j
-&= \col{r}_j \, \col{x}
+&= \col{r}_j \, \col{x} = \sum_i a_{ij} x_i
 \end{align}
-%
+%%%%%%%%%%%%%%%%%%%%%%
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Opérations matricielles en termes d'indices et de composantes}
+\subsubsection{Opérations matricielles en termes d'indices et de composantes}
 \label{sec:opmatind}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Une matrice multipliée par un vecteur-colonne:
-
+Finalement, toutes les opérations matricielles peuvent être écrite comme une équation avec des sommations et des indices. Par exemple, une matrice multipliée par un vecteur-colonne:
 %%%%%%%%%%%%%%%%%%%%
 \begin{align}
 %%%%%%%%%%%%%%%%%%%%
@@ -205,8 +211,24 @@ y_j = \sum_i{A_{ji} x_i }
 \end{align}
 %%%%%%%%%%%%%%%%%%%%
 
-Une matrice multipliée par une autre matrice:
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Calcul sur un ordinateur}
+\label{sec:ordinateur}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+À bas niveau, un ordinateur effectue des opérations de sommation sur les divers composantes pour faire une opération matricielle. Toutefois, plusieurs langages de programmation comme, \textit{Python} (avec \textit{Numpy}) et \textit{Matlab}, donnent accès à des fonctions pour demander des opérations matricielles à haut-niveau, avec un code source très optimisé en terme d'utilisation de la mémoire de l'ordinateur. Il est donc beaucoup plus rapide d'utiliser de telles fonctions que de coder ces opérations de sommation manuellement. De plus, les cartes graphiques des ordinateurs ont des circuits spécialement conçu pour faire des opérations spécialisées qui inclues beaucoup d'opération typique d'algèbre linéaire. Pour faire des calculs avec des très grandes matrices et long vecteurs, il peut y avoir des gains de temps très significatives en utilisant les capacités des cartes graphiques.
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Multiplication de matrices $C = A B $}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{$C = A B $ en termes d'indices et de composantes}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Une matrice multipliée par une autre matrice est équivalent en termes de sommation de composante à l'opération:
 %%%%%%%%%%%%%%%%%%%%
 \begin{align}
 %%%%%%%%%%%%%%%%%%%%
@@ -220,13 +242,118 @@ A_{ik} = \sum_j{B_{ij} C_{jk} }
 %%%%%%%%%%%%%%%%%%%%
 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{L'opération matricielle $A^T$}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+À venir!
+
+%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+A^{T}_{ij} = A^{T}_{ji}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{L'opération matricielle $A^{-1}$}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+À venir!
+
+\subsubsection{Formule pour une matrice 2x2}
+%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\left[ \begin{array}{c c } 
+a      &   b   \\ 
+c      &   d 
+\end{array} \right]^{-1}
+=
+\underbrace{
+\frac{1}{ad-bc}
+}_{\text{Déterminant de $A$}}
+\underbrace{
+\left[ \begin{array}{c c } 
+d      &   -b   \\ 
+-c     &    a 
+\end{array} \right]
+}_{\text{Adjoint de $A$}}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Additions de matrices $C = A + B $}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Une matrice additionnées à une autre matrice est équivalent en termes de composantes
+%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+%%%%%%%%%%%%%%%%%%%%
+C  = A + B
+%%%%%%%%%%%%%%%%%%%%
+\quad \Leftrightarrow \quad
+%%%%%%%%%%%%%%%%%%%%
+C_{ij} = A_{ij} + B_{ij} \quad \forall (i,j)
+%%%%%%%%%%%%%%%%%%%%
+\end{align}
+%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Matrice multipliée par un scalaire $B = cA$}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Une matrice multipliée par un scalaire est équivalent en termes de composantes à 
+%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+%%%%%%%%%%%%%%%%%%%%
+B = cA
+%%%%%%%%%%%%%%%%%%%%
+\quad \Leftrightarrow \quad
+%%%%%%%%%%%%%%%%%%%%
+B_{ij} = c A_{ij} \quad \forall (i,j)
+%%%%%%%%%%%%%%%%%%%%
+\end{align}
+%%%%%%%%%%%%%%%%%%%%
+
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Lois pour les opérations de matrices}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Additions et soustractions:
+%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+A + B &= B + A     \\
+c(A + B) &= cA + cB  \\
+(A + B) + C &= A + (B + C) \\
+AB &\neq BA \quad\quad \text{en général} \\
+C(A + B) &= CA + CB \\
+(A + B)C &= AC + BC \\
+A(BC) &= (AB)C 
+\end{align}
+%%%%%%%%%%%%%%%%%%%%
+
+Transposition et inversions:
+%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+(A+B)^T &= A^T + B^T \\
+(AB)^T &= B^TA^T \\
+(AB)^{-1} &= B^{-1}A^{-1} \\
+(A^{-1})^T &= (A^{T})^{-1} 
+\end{align}
+%%%%%%%%%%%%%%%%%%%%
+
+
+
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Les quatre espaces fondamentaux}
 \label{sec:4espfond}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-La figure \ref{fig:4spaces} résume les quatre espaces fondamentaux d'une matrice, deux sont caractérisent les entrées et deux espaces caractérisent les sorties. La figure \ref{fig:4spaces2} illustre comment les dimensions de ces espaces sont reliés au rang et dimensions d'une matrice.
+La figure \ref{fig:4spaces} résume les quatre espaces fondamentaux d'une matrice, deux sont caractérisent les entrées $\col{x}$ et deux espaces caractérisent les sorties $\col{y}$. La figure \ref{fig:4spaces2} illustre comment les dimensions de ces espaces sont reliés au rang et dimensions d'une matrice.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
@@ -246,16 +373,61 @@ La figure \ref{fig:4spaces} résume les quatre espaces fondamentaux d'une matric
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{example}[Espace-nul de la matrice jacobienne d'un robot manipulateur]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Espace colonne}
+\label{sec:espcol}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+L'espace colonne d'une matrice $A$ représente l'ensemble de toutes les valeurs possible de la sortie $\col{y}$ qui résulte de l'opération $\col{y} = A \col{x}$. Avec l'interprétation présentée à la section \ref{sec:combveccol}, il est possible de voir que la sortie $\col{y}$ a comme domaine toutes les combinaisons linéaires possibles des vecteur-colonnes de la matrice. Comme illustré à la Figure \ref{fig:2dspace}, pour une matrice qui aurait deux colonnes, si on interprète ces deux colonnes comme les composantes de vecteurs spatiaux, alors le domaine possible pour la sortie $\col{y}$ va être le plan formé par ces deux vecteurs.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.80\textwidth]{linalgebra_4spaces_ex1.png}
-	\caption{Exemple de l'espace nul d'une matrice}
-	\label{fig:4spaces_ex1}
+		\includegraphics[width=0.60\textwidth]{2dspace.png}
+	\caption{Visualisation graphique d'un espace colonne de dimension 2}
+	\label{fig:2dspace}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\end{example}
+
+L'espace colonne d'une matrice $A$ sera noté $col(A)$ et a la définition mathématique suivante:
+%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+col(A) = 
+\{ A \col{x} \; | \; \col{x} \in \re^n \}
+\label{eq:cola}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%
+
+\note{Notation mathématique pour les ensembles:}{ Les crochets $\{ \}$ représentent un ensemble, à l'intérieur on note la liste des éléments de l'ensemble ou bien la définition. La barre verticale $|$ signifie \textit{tel que} et le symbole $\in$ signifie \textit{appartient à}. L'équation \eqref{eq:cola} peut donc se lire \textit{l'espace colonne de la matrice $A$ est égale à l'ensemble des résultats possible de l'opération $A \col{x} $ tel que $\col{x}$ appartient à l'espace vectoriel de dimension $n$}.}
+
+Lorsque la matrice $A$ est inversible, i.e. de rang plein, l'espace colonne correspond à $\re^m$, ou $m$ est le nombre de variables de sortie. Par exemple, pour une matrice 3$\times$3 avec une sortie $\col{y}$ qui représente une position spatiale (x,y,z), si les colonnes ne sont pas co-planaire, alors la sortie $\col{y}$ va être une valeur arbitraire en 3D. On va donc dire que la matrice est inversible, car ici il est toujours possible de trouver une combinaison des colonnes pour obtenir un point (x,y,z) arbitraire. Toutefois, si les vecteurs-colonnes de la matrice sont co-linéaire (donc  ils forment un plan), alors l'espace colonne est restreint à ce plan. La sortie $\col{y}$ peut seulement prendre des valeurs qui correspondent à ce plan. Dans cette situation la matrice est dite non-inversible.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Espace nul gauche}
+\label{sec:leftnullspace}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+L'espace nul gauche (\textit{Left-Nullspace}) d'une matrice $A$, noté $N(A^T)$, correspond au domaine de la sortie $\col{y}$ qui n'est pas dans l'espace colonne. Ce domaine correspond donc aux vecteurs $\col{y}$ qui sont impossible à obtenir peut importe le vecteur d'entrée $\col{x}$. L'espace nul gauche correspond aussi à l'ensemble de tous les vecteur-colonnes $\col{y}$ pour lesquels la multiplication avec la matrice $A^T$ donne un vecteur-colonne nulle $\col{0}$ :
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+N(A^T) = \left\{ \col{y} \in \mathbb{R}^m \,|\, A^T\col{y} = \col{0} \right\}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+une condition qui revient à dire que c'est l'espace nul gauche correspond à l'ensemble des vecteurs $\col{y}$ qui sont perpendiculaires à toutes les colonnes de la matrice $A$.
+
+Tous les vecteur-colonnes sorties $\col{y}$ appartiennent soit à l'espace colonne soit à espace nul gauche:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+\col{y} \in \re^m = col(A) \; \cup \; N(A^T) %\quad \text{et} \quad
+%n     = dim( row(A) ) + dim( N(A) ) 
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\textbf{Les vecteur-colonnes $\col{y}$ appartenant à l'espace colonne ont une solution $\col{x}$ possible, tandis que ceux appartenant à l'espace nul gauche n'ont aucune solution exacte $\col{x}$ possible}.
+%
+Une matrice $A$ va avoir un espace nul gauche seulement lorsqu'elle a une rang déficient. La présence d'un espace nul gauche indique un système sur-contraint, i.e. un surplus d'équations. Il y aura donc plusieurs sorties $\col{y}$ pour lesquelles il n'y a pas de solutions $\col{x}$.
+
 
 \begin{example}[Espace-nul gauche de la matrice jacobienne d'un robot manipulateur]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -268,54 +440,7 @@ La figure \ref{fig:4spaces} résume les quatre espaces fondamentaux d'une matric
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{example}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Espace colonne}
-\label{sec:espcol}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-L'espace colonne d'une matrice $A$ représente l'ensemble de toutes les valeurs possible de la sortie $\col{y}$ qui résulte de l'opération $\col{y} = A \col{x}$. Avec l'interprétation présentée à la section \ref{sec:combveccol}, il est possible de voir que cette sortie a comme domaine toutes les combinaisons linéaires possibles des vecteur-colonnes de la matrice. 
-
-Par exemple, pour une matrice 3$\times$3 avec une sortie qui représente une position spatiale (x,y,z), dans le cas le plus générale la sortie peut potentiellement être une valeur arbitraire en 3D. Toutefois, si les vecteurs-colonnes de la matrice sont co-linéaire (donc  ils forment un plan), alors l'espace colonne est restreint à ce plan. La sortie $\col{y}$ peut seulement prendre des valeurs qui correspondent à ce plan. 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
-	\centering
-		\includegraphics[width=0.60\textwidth]{2dspace.png}
-	\caption{Visualisation graphique d'un espace colonne de dimension 2}
-	\label{fig:2dspace}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-L'espace colonne d'une matrice $A$ sera noté $col(A)$ et a la définition suivante:
-%%%%%%%%%%%%%%%%%%%%%
-\begin{align}
-col(A) = 
-\{ A \col{x} \; | \; \col{x} \in \re^n \}
-\label{eq:cola}
-\end{align}
-%%%%%%%%%%%%%%%%%%%%%%
-
-\note{Notation mathématique pour les ensembles:}{ Les crochets $\{ \}$ représentent un ensemble, à l'intérieur on note la liste des éléments de l'ensemble ou bien la définition. La barre verticale $|$ signifie \textit{tel que} et le symbole $\in$ signifie \textit{appartient à}. L'équation \eqref{eq:cola} peut donc se lire \textit{l'espace colonne de la matrice $A$ est égale à l'ensemble des résultats possible de l'opération $A \col{x} $ tel que $\col{x}$ appartient à l'espace vectoriel de dimension $n$}.}
-
-Lorsque la matrice $A$ est inversible, i.e. de rang plein, l'espace colonne correspond à $\re^m$, ou $m$ est le nombre de variables de sortie.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Espace rangée}
-\label{sec:esprow}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-L'espace rangé d'une matrice correspond à l'ensemble des vecteur-colonne entré $\col{x}$ qui donne un vecteur-colonne sortie $\col{y}$ non-nul lorsque multiplié par la matrice $A$. Cet ensemble correspond aussi à toutes les combinaisons possibles des rangées de la matrice $A$.
-
-
-L'espace rangée d'une matrice $A$ sera noté $row(A)$ et a la définition suivante:
-%%%%%%%%%%%%%%%%%%%
-\begin{align}
-row(A) =  col(A^T) = 
-\{ A^T \col{y} \; | \; \col{y} \in \re^m \}
-\end{align}
-%%%%%%%%%%%%%%%%%%%
-Lorsque la matrice $A$ est inversible, i.e. de rang plein, l'espace rangé correspond à $\re^n$, ou $n$ est le nombre de variables de sortie.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Espace nul}
@@ -328,16 +453,6 @@ L'espace nul (\textit{Nullspace}) d'une matrice $A$, noté $N(A)$ correspond a l
 N(A) = \left\{ \col{x} \in \mathbb{R}^n \,|\, A\col{x} = \col{0} \right\}
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-Tous les vecteur-colonnes entrées $\col{x}$ pour une matrice appartiennent soit à l'espace rangé soit à l'espace nul:
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{align}
-\col{x} \in \re^n = col(A^T) \; \cup \; N(A) %\quad \text{et} \quad
-%n     = dim( row(A) ) + dim( N(A) ) 
-\end{align}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\textbf{Les vecteur-colonnes appartenant à l'espace rangé influencent la sortie alors que les vecteur-colonnes appartenant à l'espace nul n'influent pas la sortie.} 
 
 Une matrice $A$ va avoir un espace nul seulement lorsqu'elle a une rang déficient, donc des colonnes linéairement dépendantes. La présence d'un espace nul indique un système sous-contraint ou il y a un surplus de variables, donc plusieurs solutions possibles d'entrées $\col{x}$ pour obtenir une même sortie $\col{y}$. 
 %
@@ -358,36 +473,53 @@ Une matrice $A$ va avoir un espace nul seulement lorsqu'elle a une rang déficie
 %\end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-La figure \ref{fig:4spaces_ex1} illustre la signification physique de l'espace nul d'une matrice qui relie la vitesse des joints d'un robot manipulateur à la vitesse de son effecteur. 
+
+\newpage
+\begin{example}[Espace-nul de la matrice jacobienne d'un robot manipulateur]
+La figure \ref{fig:4spaces_ex1} illustre la signification physique de l'espace nul d'une matrice qui relie la vitesse des joints d'un robot manipulateur à la vitesse de son effecteur.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=0.80\textwidth]{linalgebra_4spaces_ex1.png}
+	\caption{Exemple de l'espace nul d'une matrice}
+	\label{fig:4spaces_ex1}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{example}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Espace nul gauche}
-\label{sec:leftnullspace}
+\subsection{Espace rangée}
+\label{sec:esprow}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-L'espace nul gauche (\textit{Left-Nullspace}) d'une matrice $A$, noté $N(A^T)$ correspond a l'ensemble de tous les vecteur-colonnes $\col{y}$ pour lesquels la multiplication avec la matrice $A^T$ donne un vecteur-colonne nulle $\col{0}$ :
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%L'espace rangé d'une matrice correspond à l'ensemble des vecteur-colonnes entrées $\col{x}$ qui donnent un vecteur-colonne sortie $\col{y}$ non-nul lorsque multiplié par la matrice $A$.
+L'espace rangé correspond à toutes les combinaisons possibles des rangées de la matrice $A$, ce qui est donc équivalent à toutes les combinaisons possibles des colonnes de la matrice transposée $A^T$. L'espace rangée d'une matrice $A$ sera noté $row(A)$ et a la définition suivante:
+%%%%%%%%%%%%%%%%%%%
 \begin{align}
-N(A^T) = \left\{ \col{y} \in \mathbb{R}^m \,|\, A^T\col{y} = \col{0} \right\}
+row(A) =  col(A^T) = 
+\{ A^T \col{y} \; | \; \col{y} \in \re^m \}
 \end{align}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%
+Lorsque la matrice $A$ est inversible, i.e. de rang plein, l'espace rangé correspond à $\re^n$, ou $n$ est le nombre de variables d'entrées.
 
-Tous les vecteur-colonnes sorties $\col{y}$ appartiennent soit à l'espace colonne soit à espace nul gauche:
+Tous les vecteur-colonnes entrées $\col{x}$ pour une matrice appartiennent soit à l'espace rangé soit à l'espace nul:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-\col{y} \in \re^m = col(A) \; \cup \; N(A^T) %\quad \text{et} \quad
+\col{x} \in \re^n = col(A^T) \; \cup \; N(A) %\quad \text{et} \quad
 %n     = dim( row(A) ) + dim( N(A) ) 
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\textbf{Les vecteur-colonnes $\col{y}$ appartenant à l'espace colonne ont une solution $\col{x}$ possible, tandis que ceux appartenant à l'espace nul gauche n'ont aucune solution exacte $\col{x}$ possible}.
-%
-Une matrice $A$ va avoir un espace nul gauche seulement lorsqu'elle a une rang déficient. La présence d'un espace nul gauche indique un système sur-contraint, i.e. un surplus d'équations. Il y aura donc plusieurs sorties $\col{y}$ pour lesquelles il n'y a pas de solutions $\col{x}$.
+\textbf{Les vecteur-colonnes appartenant à l'espace rangé influencent la sortie alors que les vecteur-colonnes appartenant à l'espace nul n'influent pas la sortie.} 
 
 
-\newpage
+
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Rang d'une matrice}
+\subsection{Rang d'une matrice}
 \label{sec:rang}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -429,6 +561,7 @@ Un système d'équations peut être parfaitement contraint (une seule solution e
 
 Les grandes catégories de situations possibles illustrés à la figure \ref{fig:rmn} sont exemplifiés avec les exemples illustrés aux figures \ref{fig:rmn_ex1}, \ref{fig:rmn_ex2}, \ref{fig:rmn_ex3} et \ref{fig:rmn_ex4}.
 
+\newpage
 \begin{example}[Système d'équation parfaitement contraint]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
