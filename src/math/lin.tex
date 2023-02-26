@@ -416,14 +416,22 @@ N(A^T) = \left\{ \col{y} \in \mathbb{R}^m \,|\, A^T\col{y} = \col{0} \right\}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 une condition qui revient à dire que c'est l'espace nul gauche correspond à l'ensemble des vecteurs $\col{y}$ qui sont perpendiculaires à toutes les colonnes de la matrice $A$.
 
-Tous les vecteur-colonnes sorties $\col{y}$ appartiennent soit à l'espace colonne soit à espace nul gauche:
+
+L'espace des vecteur-colonnes sorties $\col{y}$ est formé par $r$ (rang) bases qui forment l'espace colonne et $m-r$ bases qui forment l'espace nul gauche.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-\col{y} \in \re^m = col(A) \; \cup \; N(A^T) %\quad \text{et} \quad
-%n     = dim( row(A) ) + dim( N(A) ) 
+m     = dim( col(A) ) + dim( N(A^T) )  = r + dim( N(A^T) )
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%TODO Ajuster cela!!
+% Tous les vecteur-colonnes sorties $\col{y}$ appartiennent soit à l'espace colonne soit à espace nul gauche:
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{align}
+% \col{y} \in \re^m = col(A) \; \cup \; N(A^T) %\quad \text{et} \quad
+% %n     = dim( row(A) ) + dim( N(A) ) 
+% \end{align}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
 \textbf{Les vecteur-colonnes $\col{y}$ appartenant à l'espace colonne ont une solution $\col{x}$ possible, tandis que ceux appartenant à l'espace nul gauche n'ont aucune solution exacte $\col{x}$ possible}.
 %
 Une matrice $A$ va avoir un espace nul gauche seulement lorsqu'elle a une rang déficient. La présence d'un espace nul gauche indique un système sur-contraint, i.e. un surplus d'équations. Il y aura donc plusieurs sorties $\col{y}$ pour lesquelles il n'y a pas de solutions $\col{x}$.
@@ -503,13 +511,21 @@ row(A) =  col(A^T) =
 %%%%%%%%%%%%%%%%%%%
 Lorsque la matrice $A$ est inversible, i.e. de rang plein, l'espace rangé correspond à $\re^n$, ou $n$ est le nombre de variables d'entrées.
 
-Tous les vecteur-colonnes entrées $\col{x}$ pour une matrice appartiennent soit à l'espace rangé soit à l'espace nul:
+
+L'espace des vecteur-colonnes entrées $\col{x}$ est formé par $r$ (rang) bases qui forment l'espace rangée et $n-r$ bases qui forment l'espace nul:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-\col{x} \in \re^n = col(A^T) \; \cup \; N(A) %\quad \text{et} \quad
-%n     = dim( row(A) ) + dim( N(A) ) 
+n     = dim( row(A) ) + dim( N(A) )  = r + dim( N(A) )
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%TODO Ajuster cela!!
+% Tous les vecteur-colonnes entrées $\col{x}$ pour une matrice appartiennent soit à l'espace rangé soit à l'espace nul:
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{align}
+% \col{x} \in \re^n = col(A^T) \; \cup \; N(A) %\quad \text{et} \quad
+% %n     = dim( row(A) ) + dim( N(A) ) 
+% \end{align}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \textbf{Les vecteur-colonnes appartenant à l'espace rangé influencent la sortie alors que les vecteur-colonnes appartenant à l'espace nul n'influent pas la sortie.} 
 
@@ -529,7 +545,6 @@ Le rang $r$ d'une matrice correspond à la dimension de l'espace colonne d'une m
 r = rank( A ) = dim( col(A) ) = dim( col(A^T) ) =\#\, pivots
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%
-
 
 Le rang d'une matrice est toujours inférieur ou égale aux dimensions $m$ et $n$.
 %%%%%%%%%%%%%%%%%%%%%%%
@@ -566,7 +581,7 @@ Les grandes catégories de situations possibles illustrés à la figure \ref{fig
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.65\textwidth]{linalgebra_4types_ex1.png}
+		\includegraphics[width=0.60\textwidth]{linalgebra_4types_ex1.png}
 	\caption{Exemple d'un système d'équation parfaitement contraint}
 	\label{fig:rmn_ex1}
 \end{figure}
@@ -577,7 +592,7 @@ Les grandes catégories de situations possibles illustrés à la figure \ref{fig
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.65\textwidth]{linalgebra_4types_ex2.png}
+		\includegraphics[width=0.60\textwidth]{linalgebra_4types_ex2.png}
 	\caption{Exemple d'un système d'équation sous-contraint}
 	\label{fig:rmn_ex2}
 \end{figure}
@@ -588,7 +603,7 @@ Les grandes catégories de situations possibles illustrés à la figure \ref{fig
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.65\textwidth]{linalgebra_4types_ex3.png}
+		\includegraphics[width=0.50\textwidth]{linalgebra_4types_ex3.png}
 	\caption{Exemple d'un système d'équation sur-contraint}
 	\label{fig:rmn_ex3}
 \end{figure}
@@ -599,7 +614,7 @@ Les grandes catégories de situations possibles illustrés à la figure \ref{fig
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
-		\includegraphics[width=0.65\textwidth]{linalgebra_4types_ex4.png}
+		\includegraphics[width=0.50\textwidth]{linalgebra_4types_ex4.png}
 	\caption{Exemple d'un système d'équation non-inversible}
 	\label{fig:rmn_ex4}
 \end{figure}
@@ -639,9 +654,9 @@ p_{1} & u_{12} &  u_{13} \\
 Les coefficients non-nuls $p_i$ sur la diagonale de la matrice $U$ sont appeles les pivots.
 
 
-\newpage
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Base}
+\subsection{Base}
 \label{sec:base}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -677,7 +692,7 @@ forment une base pour le sous-espace qui correspond au plan $z=0$.
 \label{sec:lindep}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Un vecteur est dit linéairement dépendant d'un autre vecteur (ou un ensemble de vecteurs), lorsque celui-ci peut être exprimé comme un combinaison pondéré des autres. 
+Un vecteur est dit linéairement dépendant d'un autre vecteur (ou un ensemble de vecteurs), lorsque celui-ci peut être exprimé comme une combinaison pondéré des autres. 
 
 %TODO figure
 
@@ -702,15 +717,12 @@ Inversement, un ensemble de vecteurs $\left\{ \col{v}_1, \col{v}_2, \hdots, \col
 
 
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Projection}
+% \label{sec:projectionmatrix}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Projection}
-\label{sec:projectionmatrix}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-À venir!
+% À venir!
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -833,6 +845,8 @@ A^T \col{y} &= A^T A \col{\hat{x}} \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{proof}
 
+
+\iftoggle{EN}{%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newpage
 \subsection{Graphical Interpretation of the Least Square Solution}
@@ -906,6 +920,7 @@ The distance between the approximation $\underline{p}$ and $\underline{y}$ is mi
 	\caption{Graphical Visualization of Least Square}
 \end{figure}
 
+}
 
 
 
@@ -949,7 +964,7 @@ Il est à noter que la matrice $A$ doit avoir des rangés indépendantes pour qu
 
 
 
-
+\newpage
 \begin{example}[Utilisation d'un matrice pseudo-inverse]
 Pour cet exemple, un robot doit produire un force de 14 N sur un mur. Pour y parvenir le courant électrique dans les trois moteurs doit être ajusté. La relation entre la force et le courant dans les moteurs est linéaire et illustrée ci-dessous. On cherche ici une solution qui minimise les pertes joules $ri^2$ dans les moteurs. Comme il y a plusieurs solutions possible pour atteindre le niveau de force désiré, et que la fonction coût à minimiser est quadratique, une matrice pseudo-inverse droite peut être utilisée pour calculer la solution optimale directement, voir Figure \ref{fig:pseudo-inverse-ex1}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
