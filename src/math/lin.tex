@@ -8,10 +8,10 @@
 L'algèbre linéaire, c'est à la base une collection d'outils mathématique pour traiter plusieurs fonctions/opérations en parallèle.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{L'opération $\col{y} = A \col{x}$}
+\subsection{L'opération $\col{y} = A \col{x}$}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
- L'opération $\col{y} = A \col{x}$ est un outils mathématique pour faire $m$ opérations linéaires sur les variables $x_i$ dans le vecteur-colonne $\col{x}$. Les outils de l'algèbre linéaire sont donc particulièrement utiles pour travailler avec des quantités multivariables comme des vecteurs 3D de position, vitesse, forces, etc.
+ L'opération $\col{y} = A \col{x}$ est un outil mathématique pour faire $m$ opérations linéaires sur les variables $x_i$ dans le vecteur-colonne $\col{x}$. Les outils de l'algèbre linéaire sont donc particulièrement utiles pour travailler avec des quantités multivariables comme des vecteurs 3D de position, vitesse, forces, etc.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htbp]
@@ -217,7 +217,7 @@ y_j = \sum_i{A_{ji} x_i }
 \label{sec:ordinateur}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-À bas niveau, un ordinateur effectue des opérations de sommation sur les divers composantes pour faire une opération matricielle. Toutefois, plusieurs langages de programmation comme, \textit{Python} (avec \textit{Numpy}) et \textit{Matlab}, donnent accès à des fonctions pour demander des opérations matricielles à haut-niveau, avec un code source très optimisé en terme d'utilisation de la mémoire de l'ordinateur. Il est donc beaucoup plus rapide d'utiliser de telles fonctions que de coder ces opérations de sommation manuellement. De plus, les cartes graphiques des ordinateurs ont des circuits spécialement conçu pour faire des opérations spécialisées qui inclues beaucoup d'opération typique d'algèbre linéaire. Pour faire des calculs avec des très grandes matrices et long vecteurs, il peut y avoir des gains de temps très significatives en utilisant les capacités des cartes graphiques.
+À bas niveau, un ordinateur effectue des opérations de sommation sur les divers composantes pour faire une opération matricielle. Toutefois, plusieurs langages de programmation, comme \textit{Python} (avec \textit{Numpy}) et \textit{Matlab}, donnent accès à des fonctions pour demander des opérations matricielles à haut-niveau, avec un code source très optimisé en terme d'utilisation de la mémoire de l'ordinateur. Il est donc beaucoup plus rapide d'utiliser de telles fonctions que de coder ces opérations de sommation manuellement. De plus, les cartes graphiques des ordinateurs ont des circuits spécialement conçu pour faire des opérations spécialisées typiques d'algèbre linéaire. Pour faire des calculs avec des très grandes matrices et long vecteurs, il peut y avoir des gains de temps très significatifs en utilisant les capacités des cartes graphiques.
 
 
 \newpage
@@ -247,11 +247,10 @@ A_{ik} = \sum_j{B_{ij} C_{jk} }
 \subsection{L'opération matricielle $A^T$}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-À venir!
-
+Prendre la transposée d'une matrice est une opération qui consiste à inverser les indices $i$ et $j$ de la matrice, ce qu'on peut aussi voir comme une réflexion selon la diagonale de la matrice:
 %%%%%%%%%%%%%%%%%%%%
 \begin{align}
-A^{T}_{ij} = A^{T}_{ji}
+A^{T}_{ij} = A_{ji}
 \end{align}
 %%%%%%%%%%%%%%%%%%%%
 
@@ -286,7 +285,7 @@ d      &   -b   \\
 \subsection{Additions de matrices $C = A + B $}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Une matrice additionnées à une autre matrice est équivalent en termes de composantes
+Une matrice additionnée à une autre matrice est équivalent en termes de composantes à additionner les termes individuellements:
 %%%%%%%%%%%%%%%%%%%%
 \begin{align}
 %%%%%%%%%%%%%%%%%%%%
@@ -303,7 +302,7 @@ C_{ij} = A_{ij} + B_{ij} \quad \forall (i,j)
 \subsection{Matrice multipliée par un scalaire $B = cA$}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Une matrice multipliée par un scalaire est équivalent en termes de composantes à 
+Une matrice multipliée par un scalaire est équivalent en termes de composantes à multiplier chaque composante par le scalaire:
 %%%%%%%%%%%%%%%%%%%%
 \begin{align}
 %%%%%%%%%%%%%%%%%%%%
@@ -353,7 +352,7 @@ Transposition et inversions:
 \label{sec:4espfond}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-La figure \ref{fig:4spaces} résume les quatre espaces fondamentaux d'une matrice, deux sont caractérisent les entrées $\col{x}$ et deux espaces caractérisent les sorties $\col{y}$. La figure \ref{fig:4spaces2} illustre comment les dimensions de ces espaces sont reliés au rang et dimensions d'une matrice.
+La figure \ref{fig:4spaces} résume les quatre espaces fondamentaux d'une matrice, deux espaces caractérisent les entrées $\col{x}$ et deux espaces caractérisent les sorties $\col{y}$. La figure \ref{fig:4spaces2} illustre comment les dimensions de ces espaces sont reliés au rang et dimensions d'une matrice.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
@@ -576,6 +575,16 @@ Un système d'équations peut être parfaitement contraint (une seule solution e
 
 Les grandes catégories de situations possibles illustrés à la figure \ref{fig:rmn} sont exemplifiés avec les exemples illustrés aux figures \ref{fig:rmn_ex1}, \ref{fig:rmn_ex2}, \ref{fig:rmn_ex3} et \ref{fig:rmn_ex4}.
 
+\begin{enumerate}
+    \item Parfaitement contraint ($r=m=n$): Il n'y a pas d'espace nul ni d'espace gauche nul.
+    \item Trop de variables ($r<n$): Il y a un espace nul de dimension $n-r$.
+    \item Trop d'équations ($r<m$): Il y a un espace gauche nul de dimension $m-r$.
+    \item Trop d'équations et de variables ($r<m,r<n$): Il y a un espace gauche nul de dimension $m-r$ et un espace nul de dimension $n-r$.
+\end{enumerate}
+
+
+
+
 \newpage
 \begin{example}[Système d'équation parfaitement contraint]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -627,13 +636,13 @@ Les grandes catégories de situations possibles illustrés à la figure \ref{fig
 \label{sec:lu}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Une matrice $A$ peut-etre factorise en deux matrices (triangulaires lorsque $A$ est une matrice inversible):
+Une matrice $A$ peut-être factorisée en deux matrices (triangulaires lorsque $A$ est une matrice inversible):
 %
 \begin{align}
 A = LU 
 \end{align}
 %
-ou la matrice $U$ est une matrice ou tout les coefficients sous la diagonale sont nuls et la matrice $L$ correspond aux opérations sur les ranges conduites dans le cadre d'une élimination Gauss-Jordan. Par exemple pour une matrice 3x3 inversible:
+où la matrice $U$ est une matrice ou tout les coefficients sous la diagonale sont nuls et la matrice $L$ correspond aux opérations sur les ranges conduites dans le cadre d'une élimination Gauss-Jordan. Par exemple pour une matrice 3x3 inversible:
 %
 \begin{align}
 L= 
@@ -965,7 +974,7 @@ Il est à noter que la matrice $A$ doit avoir des rangés indépendantes pour qu
 
 
 \newpage
-\begin{example}[Utilisation d'un matrice pseudo-inverse]
+\begin{example}[Utilisation d'une matrice pseudo-inverse]
 Pour cet exemple, un robot doit produire un force de 14 N sur un mur. Pour y parvenir le courant électrique dans les trois moteurs doit être ajusté. La relation entre la force et le courant dans les moteurs est linéaire et illustrée ci-dessous. On cherche ici une solution qui minimise les pertes joules $ri^2$ dans les moteurs. Comme il y a plusieurs solutions possible pour atteindre le niveau de force désiré, et que la fonction coût à minimiser est quadratique, une matrice pseudo-inverse droite peut être utilisée pour calculer la solution optimale directement, voir Figure \ref{fig:pseudo-inverse-ex1}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]

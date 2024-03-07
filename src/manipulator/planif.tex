@@ -25,7 +25,10 @@ L'étape de planification de trajectoire est généralement essentiel lorsqu'un 
 
 \note{Système de coordonnées pour définir une trajectoire}{On peut définir des trajectoires dans plusieurs systèmes de coordonnées. Toutefois, pour simplifier la notation, nous présenterons ici d'abord plusieurs concepts en considérant que le trajet est toujours définit dans l'espace des joints d'un robot. Nous verrons ensuite que ces concepts se généralisent pour d'autres systèmes de coordonnées. }
 
+\video{Chemin et profil temporel}{https://youtu.be/p0NrGrDqFaU}
+
 Il est parfois utile d'utiliser le concept d'un chemin pour découpler le problème de planification de trajectoire en deux étapes: 1) trouver un chemin, une description géométrique d'une séquence de configuration $\col{q}$ reliant le point de départ et la cible; et ensuite 2) déterminer un profil temporel de vitesse sur ce chemin pour fixer une trajectoire temporelle.
+
 
 \begin{figure}[htbp]
 	\centering
@@ -185,12 +188,37 @@ qui sont illustrée à la Figure \ref{fig:poly3}.
 Une option pour avoir des trajectoires plus lisses est d'utiliser une fonction polynomiale d'ordre 5. Avec 5 paramètres il est possible de rajouter deux contraintes pour avoir une accélération qui débute et termine à une valeur de zéro, ce qui permet d'avoir aucune discontinuité en terme d'accélération, voir Figure \ref{fig:poly5} pour un allure de ce type de profile. Il est à noter que puisque nous avons rajouter 2 paramètres et 2 contraintes, comme pour le profile d'ordre 3 le profil d'ordre 5 a seulement $t_f$ comme paramètre libre. 
 
 
+\subsubsection{Profil temporel polynomial d'ordre $n$}
+
+Le concept de trajectoire polynomial ce générale jusqu'à un ordre $n$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[ht]
+		%\vspace{-10pt}
+        \centering
+		\includegraphics[width=0.90\textwidth]{fig/polynomial_traj_draft.jpg}
+        \caption{Trajectiore polynomial d'ordre $n$}
+		\label{fig:poly_n}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Si ont désire imposer $n$ conditions frontières, i.e. position, vitesse, accélération, etc. à $t_o$ et à $t_f$, alors le système est parfaitement contraint et il est possible de calculer les $n$ paramètres en inversant la matrice suivante:
+
+( voir notre manuscrites d'Alex février 2024)
+
+À venir!
+
+
 % \subsubsection{Courbe en S}
 
 % À venir!
 
 \newpage
 \section{Planification cinématique pour les robots manipulateurs}
+
+\video{Generation de trajectoire pour les manipulateurs}{https://youtu.be/_PvvpwGBu7E}
+
+
 
 \subsection{Point à point dans l'espace des joints}
 
@@ -322,6 +350,18 @@ Une alternative est d'utiliser des fonctions d'interpolation pour générer une 
 
 
 \newpage
+\section{Planéité différentielle}
+\label{sec:searchalgo}
+
+Le concept de planéité différentielle, en anglais \textit{differential flatness}, peut être très utile pour planifier des trajectoires pour des systèmes sous-actionnés. Le principe est le suivant: certains systèmes ont des variables sorties qui ont une propriété spéciale, i.e. nommée la planéité différentielle, qui est que tout les états et forces du système sont entièrement définis par ces variables et leurs dérivées supérieures. Par exemple, la position de l'effecteur pour un bras manipulateur, le centre de masse d'un drone quadcopter, le point milieu entre les deux roues arrières d'une voiture ont cette propriété. Pour une bras manipulateur pleinement actionné, les forces nécessaires aux joints sont reliés à l'accélération à l'effecteur. Pour un drone, les forces de propulsion sont reliés à la quatrième dérivée temporelle de la position du centre de masse, souvent appelé le \textit{snap}.
+
+Ce concept peut être exploité pour générer plus facilement des trajectoires faisable qui respecte la dynamique du système. L'idée est de définir la trajectoire désirée du système en définissant une trajectoire continue juste qu'à un ordre $n$ (le minimum est variable selon le système), qui permet d'ensuite calculer tous les autres états et forces à partir de cet trajectoire et les dérivées supérieures de celle-ci. Typiquement, on peut utiliser une paramétrisation de type polynomiale d'ordre $n$ pour garantir que les dérivées supérieur sont définies jusqu'à l'ordre $n$. Il est particulièrement intéressant d'effectuer une optimisation des paramètres de la trajectoire pour minimiser un métrique qui correspond à l'effort des actionneurs, comme le snap pour un drone, de sorte à obtenir des mouvements gracieux. Par rapport à d'autre méthode d'optimisation de trajectoire, cette méthodologie est intéressante car l'espace de recherche est limité à des paramètres d'une trajectoire polynomiales qui garantissent la faisabilité, et l'optimisation est une problème de programmation quadratique qui est garantit de converger en temps fini. 
+
+À venir!
+
+
+
+\newpage
 \section{Algorithmes d'optimisation de trajectoires}
 
 \video{Introduction à la commande optimale}{https://youtu.be/3x6Vg-RRZ50}
@@ -330,7 +370,12 @@ Une alternative est d'utiliser des fonctions d'interpolation pour générer une 
 
 À venir!
 
+Mots clés: programmation quadratique, \textit{direct collocation}, \textit{shooting}
+
+\newpage
 \section{Algorithmes de recherche}
 \label{sec:searchalgo}
 
 À venir!
+
+Mots clés: RRT, RRT*
