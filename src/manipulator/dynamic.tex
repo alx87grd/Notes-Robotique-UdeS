@@ -334,7 +334,7 @@ c_i &= \sum_j \sum_k \Gamma_{ijk} \dot{q}_j \dot{q}_k \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Forme compacte des équations des manipulateurs}
 
-Parfois pour allégé la manipulation des équations, une version abrégée où $\col{c}$ est parfois utilisé pour regrouper toute les forces internes (qui sont des fonctions des états du systèmes):
+Parfois pour allégé la manipulation des équations, une version abrégée où $\col{h}$ est parfois utilisé pour regrouper toute les forces internes (qui sont des fonctions des états du systèmes):
 %%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \col{h} = C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q})
@@ -520,7 +520,7 @@ En dérivant la relation de cinématique différentielle il est possible d'obten
 Ensuite si on utilise ces équations pour remplacer les variables de l'espace des joints par ceux dans l'espace de la tâche dans l'équation des manipulateurs:
 %%%%%%%%%%%%%%%%
 \begin{align}
-H \col{\ddot{q}} + \col{c} &= \col{\tau} + J^T \col{f}_{R_E} \\
+H \col{\ddot{q}} + \col{h} &= \col{\tau} + J^T \col{f}_{R_E} \\
 H J^{-1} (\col{\ddot{r}} - \dot{J} \col{\dot{q}}) + \col{h} &= \col{\tau} + J^T \col{f}_{R_E}
 \end{align}
 %%%%%%%%%%%%%%%%
