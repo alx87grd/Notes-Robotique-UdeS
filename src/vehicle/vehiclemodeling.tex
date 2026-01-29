@@ -1,156 +1,340 @@
 \chapter{Modélisation des véhicules}
 
-Ce chapitre présente divers modèles cinématiques et dynamiques de véhicules qui sont souvent utilisés dans un contexte de commande et planification. C'est donc ici un survol d'approche de modélisation où un compromis entre fidélité et complexité est effectué. Les approches de modélisation haute fidélité qu'on pourrait utiliser dans un simulateur pour faire de la validation peuvent différer et ne seront pas traité ici.
+Ce chapitre présente divers modèles cinématiques et dynamiques de véhicules qui sont souvent utilisés dans un contexte de commande et planification. Il s'agit d'un survol des approches de modélisation où un compromis entre fidélité et complexité est effectué. Les approches de modélisation haute fidélité (ex: éléments finis pour la déformation des pneus), typiquement utilisées en validation, diffèrent des modèles de commande présentés ici.
 
+% ==========================================
+% SECTION 1: THÉORIE UNIFIÉE
+% ==========================================
+\section{Approche unifiée et hiérarchie de modèles}
 
-\section{Navigation holonomique}
+Cette section établit le cadre mathématique commun à tous les véhicules (terrestres, aériens, marins), en définissant les niveaux d'abstraction, du simple point matériel au système multi-corps.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Hiérarchie des modèles génériques}
+
+\begin{itemize}
+    \item \textbf{TODO:} Expliquer le concept de hiérarchie : plus on descend, plus la fidélité augmente, mais le coût de calcul aussi.
+    \item \textbf{TODO:} Discuter des cas d'usage par niveau (ex: Niv 1 pour A* sur une carte 2D, Niv 6 pour un contrôleur MPC).
+\end{itemize}
+
+% Insertion du Tableau 1 (Generic Vehicles) en mode paysage
+\begin{landscape}
+% ==========================================
+% TABLE 1: GENERIC / HOLONOMIC MODELS (FR) - SIMPLIFIÉ
+% ==========================================
+\begin{table}[htbp]
+    \centering
+    \caption{\textbf{Abstractions de véhicules génériques}}
+    \vspace{0.1cm}
+    \setlength{\tabcolsep}{4pt} % Espacement légèrement augmenté
+    % Ajustement des largeurs : 1 col de desc + 5 cols de données
+    \begin{tabular}{|L{0.09\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|}
+        \hline
+        \textbf{Caractér.} & 
+        \textbf{Niveau 1 : Particule cinématique} (Ordre 1) & 
+        \textbf{Niveau 2 : Particule dynamique} (Ordre 2) & 
+        \textbf{Niveau 3 : Corps rigide cin.} (Ordre 1) & 
+        \textbf{Niveau 5 : Corps rigide dyn. 2D} & 
+        \textbf{Niveau 6 : Corps rigide dyn. 3D} \\
+        \hline
+
+         \textbf{n} & 
+        2 & 
+        4 & 
+        3 & 
+        6 & 
+        12 
+        \\
+        \hline
+        
+        \textbf{Modèle dynamique} & 
+        $\dot{x} = v_x$ 
+        \newline 
+        $\dot{y} = v_y$
+        & 
+        $\ddot{x} = a_x$ 
+        \newline 
+        $\ddot{y} = a_y$
+        \newline 
+         & 
+        $\dot{\mathbf{p}} = \mathbf{R}(\psi)\mathbf{v}_{b}$ \newline $\dot{\psi} = r$  & 
+        $m(\dot{u}-vr) = F_x$ \newline $m(\dot{v}+ur) = F_y$ \newline $I_z \dot{r} = M_z$ 
+        & 
+        $m(\dot{\mathbf{v}} + \omega \times \mathbf{v}) = \mathbf{F}$ \newline $\mathbf{I}\dot{\omega} + \omega \times \mathbf{I}\omega = \mathbf{M}$ \\
+        \hline
+
+        \textbf{Espace de config.} $\mathbf{q}$ & 
+        $\mathbf{q} = [x, y]^T$ & 
+        $\mathbf{q} = [x, y]^T$ & 
+        $\mathbf{q} = [x, y, \psi]^T$ & 
+        $\mathbf{q} = [x, y, \psi]^T$ & 
+        $\mathbf{q} \in \mathbb{R}^{6}$ (Pos, Euler) \\ \hline
+        
+        \textbf{Espace d'état} $\mathbf{x}$ & 
+        $\mathbf{x} = [x, y]^T$ & 
+        $\mathbf{x} = [x, y, v_x, v_y]^T$ & 
+        $\mathbf{x} = [x, y, \psi]^T$ & 
+        $\mathbf{x} = [x, y, \psi, u, v, r]^T$ & 
+        $\mathbf{x} \in \mathbb{R}^{12}$ \newline (Pos, Euler, VitLin, VitAng) \\
+        \hline
+        
+        \textbf{Espace d'action} $\mathbf{u}$ & 
+        $\mathbf{u} = [v_x, v_y]^T$ & 
+        $\mathbf{u} = [a_x, a_y]^T$ & 
+        $\mathbf{u} = [u, v, r]^T$ \newline (Vit. Corps) & 
+        $\mathbf{u} = [F_x, F_y, M_z]^T$ \newline (Torseur 2D) & 
+        $\mathbf{u} = [\mathbf{F}, \mathbf{M}]^T$ \newline (Torseur 3D) \\
+        \hline
+        
+        \textbf{Modèle Env. / Carte} & 
+        Carte traversabilité $trav(x,y) \in [0, 1]$ & 
+        Carte traversabilité $trav(x,y) \in [0, 1]$ \newline
+        Champ hauteur 2.5D \newline $z(x,y)$
+        & 
+        $trav(x,y) \in [0, 1]$ \newline
+        $z(x,y) \in \mathbb{R}^1$
+        & 
+        $trav(x,y) \in [0, 1]$ \newline
+        $z(x,y) \in \mathbb{R}^1$
+        & 
+        $trav(x,y) \in [0, 1]$ \newline
+        $z(x,y) \in \mathbb{R}^1$
+        \\
+        \hline
+        
+        \textbf{Contr. d'état} & 
+        Positions traversables \newline
+        $\mathbf{q} \in \mathcal{C}_{free}$ & 
+        Positions traversables \newline
+        $\mathbf{q} \in \mathcal{C}_{free}$ \newline
+        Vitesses réalisables \newline
+        $\mathbf{u} \in \mathcal{V}_{feasible}$ & 
+        $\mathbf{q} \in \mathcal{C}_{free} \subseteq \mathbb{R}^3$ 
+        & 
+        $\mathbf{q} \in \mathcal{C}_{free} \subseteq \mathbb{R}^3$ \newline
+        $\mathbf{u} \in \mathcal{V}_{feasible} \subseteq \mathbb{R}^3$ 
+        & 
+        $\mathbf{q} \in \mathcal{C}_{free} \subseteq \mathbb{R}^6$ \newline
+        $\mathbf{u} \in \mathcal{V}_{feasible} \subseteq \mathbb{R}^6$  
+        \\
+        \hline
+        
+        \textbf{Contr. d'action} & 
+        Vitesses réalisables \newline
+        $\mathbf{u} \in \mathcal{V}_{feasible}$ & 
+        Accélérations réalisables \newline
+        $\mathbf{u} \in \mathcal{A}_{feasible}(x)$ & 
+        $\mathbf{u} \in \mathcal{V}_{feasible} \subseteq \mathbb{R}^3$  & 
+        $\mathbf{u} \in \mathcal{F}_{feasible}(x)$ & 
+        $\mathbf{u} \in \mathcal{F}_{feasible}(x)$\\
+        \hline
+        
+    \end{tabular}
+\end{table}
+\end{landscape}
+
+% Figure réintégrée ici pour illustrer les niveaux 1 et 2
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=0.70\textwidth]{fig/holonomicvehicle.jpg}
-	\caption{Modèle dynamique pour un vehicle holonomique}
+	\caption{Modèle dynamique pour un véhicule holonomique (Abstraction particule - Niveaux 1 et 2)}
 	\label{fig:holonomicvehicle}
 \end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\subsection{Équations du mouvement dans le repère du corps (Body-Frame)}
 
-\section{Navigation sur un graphe discret}
+La plupart des capteurs (IMU) et des actionneurs (propulseurs, roues) sont fixés au châssis. Il est donc plus naturel d'exprimer la dynamique dans le repère du véhicule $\mathcal{R}_b$ plutôt que dans le repère inertiel $\mathcal{R}_I$.
 
-À venir!
+\begin{itemize}
+    \item \textbf{TODO:} Définir le vecteur d'état général en 3D : $\nu = [u, v, w, p, q, r]^T$ (vitesses linéaires et angulaires dans le body frame).
+    \item \textbf{TODO:} Présenter les équations de Newton-Euler généralisées :
+    \begin{equation}
+        \mathbf{M}\dot{\nu} + \mathbf{C}(\nu)\nu = \tau
+    \end{equation}
+    ou sous la forme vectorielle :
+    \begin{align*}
+        m (\dot{\mathbf{v}}_b + \boldsymbol{\omega}_b \times \mathbf{v}_b) &= \mathbf{F}_b \\
+        \mathbf{I} \dot{\boldsymbol{\omega}}_b + \boldsymbol{\omega}_b \times (\mathbf{I} \boldsymbol{\omega}_b) &= \mathbf{M}_b
+    \end{align*}
+    \item \textbf{TODO:} Expliquer l'avantage : la matrice d'inertie $\mathbf{I}$ est constante dans ce repère.
+    \item \textbf{TODO:} Faire le lien avec la cinématique (matrice de rotation $\mathbf{R}(\Theta)$ pour passer de $\dot{\mathbf{p}}$ à $\mathbf{v}_b$).
+\end{itemize}
 
+% ==========================================
+% SECTION 2: VÉHICULES TERRESTRES
+% ==========================================
+\section{Véhicules Terrestres (Automobiles et Robots mobiles)}
 
+Cette section couvre les véhicules non-holonomes se déplaçant sur une surface (2D ou 2.5D).
 
-\section{Automobiles}
+\subsection{Hiérarchie spécifique aux roues}
 
-Cette section présente des modèles simples de comportement de véhicules qui ont une architecture de type automobile, c'est-à-dire quatre roue et des roues avant orientable (typiquement une architecture de direction de type ackerman).
+% Insertion du Tableau 2 (Wheeled Vehicles)
+\begin{table}[htbp]
+    \centering
+    \caption{\textbf{Abstractions pour véhicules à roues}}
+    \vspace{0.1cm}
+    \begin{tabular}{|p{0.15\linewidth}|p{0.25\linewidth}|p{0.25\linewidth}|p{0.25\linewidth}|}
+        \hline
+        \textbf{Niveau} & \textbf{Modèle Bicyclette (Cin.)} & \textbf{Bicyclette Dynamique} & \textbf{Voiture Complète 3D} \\
+        \hline
+        \textbf{Hypothèse} & Pas de glissement & Glissement (Pneus), Roulis négligé & 4 roues, Suspension, Roulis/Tangage \\
+        \hline
+    \end{tabular}
+\end{table}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Modèle bicyclette}
+\subsection{Modèles Cinématiques (Basse vitesse)}
 
-Le modèle souvent appelé bicyclette, est un modèle cinématique simple qui représente bien le comportement d'un véhicule a basse vitesse, et est donc typiquement utilisé pour planifié une trajectoire dans un stationnement par exemple.
-%%%%%%%%%%%%%%%%%%%%%%%%%
+Ces modèles supposent que les roues ne glissent pas (contrainte de roulement sans glissement). Ils sont valides à basse vitesse.
+
+\subsubsection{Architecture Ackermann et Modèle Bicyclette}
+
+\begin{itemize}
+    \item \textbf{TODO:} Expliquer la géométrie Ackermann (centre de rotation instantané).
+    \item \textbf{TODO:} Dériver les équations cinématiques $\dot{x}, \dot{y}, \dot{\psi}$.
+\end{itemize}
+
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=0.90\textwidth]{fig/ackerman.jpg}
-	\caption{Modèle simplifié de type bicyclette}
+	\caption{Géométrie de direction d'Ackermann et simplification bicyclette}
 	\label{fig:ackerman}
 \end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Modèle bicyclette cinématique}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=0.90\textwidth]{fig/bicyclemodel.jpg}
-	\caption{Modèle dynamique de type bicyclette cinématique}
+	\caption{Variables d'état du modèle bicyclette cinématique}
 	\label{fig:bicyclemodel}
 \end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=0.90\textwidth]{fig/bicyclemodel2.jpg}
-	\caption{Condition pour avoir aucun glissement pour le modèle bicyclette}
+	\caption{Contraintes non-holonomes (roulement sans glissement)}
 	\label{fig:bicyclemodel2}
 \end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Modèle bicyclette dynamique}
+\subsubsection{Robots à conduite différentielle}
+\begin{itemize}
+    \item \textbf{TODO:} Ajouter le modèle unicycle / char d'assaut (tank drive) pour les robots de type Pioneer/Husky.
+\end{itemize}
 
-À venir!
+\subsection{Interaction Pneu-Sol et Terramechanics}
 
+Pour les modèles dynamiques, les forces ne sont plus infinies; elles dépendent de l'interaction entre la roue et le sol.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Modèle longitudinal}
+\subsubsection{Modèles de Pneus (Sur route)}
+Sur route asphaltée, la déformation du pneu génère les forces.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[htbp]
-	\centering
-		\includegraphics[width=0.90\textwidth]{fig/longitudinalmodel.jpg}
-	\caption{Modèle simple de propulsion/freinage longitudinal}
-	\label{fig:longitudinalmodel}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize}
+    \item \textbf{TODO:} Définir le glissement longitudinal ($s$) et l'angle de dérive latéral ($\alpha$).
+    \item \textbf{TODO:} Présenter le modèle linéaire ($F_y = C_\alpha \alpha$) pour les faibles accélérations.
+    \item \textbf{TODO:} Présenter la courbe de Pacejka (Magic Formula) pour la saturation.
+\end{itemize}
 
-
-\subsection{Modèle avec transfert de poids}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Modélisation du contact sol-roue}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=0.60\textwidth]{fig/slipcurve.jpg}
-	\caption{Modèle de force de contact pour un pneu}
+	\caption{Courbe caractéristique d'un pneu : Force latérale vs Angle de dérive}
 	\label{fig:slipcurve}
 \end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\subsubsection{Modèles de Sol (Hors route / Terramechanics)}
+En robotique tout-terrain (agricole, planétaire), le sol se déforme sous la roue.
 
+\begin{itemize}
+    \item \textbf{TODO:} Introduire les concepts de Terramechanics (Bekker-Wong).
+    \item \textbf{TODO:} Expliquer l'enfoncement ($z_{sink}$) et la résistance au roulement due au compactage du sol.
+    \item \textbf{TODO:} Mentionner les modèles de cisaillement (Janosi-Hanamoto) pour la traction dans le sable/boue.
+\end{itemize}
 
+\subsection{Modèles Dynamiques}
 
+\subsubsection{Modèle Bicyclette Dynamique (Planar)}
+\begin{itemize}
+    \item \textbf{TODO:} Écrire les équations de Newton-Euler en 2D en utilisant les forces de pneus définies ci-dessus.
+    \item \textbf{TODO:} $\dot{v}_y = -u \dot{\psi} + \frac{1}{m}(F_{y,f} + F_{y,r})$ (Importance du terme centrifuge).
+\end{itemize}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Modèles de suspension}
+\subsubsection{Modèle Longitudinal}
+\begin{itemize}
+    \item \textbf{TODO:} Modèle de moteur, freinage et résistance aérodynamique simple.
+\end{itemize}
 
-\subsubsection{Quart de véhicule sans pneu}
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.90\textwidth]{fig/longitudinalmodel.jpg}
+	\caption{Forces longitudinales s'appliquant au véhicule}
+	\label{fig:longitudinalmodel}
+\end{figure}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Dynamique 3D et Suspensions}
+Lorsque le véhicule accélère ou tourne, le poids se transfère, modifiant la traction disponible.
+
+\begin{itemize}
+    \item \textbf{TODO:} Expliquer le transfert de charge dynamique (Load transfer) longitudinal et latéral.
+    \item \textbf{TODO:} Modèle "Quart de véhicule" (Quarter Car) pour la dynamique verticale.
+\end{itemize}
+
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=0.90\textwidth]{fig/simplesuspension.jpg}
-	\caption{Modèle simple de suspension}
+	\caption{Modèle de suspension (Quart de véhicule)}
 	\label{fig:simplesuspension}
 \end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection{Quart de véhicule avec pneu}
-
-\subsubsection{Demi véhicule}
-
-\subsubsection{Véhicule complet}
-
-
+% ==========================================
+% SECTION 3: VÉHICULES AÉRIENS
+% ==========================================
 \newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Robot mobiles}
+\section{Drones (Multirotors)}
 
-Cette section présente des modèles simples pour d'autres architecture de robot mobiles.
+\subsection{Hiérarchie et Modélisation}
+Les drones sont typiquement modélisés comme des corps rigides 6-DOF propulsés par des hélices fixes.
 
+\subsection{Dynamique et Matrice d'allocation (Wrench Map)}
+\begin{itemize}
+    \item \textbf{TODO:} Lien entre vitesse des moteurs carrée $\omega_i^2$ et le torseur $[\mathbf{F}, \mathbf{M}]^T$.
+    \item \textbf{TODO:} Configuration Quadrotor (X ou +) vs Hexarotor.
+\end{itemize}
 
+\subsection{Modèles simplifiés}
 
+\subsubsection{Modèle linéarisé (Stationnaire)}
+\begin{itemize}
+    \item \textbf{TODO:} Utile pour le contrôle PID standard près de l'équilibre.
+\end{itemize}
 
+\subsubsection{Modèle Planaire (2D)}
+Utile pour introduire les concepts sans la complexité de la 3D.
 
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Drones}
-
-\subsection{Modèle de quadrirotor planaire}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=0.99\textwidth]{fig/planar_drone.jpg}
-	\caption{Modèle de drone planaire}
+	\caption{Modèle simplifié : Drone planaire (3-DOF)}
 	\label{fig:planar_drone}
 \end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% ==========================================
+% SECTION 4: AVIONS
+% ==========================================
+\newpage
+\section{Avions (Ailes fixes)}
 
+\subsection{Modèles Cinématiques (Planification)}
+\begin{itemize}
+    \item \textbf{TODO:} Modèle de Dubins (Vitesse constante, rayon de courbure min).
+\end{itemize}
+
+\subsection{Aérodynamique et Dynamique de vol}
+Contrairement aux drones, la portance dépend de la vitesse d'avancement (Airspeed).
+
+\begin{itemize}
+    \item \textbf{TODO:} Définir Angle d'attaque ($\alpha$) et Angle de dérapage ($\beta$).
+    \item \textbf{TODO:} Équations de base : Portance ($L = \frac{1}{2}\rho v^2 S C_L$) et Traînée ($D$).
+    \item \textbf{TODO:} Distinction Vitesse Sol vs Vitesse Air (Effet du vent).
+\end{itemize}
 
 \newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Avions}
-
-
-
-\newpage
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Fusée}
+\section{Autres architectures (Fusées, Sous-marins)}
+\textbf{TODO:} Brève mention des similitudes (masse variable pour fusées, masse ajoutée pour sous-marins).
