@@ -275,6 +275,7 @@ Ce système se regroupe finalement en une seule équation matricielle par blocs,
 \end{equation}
 
 \subsection{Corps planaire (3 DDL)}
+\label{sec:rigidbody2D}
 
 Ce modèle s'applique aux véhicules dont le mouvement est restreint au plan. On définit les vitesses dans le repère du corps :
 \begin{itemize}
@@ -492,7 +493,7 @@ Ces équations correspondent à un modèle d'état de la forme $\dot{\mathbf{q}}
 
 \subsection{Modèle Bicyclette Dynamique}
 
-Contrairement au modèle cinématique, le modèle dynamique prend en compte les forces, les masses et les inerties. On utilise le modèle planaire 3 DDL, avec les vitesses exprimées dans le repère du corps : $u$ (longitudinale), $v$ (latérale) et $r$ (vitesse angulaire de lacet). En considérant seulement les forces des pneus et une traînée aérodynamique, les équations sont:
+Le modèle bicyclette dynamique prend en compte les forces, les masses et les inerties dans le plan avec 3 DDL. On réutilise les équations de corps rigide (voir section \ref{sec:rigidbody2D}) avec les vitesses exprimées dans le repère du corps : $u$ (longitudinale), $v$ (latérale) et $r$ (vitesse angulaire de lacet), et on ajoute  les forces des pneus et une traînée aérodynamique:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
     m(\dot{u} - rv) &= (F_{x1} c_\delta - F_{y1} s_\delta) + F_{x2} - F_{aero} \\
@@ -500,7 +501,7 @@ Contrairement au modèle cinématique, le modèle dynamique prend en compte les 
     I_z \dot{r} &= a(F_{x1} s_\delta + F_{y1} c_\delta) - b F_{y2}
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Avec les notations suivantes :
+ou, tel qu'illustré à la figure \ref{fig:dynamic_bicycle} :
 \begin{itemize}
     \item Indice $1$ : Roue avant (front), Indice $2$ : Roue arrière (rear).
     \item $a, b$ : Distances du centre de gravité (CG) aux essieux avant et arrière.
@@ -538,10 +539,11 @@ La cinématique du corps rigide nous donne la vitesse au point d'attache des ess
 \end{align}
 
 \paragraph{Projection dans le repère de la roue}
-On projette ces vitesses dans le repère local de la roue ($w$). La roue avant ici n'a pas de rotation relative, mais pour la roue avant (braquée de $\delta$), on applique une rotation inverse :
+La roue avant ici n'a pas de rotation relative au corp, mais la roue avant est braquée de $\delta$. On applique une rotation inverse pour exprimé les vitesses dans son repère local:
 \begin{align}
-    v_{x1}^c &= u \cos\delta + (v + ar)\sin\delta \\
-    v_{y1}^c &= -u \sin\delta + (v + ar)\cos\delta
+    % v_{x1}^c &= u \cos\delta + (v + ar)\sin\delta \\
+    % v_{y1}^c &= -u \sin\delta + (v + ar)\cos\delta
+    \mathbf{v}_{1}^c &= [u \cos\delta + (v + ar)\sin\delta, \quad -u \sin\delta + (v + ar)\cos\delta]^T
 \end{align}
 
 \subsubsection{Calcul des Glissements}
