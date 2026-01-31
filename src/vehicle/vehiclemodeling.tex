@@ -1,229 +1,655 @@
 \chapter{Modélisation des véhicules}
 
-Ce chapitre présente divers modèles cinématiques et dynamiques de véhicules qui sont souvent utilisés dans un contexte de commande et planification. Il s'agit d'un survol des approches de modélisation où un compromis entre fidélité et complexité est effectué. Les approches de modélisation haute fidélité (ex: éléments finis pour la déformation des pneus), typiquement utilisées en validation, diffèrent des modèles de commande présentés ici.
+Ce chapitre présente divers modèles cinématiques et dynamiques de véhicules couramment utilisés dans un contexte de commande et de planification. Il propose un survol des approches de modélisation où un compromis entre fidélité et complexité est nécessaire. 
+
+\note{Note:}{ Il est à noter que les approches de modélisation « haute fidélité » (telles que les éléments finis pour la déformation des pneus ou la mécanique des fluides numérique pour l'aérodynamisme complexe), généralement réservées à la validation en simulation, ne seront pas traitées ici. L'accent est mis sur les modèles d'ordre réduit exploitables pour la synthèse de lois de commande.}
 
 % ==========================================
 % SECTION 1: THÉORIE UNIFIÉE
 % ==========================================
-\section{Approche unifiée et hiérarchie de modèles}
+\section{Hiérarchie de modèles}
 
-Cette section établit le cadre mathématique commun à tous les véhicules (terrestres, aériens, marins), en définissant les niveaux d'abstraction, du simple point matériel au système multi-corps.
+Cette section établit le cadre mathématique commun à la majorité des véhicules (terrestres, aériens, marins) en définissant les niveaux d'abstraction, allant du simple point matériel au système multi-corps complexe.
+%
+Comme illustré au tableau \ref{tab:genericvehicles}, plusieurs niveaux d'abstraction sont envisageables pour modéliser un même véhicule. Chaque niveau repose sur des hypothèses simplificatrices qui réduisent la complexité mathématique au prix d'une diminution de la fidélité physique. Le choix du modèle approprié dépend intrinsèquement du contexte : l'application visée (planification globale, contrôle local, simulation), la complexité de l'environnement ou encore la capacité de calcul disponible.
 
-\subsection{Hiérarchie des modèles génériques}
+Prenons l'analogie de la conduite automobile pour illustrer ces différents niveaux de granularité. Lorsqu'un conducteur planifie un trajet entre deux villes, ou lorsqu'il utilise un système de navigation GPS, le véhicule est assimilé à un simple point se déplaçant sur les segments d'un graphe ; les détails comme l'angle de braquage ou la commande des gaz sont ignorés à cette étape macroscopique. En revanche, pour effectuer une manœuvre précise comme un stationnement en parallèle, le conducteur doit planifier une trajectoire spatiale fine en tenant compte de la géométrie du véhicule et de ses contraintes de mouvement non-holonomes. Enfin, dans une situation limite comme un dérapage sur une plaque de glace, une compréhension de la dynamique, incluant les forces de friction et l'inertie, devient indispensable pour rétablir la stabilité.
 
-\begin{itemize}
-    \item \textbf{TODO:} Expliquer le concept de hiérarchie : plus on descend, plus la fidélité augmente, mais le coût de calcul aussi.
-    \item \textbf{TODO:} Discuter des cas d'usage par niveau (ex: Niv 1 pour A* sur une carte 2D, Niv 6 pour un contrôleur MPC).
-\end{itemize}
+Ainsi, pour les algorithmes de robotique, il est parfois suffisant d'utiliser un modèle particule $(x,y)$ pour la planification de chemin à haut niveau, alors qu'un modèle dynamique précis sera nécessaire pour calculer les forces de commande en temps réel. Il convient donc de considérer cet écosystème de modèles comme une boîte à outils, où chaque modèle est un instrument adapté à une tâche spécifique.
 
-% Insertion du Tableau 1 (Generic Vehicles) en mode paysage
-\begin{landscape}
-% ==========================================
-% TABLE 1: GENERIC / HOLONOMIC MODELS (FR) - SIMPLIFIÉ
-% ==========================================
-\begin{table}[htbp]
-    \centering
-    \caption{\textbf{Abstractions de véhicules génériques}}
-    \vspace{0.1cm}
-    \setlength{\tabcolsep}{4pt} % Espacement légèrement augmenté
-    % Ajustement des largeurs : 1 col de desc + 5 cols de données
-    \begin{tabular}{|L{0.09\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|}
-        \hline
-        \textbf{Caractér.} & 
-        \textbf{Niveau 1 : Particule cinématique} (Ordre 1) & 
-        \textbf{Niveau 2 : Particule dynamique} (Ordre 2) & 
-        \textbf{Niveau 3 : Corps rigide cin.} (Ordre 1) & 
-        \textbf{Niveau 5 : Corps rigide dyn. 2D} & 
-        \textbf{Niveau 6 : Corps rigide dyn. 3D} \\
-        \hline
-
-         \textbf{n} & 
-        2 & 
-        4 & 
-        3 & 
-        6 & 
-        12 
-        \\
-        \hline
-        
-        \textbf{Modèle dynamique} & 
-        $\dot{x} = v_x$ 
-        \newline 
-        $\dot{y} = v_y$
-        & 
-        $\ddot{x} = a_x$ 
-        \newline 
-        $\ddot{y} = a_y$
-        \newline 
-         & 
-        $\dot{\mathbf{p}} = \mathbf{R}(\psi)\mathbf{v}_{b}$ \newline $\dot{\psi} = r$  & 
-        $m(\dot{u}-vr) = F_x$ \newline $m(\dot{v}+ur) = F_y$ \newline $I_z \dot{r} = M_z$ 
-        & 
-        $m(\dot{\mathbf{v}} + \omega \times \mathbf{v}) = \mathbf{F}$ \newline $\mathbf{I}\dot{\omega} + \omega \times \mathbf{I}\omega = \mathbf{M}$ \\
-        \hline
-
-        \textbf{Espace de config.} $\mathbf{q}$ & 
-        $\mathbf{q} = [x, y]^T$ & 
-        $\mathbf{q} = [x, y]^T$ & 
-        $\mathbf{q} = [x, y, \psi]^T$ & 
-        $\mathbf{q} = [x, y, \psi]^T$ & 
-        $\mathbf{q} \in \mathbb{R}^{6}$ (Pos, Euler) \\ \hline
-        
-        \textbf{Espace d'état} $\mathbf{x}$ & 
-        $\mathbf{x} = [x, y]^T$ & 
-        $\mathbf{x} = [x, y, v_x, v_y]^T$ & 
-        $\mathbf{x} = [x, y, \psi]^T$ & 
-        $\mathbf{x} = [x, y, \psi, u, v, r]^T$ & 
-        $\mathbf{x} \in \mathbb{R}^{12}$ \newline (Pos, Euler, VitLin, VitAng) \\
-        \hline
-        
-        \textbf{Espace d'action} $\mathbf{u}$ & 
-        $\mathbf{u} = [v_x, v_y]^T$ & 
-        $\mathbf{u} = [a_x, a_y]^T$ & 
-        $\mathbf{u} = [u, v, r]^T$ \newline (Vit. Corps) & 
-        $\mathbf{u} = [F_x, F_y, M_z]^T$ \newline (Torseur 2D) & 
-        $\mathbf{u} = [\mathbf{F}, \mathbf{M}]^T$ \newline (Torseur 3D) \\
-        \hline
-        
-        \textbf{Modèle Env. / Carte} & 
-        Carte traversabilité $trav(x,y) \in [0, 1]$ & 
-        Carte traversabilité $trav(x,y) \in [0, 1]$ \newline
-        Champ hauteur 2.5D \newline $z(x,y)$
-        & 
-        $trav(x,y) \in [0, 1]$ \newline
-        $z(x,y) \in \mathbb{R}^1$
-        & 
-        $trav(x,y) \in [0, 1]$ \newline
-        $z(x,y) \in \mathbb{R}^1$
-        & 
-        $trav(x,y) \in [0, 1]$ \newline
-        $z(x,y) \in \mathbb{R}^1$
-        \\
-        \hline
-        
-        \textbf{Contr. d'état} & 
-        Positions traversables \newline
-        $\mathbf{q} \in \mathcal{C}_{free}$ & 
-        Positions traversables \newline
-        $\mathbf{q} \in \mathcal{C}_{free}$ \newline
-        Vitesses réalisables \newline
-        $\mathbf{u} \in \mathcal{V}_{feasible}$ & 
-        $\mathbf{q} \in \mathcal{C}_{free} \subseteq \mathbb{R}^3$ 
-        & 
-        $\mathbf{q} \in \mathcal{C}_{free} \subseteq \mathbb{R}^3$ \newline
-        $\mathbf{u} \in \mathcal{V}_{feasible} \subseteq \mathbb{R}^3$ 
-        & 
-        $\mathbf{q} \in \mathcal{C}_{free} \subseteq \mathbb{R}^6$ \newline
-        $\mathbf{u} \in \mathcal{V}_{feasible} \subseteq \mathbb{R}^6$  
-        \\
-        \hline
-        
-        \textbf{Contr. d'action} & 
-        Vitesses réalisables \newline
-        $\mathbf{u} \in \mathcal{V}_{feasible}$ & 
-        Accélérations réalisables \newline
-        $\mathbf{u} \in \mathcal{A}_{feasible}(x)$ & 
-        $\mathbf{u} \in \mathcal{V}_{feasible} \subseteq \mathbb{R}^3$  & 
-        $\mathbf{u} \in \mathcal{F}_{feasible}(x)$ & 
-        $\mathbf{u} \in \mathcal{F}_{feasible}(x)$\\
-        \hline
-        
-    \end{tabular}
-\end{table}
-\end{landscape}
-
-% Figure réintégrée ici pour illustrer les niveaux 1 et 2
-\begin{figure}[htbp]
+\begin{figure}[htb]
 	\centering
 		\includegraphics[width=0.70\textwidth]{fig/holonomicvehicle.jpg}
-	\caption{Modèle dynamique pour un véhicule holonomique (Abstraction particule - Niveaux 1 et 2)}
+	\caption{Modèle particule cinématique 2D pour un véhicule holonomique. La configuration est donnée par la position soit $\mathbf{q} = [x, y]^T \in \mathbb{R}^2$, l'état est identique à la configuration, et les actions sont les vitesses linéaires $\mathbf{u} = [v_x, v_y]^T \in \mathbb{R}^2$.}
 	\label{fig:holonomicvehicle}
 \end{figure}
 
-\subsection{Équations du mouvement dans le repère du corps (Body-Frame)}
 
-La plupart des capteurs (IMU) et des actionneurs (propulseurs, roues) sont fixés au châssis. Il est donc plus naturel d'exprimer la dynamique dans le repère du véhicule $\mathcal{R}_b$ plutôt que dans le repère inertiel $\mathcal{R}_I$.
+\subsection{Espace de configuration}
 
-\begin{itemize}
-    \item \textbf{TODO:} Définir le vecteur d'état général en 3D : $\nu = [u, v, w, p, q, r]^T$ (vitesses linéaires et angulaires dans le body frame).
-    \item \textbf{TODO:} Présenter les équations de Newton-Euler généralisées :
-    \begin{equation}
-        \mathbf{M}\dot{\nu} + \mathbf{C}(\nu)\nu = \tau
-    \end{equation}
-    ou sous la forme vectorielle :
-    \begin{align*}
+L'espace de configuration, formellement un ensemble noté $\mathcal{C}$, représente toutes les positions et orientations possibles du véhicule. Un point $\mathbf{q} \in \mathcal{C}$ définit la configuration géométrique du système à un instant donné, indépendamment de sa vitesse ou des forces qui s'y appliquent. La dimension de cet espace correspond au nombre de degrés de liberté (DDL) du système.
+
+La définition de $\mathbf{q}$ varie selon le niveau d'abstraction choisi. Pour une modélisation simplifiée de type particule la configuration se résume à la position cartésienne, soit $\mathbf{q} = [x, y]^T \in \mathbb{R}^2$ en 2D ou $\mathbf{q} = [x, y, z]^T \in \mathbb{R}^3$ en 3D. Pour un corps rigide évoluant sur un plan, comme une voiture ou un robot mobile classique, il est nécessaire d'ajouter l'orientation (le cap) à la position, ce qui donne $\mathbf{q} = [x, y, \psi]^T$. Mathématiquement, cet espace est le groupe spécial euclidien $SE(2)$. Enfin, pour un véhicule évoluant dans l'espace tridimensionnel, tel qu'un drone ou un avion, la configuration inclut la position et l'attitude complète, souvent représentée par des angles d'Euler ou des quaternions, appartenant alors au groupe $SE(3)$.
+
+\subsection{Espace d'état}
+
+L'espace d'état $\mathcal{X}$ contient l'ensemble minimal de variables nécessaires pour prédire l'évolution future du système, connaissant les entrées futures. Le vecteur d'état,$\mathbf{x} \in \mathcal{X}$. Contrairement à la configuration qui ne décrit que la géométrie instantanée, l'état doit capturer la « mémoire » dynamique du système, i.e. pour un véhicule son énergie cinétique/momentum avec des variable de vitesses. Le nombre d'états, souvent noté $n$, est appelé l'ordre du système. Pour les modèles cinématiques, l'état est souvent équivalent à la configuration ($\mathbf{x} = \mathbf{q}$). En revanche, pour les modèles dynamiques, l'état doit inclure à la fois la configuration et les vitesses (linéaires et angulaires) pour propager les équations du mouvement. 
+
+\subsection{Espace d'action}
+
+L'espace d'action $\mathcal{U}$ définit l'ensemble des entrées de commande admissibles, notées $\mathbf{u}$. C'est à ce niveau que se fait la distinction majeure entre la planification purement géométrique et la commande physique. Dans le cadre d'un modèle cinématique, l'action correspond souvent à des vitesses généralisées, comme la vitesse d'avancement et la vitesse de rotation. L'hypothèse sous-jacente est qu'il existe des contrôleurs de bas niveau suffisamment performants pour asservir ces vitesses quasi-instantanément. À l'inverse, dans un modèle dynamique, l'action correspond aux grandeurs physiques réelles générées par les actionneurs, telles que les forces, les couples aux roues, la poussée des hélices ou les angles de braquage des ailerons. Ces entrées agissent sur les accélérations du système via les lois de la mécanique.
+
+\subsection{Modèle cinématique vs dynamique}
+
+La distinction fondamentale entre ces deux familles de modèles réside dans la nature de la relation entre l'action et le mouvement. Un modèle cinématique décrit le mouvement possible du véhicule en fonction de contraintes géométriques, sans considérer les causes du mouvement. L'équation d'évolution est typiquement de la forme $\dot{\mathbf{q}} = \mathbf{N}(\mathbf{q})\mathbf{u}$. Ce type de modélisation est particulièrement adapté à la planification de trajectoire à basse vitesse, où les effets inertiels sont négligeables. À l'opposé, un modèle dynamique prend explicitement en compte la masse et l'inertie du véhicule à travers la seconde loi de Newton ($F=ma$). Il relie les forces et couples appliqués aux accélérations résultantes. L'utilisation d'un modèle dynamique devient indispensable lorsque les vitesses sont élevées, nécessitant la gestion de l'inertie, ou lorsque les interactions avec l'environnement sont complexes, comme dans le cas de la friction variable ou du dérapage. Il est aussi possible d'utiliser des intermédiaires. Par exemple, un modèle cinématique d'ordre deux, ou les actions sont des accélérations, les états sont les même que pour le modèle dynamique, mais les forces ne sont pas modélisées explicitement.
+
+
+
+
+
+% Insertion du Tableau 1 (Generic Vehicles) en mode paysage
+\begin{landscape}
+    % ==========================================
+    % TABLE 1: GENERIC / HOLONOMIC MODELS (FR) - SIMPLIFIÉ
+    % ==========================================
+    \begin{table}[htbp]
+        \centering
+        \caption{\textbf{Abstractions de véhicules génériques}}
+        \label{tab:genericvehicles}
+        \vspace{0.1cm}
+        \setlength{\tabcolsep}{4pt} % Espacement légèrement augmenté
+        % Ajustement des largeurs : 1 col de desc + 5 cols de données
+        \begin{tabular}{|L{0.09\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|}
+            \hline
+            \textbf{Caractér.} & 
+            \textbf{Niveau 1 : Particule cinématique} (Ordre 1) & 
+            \textbf{Niveau 2 : Particule dynamique} (Ordre 2) & 
+            \textbf{Niveau 3 : Corps rigide cin.} (Ordre 1) & 
+            \textbf{Niveau 5 : Corps rigide dyn. 2D} & 
+            \textbf{Niveau 6 : Corps rigide dyn. 3D} \\
+            \hline
+    
+             \textbf{n} & 
+            2 & 
+            4 & 
+            3 & 
+            6 & 
+            12 
+            \\
+            \hline
+            
+            \textbf{Modèle dynamique} & 
+            $\dot{x} = v_x$ 
+            \newline 
+            $\dot{y} = v_y$
+            & 
+            $\ddot{x} = a_x$ 
+            \newline 
+            $\ddot{y} = a_y$
+            \newline 
+             & 
+            $\dot{\mathbf{p}} = \mathbf{R}(\psi)\mathbf{v}_{b}$ \newline $\dot{\psi} = r$  & 
+            $m(\dot{u}-vr) = F_x$ \newline $m(\dot{v}+ur) = F_y$ \newline $I_z \dot{r} = M_z$ 
+            & 
+            $m(\dot{\mathbf{v}} + \omega \times \mathbf{v}) = \mathbf{F}$ \newline $\mathbf{I}\dot{\omega} + \omega \times \mathbf{I}\omega = \mathbf{M}$ \\
+            \hline
+    
+            \textbf{Espace de config.} $\mathbf{q}$ & 
+            $\mathbf{q} = [x, y]^T$ & 
+            $\mathbf{q} = [x, y]^T$ & 
+            $\mathbf{q} = [x, y, \psi]^T$ & 
+            $\mathbf{q} = [x, y, \psi]^T$ & 
+            $\mathbf{q} \in \mathbb{R}^{6}$ (Pos, Euler) \\ \hline
+            
+            \textbf{Espace d'état} $\mathbf{x}$ & 
+            $\mathbf{x} = [x, y]^T$ & 
+            $\mathbf{x} = [x, y, v_x, v_y]^T$ & 
+            $\mathbf{x} = [x, y, \psi]^T$ & 
+            $\mathbf{x} = [x, y, \psi, u, v, r]^T$ & 
+            $\mathbf{x} \in \mathbb{R}^{12}$ \newline (Pos, Euler, VitLin, VitAng) \\
+            \hline
+            
+            \textbf{Espace d'action} $\mathbf{u}$ & 
+            $\mathbf{u} = [v_x, v_y]^T$ & 
+            $\mathbf{u} = [a_x, a_y]^T$ & 
+            $\mathbf{u} = [u, v, r]^T$ \newline (Vit. Corps) & 
+            $\mathbf{u} = [F_x, F_y, M_z]^T$ \newline (Torseur 2D) & 
+            $\mathbf{u} = [\mathbf{F}, \mathbf{M}]^T$ \newline (Torseur 3D) \\
+            \hline
+            
+            \textbf{Modèle Env. / Carte} & 
+            Carte traversabilité $trav(x,y) \in [0, 1]$ & 
+            Carte traversabilité $trav(x,y) \in [0, 1]$ \newline
+            Champ hauteur 2.5D \newline $z(x,y)$
+            & 
+            $trav(x,y) \in [0, 1]$ \newline
+            $z(x,y) \in \mathbb{R}^1$
+            & 
+            $trav(x,y) \in [0, 1]$ \newline
+            $z(x,y) \in \mathbb{R}^1$
+            & 
+            $trav(x,y) \in [0, 1]$ \newline
+            $z(x,y) \in \mathbb{R}^1$
+            \\
+            \hline
+            
+            \textbf{Contr. d'état} & 
+            Positions traversables \newline
+            $\mathbf{q} \in \mathcal{C}_{free}$ & 
+            Positions traversables \newline
+            $\mathbf{q} \in \mathcal{C}_{free}$ \newline
+            Vitesses réalisables \newline
+            $\mathbf{u} \in \mathcal{V}_{feasible}$ & 
+            $\mathbf{q} \in \mathcal{C}_{free} \subseteq \mathbb{R}^3$ 
+            & 
+            $\mathbf{q} \in \mathcal{C}_{free} \subseteq \mathbb{R}^3$ \newline
+            $\mathbf{u} \in \mathcal{V}_{feasible} \subseteq \mathbb{R}^3$ 
+            & 
+            $\mathbf{q} \in \mathcal{C}_{free} \subseteq \mathbb{R}^6$ \newline
+            $\mathbf{u} \in \mathcal{V}_{feasible} \subseteq \mathbb{R}^6$  
+            \\
+            \hline
+            
+            \textbf{Contr. d'action} & 
+            Vitesses réalisables \newline
+            $\mathbf{u} \in \mathcal{V}_{feasible}$ & 
+            Accélérations réalisables \newline
+            $\mathbf{u} \in \mathcal{A}_{feasible}(x)$ & 
+            $\mathbf{u} \in \mathcal{V}_{feasible} \subseteq \mathbb{R}^3$  & 
+            $\mathbf{u} \in \mathcal{F}_{feasible}(x)$ & 
+            $\mathbf{u} \in \mathcal{F}_{feasible}(x)$\\
+            \hline
+            
+        \end{tabular}
+    \end{table}
+    \end{landscape}
+
+
+
+
+\newpage
+\section{Équations du mouvement (dynamique) dans le repère du corps}
+
+Il est fréquent en robotique d'observer deux formulations dynamiques qui semblent distinctes : celle utilisée pour les bras manipulateurs (Partie I de ce cours) et celle utilisée pour les véhicules (Partie II). Il s'agit en fait de la même équation fondamentale, exprimée dans des systèmes de coordonnées différents.
+
+\subsection{Coordonnées généralisées vs repère du corps}
+
+\paragraph{Équation dans l'espace de configuration}
+Il est toujours possible d'écrire les équations de la dynamique d'un système mécanique en utilisant uniquement l'espace de configuration, tel que présenté pour les robots manipulateurs au chapitre \ref{sec:manip}. Pour un manipulateur, on exprime généralement la dynamique dans l'espace des coordonnées généralisées $\mathbf{q}$ (angles des joints). L'équation prend la forme standard :
+\begin{equation}
+    \mathbf{H}(\mathbf{q})\ddot{\mathbf{q}} + \mathbf{C}(\mathbf{q}, \dot{\mathbf{q}})\dot{\mathbf{q}} + \mathbf{g}(\mathbf{q}) = \boldsymbol{\tau}_q
+    \label{eq:lagrangian_dynamics}
+\end{equation}
+Ici, la matrice d'inertie $\mathbf{H}(\mathbf{q})$ varie continuellement avec la configuration du robot (ex: lorsque le bras se déplie, l'inertie augmente). Il est théoriquement possible d'écrire la dynamique d'un véhicule sous cette forme, en utilisant les coordonnées généralisées appropriées (ex: position et orientation dans l'espace inertiel). Cependant, il est généralement plus pratique de formuler la dynamique des véhicules en utilisant des vitesses définies dans un repère attaché au corps du véhicule.
+
+\paragraph{Repère du corps}
+Pour un véhicule (drone, sous-marin), on préfère exprimer les vitesses $\boldsymbol{\nu}$ et les forces dans le repère attaché au corps, car les forces aérodynamiques/hydrodynamiques et les mesures des capteurs s'y expriment naturellement. L'équation devient :
+\begin{align}
+    \mathbf{M}_b \dot{\boldsymbol{\nu}} + \mathbf{C}_b(\boldsymbol{\nu})\boldsymbol{\nu} + \mathbf{g}_b(\mathbf{q}) &= \boldsymbol{\tau}_b \label{eq:newton_euler_dynamics}
+    \\
+    \mathbf{J}(\mathbf{q}) \dot{\mathbf{q}} &= \boldsymbol{\nu}
+\end{align}
+Pour un corps rigide, $\mathbf{J}(\mathbf{q})$ est la matrice jacobienne (ou de transformation cinématique) faisant le lien entre le repère inertiel et le repère du corps. En utilisant le repère attaché au corps, la matrice d'inertie $\mathbf{M}_b$ du véhicule est typiquement constante. Toutefois, on note l'apparition de termes de Coriolis et centrifuges dans $\mathbf{C}_b(\boldsymbol{\nu})$ qui n'étaient pas présents sous cette forme dans les coordonnées généralisées. Ces termes apparaissent car le repère du corps est un référentiel non-inertiel (en rotation).
+
+\paragraph{Équivalence}
+Le lien entre ces deux formulations s'établit par les relations suivantes :
+\begin{align}
+    \boldsymbol{\nu} &= \mathbf{J}(\mathbf{q}) \dot{\mathbf{q}}  \\
+    \mathbf{H}(\mathbf{q}) &= \mathbf{J}^T(\mathbf{q}) \mathbf{M}_b \mathbf{J}(\mathbf{q}) \\
+    \boldsymbol{\tau}_q &= \mathbf{J}^T(\mathbf{q}) \boldsymbol{\tau}_b
+\end{align}
+On peut vérifier cette équivalence en comparant l'énergie cinétique $T$ exprimée dans les deux repères :
+\begin{align}
+    T = \frac{1}{2} \boldsymbol{\nu}^T \mathbf{M}_b \boldsymbol{\nu} 
+    = \frac{1}{2} (\mathbf{J} \dot{\mathbf{q}})^T \mathbf{M}_b (\mathbf{J} \dot{\mathbf{q}}) 
+    = \frac{1}{2} \dot{\mathbf{q}}^T (\underbrace{\mathbf{J}^T \mathbf{M}_b \mathbf{J}}_{\mathbf{H}(\mathbf{q})}) \dot{\mathbf{q}}
+\end{align}
+
+\subsection{Forme vectorielle et matricielle}
+
+Les équations de la dynamique d'un corps rigide sont souvent présentées initialement sous forme vectorielle, séparant la translation et la rotation :
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
         m (\dot{\mathbf{v}}_b + \boldsymbol{\omega}_b \times \mathbf{v}_b) &= \mathbf{F}_b \\
-        \mathbf{I} \dot{\boldsymbol{\omega}}_b + \boldsymbol{\omega}_b \times (\mathbf{I} \boldsymbol{\omega}_b) &= \mathbf{M}_b
-    \end{align*}
-    \item \textbf{TODO:} Expliquer l'avantage : la matrice d'inertie $\mathbf{I}$ est constante dans ce repère.
-    \item \textbf{TODO:} Faire le lien avec la cinématique (matrice de rotation $\mathbf{R}(\Theta)$ pour passer de $\dot{\mathbf{p}}$ à $\mathbf{v}_b$).
+        \mathbf{I}_b \dot{\boldsymbol{\omega}}_b + \boldsymbol{\omega}_b \times (\mathbf{I}_b \boldsymbol{\omega}_b) &= \mathbf{M}_b
+    \label{eq:newton_euler_vec}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Dans ces équations :
+\begin{itemize}
+    \item $m$ est la masse totale du véhicule.
+    \item $\mathbf{I}_b$ est le tenseur d'inertie du véhicule exprimé dans le repère du corps (matrice $3 \times 3$ constante).
+    \item $\mathbf{v}_b$ et $\boldsymbol{\omega}_b$ sont les vitesses linéaire et angulaire dans le repère du corps.
+    \item $\mathbf{F}_b$ et $\mathbf{M}_b$ sont la force et le moment appliqués sur le corps.
 \end{itemize}
 
+Pour obtenir la forme matricielle unifiée, on définit les vecteurs de vitesses et d'effort généralisés :
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+    \boldsymbol{\nu} = \begin{bmatrix}
+    \mathbf{v}_b \\
+    \boldsymbol{\omega}_b
+    \end{bmatrix}, \quad
+    \boldsymbol{\tau}_b = \begin{bmatrix}
+    \mathbf{F}_b \\
+    \mathbf{M}_b
+    \end{bmatrix}  
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+En utilisant l'opérateur matriciel antisymétrique $S(\cdot)$ pour le produit vectoriel (tel que $\mathbf{a} \times \mathbf{b} = S(\mathbf{a})\mathbf{b}$), on peut réécrire les équations vectorielles (\ref{eq:newton_euler_vec}) ainsi :
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+    m \dot{\mathbf{v}}_b + m S(\boldsymbol{\omega}_b) \mathbf{v}_b &= \mathbf{F}_b  \\
+    \mathbf{I}_b \dot{\boldsymbol{\omega}}_b + S(\boldsymbol{\omega}_b) \mathbf{I}_b \boldsymbol{\omega}_b &= \mathbf{M}_b  
+\label{eq:newton_euler_mat}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Ce système se regroupe finalement en une seule équation matricielle par blocs, correspondant à la forme (\ref{eq:newton_euler_dynamics}) :
+\begin{equation}
+    \underbrace{
+    \begin{bmatrix}
+        m \mathbf{I}_{3\times3} & \mathbf{0}_{3\times3} \\
+        \mathbf{0}_{3\times3} & \mathbf{I}_b
+    \end{bmatrix}
+    }_{\mathbf{M}_b}
+    \begin{bmatrix}
+        \dot{\mathbf{v}}_b \\
+        \dot{\boldsymbol{\omega}}_b
+    \end{bmatrix}
+    +
+    \underbrace{
+    \begin{bmatrix}
+        m S(\boldsymbol{\omega}_b) & \mathbf{0}_{3\times3} \\
+        \mathbf{0}_{3\times3} & -S(\mathbf{I}_b\boldsymbol{\omega}_b)
+    \end{bmatrix}
+    }_{\mathbf{C}_b(\boldsymbol{\nu})}
+    \begin{bmatrix}
+        \mathbf{v}_b \\
+        \boldsymbol{\omega}_b
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        \mathbf{F}_b \\
+        \mathbf{M}_b
+    \end{bmatrix}
+\end{equation}
+
+\subsection{Corps planaire (3 DDL)}
+
+Ce modèle s'applique aux véhicules dont le mouvement est restreint au plan. On définit les vitesses dans le repère du corps :
+\begin{itemize}
+    \item $u$ : Vitesse longitudinale (axe $x$).
+    \item $v$ : Vitesse latérale (axe $y$).
+    \item $r$ : Vitesse angulaire de lacet (rotation autour de $z$).
+\end{itemize}
+
+L'équation matricielle du mouvement $\mathbf{M}_b \dot{\boldsymbol{\nu}} + \mathbf{C}_b(\boldsymbol{\nu})\boldsymbol{\nu} = \boldsymbol{\tau}_b$ devient :
+\begin{equation}
+    \begin{bmatrix}
+        m & 0 & 0 \\
+        0 & m & 0 \\
+        0 & 0 & I_z
+    \end{bmatrix}
+    \begin{bmatrix} \dot{u} \\ \dot{v} \\ \dot{r} \end{bmatrix}
+    +
+    \begin{bmatrix}
+        0 & -m r & 0 \\
+        m r & 0 & 0 \\
+        0 & 0 & 0
+    \end{bmatrix}
+    \begin{bmatrix} u \\ v \\ r \end{bmatrix}
+    =
+    \begin{bmatrix} \sum F_x \\ \sum F_y \\ \sum M_z \end{bmatrix}
+    \label{eq:planar_body_dynamics}
+\end{equation}
+
+\subsubsection{Équations scalaires}
+En effectuant le produit matriciel, on obtient les équations scalaires. Les termes de droite représentent la somme de toutes les forces et moments externes (propulsion, aérodynamisme, contact pneu-sol, etc.) agissant sur le corps :
+\begin{align}
+    m(\dot{u} - rv) &= \sum F_x \\
+    m(\dot{v} + ru) &= \sum F_y \\
+    I_z \dot{r} &= \sum M_z
+\end{align}
+
+\subsection{Corps rigide (6 DDL)}
+
+Ce modèle général s'applique aux véhicules évoluant dans l'espace 3D (ex: drones, avions, sous-marins). On définit les vitesses dans le repère du corps :
+\begin{itemize}
+    \item $u, v, w$ : Vitesses linéaires (Surge, Sway, Heave).
+    \item $p, q, r$ : Vitesses angulaires (Roll, Pitch, Yaw rates).
+\end{itemize}
+
+Nous supposons ici que le repère du corps est aligné avec les axes principaux d'inertie, rendant la matrice d'inertie diagonale $\mathbf{I}_b = \text{diag}(I_x, I_y, I_z)$.
+
+\subsubsection{Équations matricielles}
+L'équation matricielle $\mathbf{M}_b \dot{\boldsymbol{\nu}} + \mathbf{C}_b(\boldsymbol{\nu})\boldsymbol{\nu} = \boldsymbol{\tau}_b$ s'écrit sous forme développée:
+\begin{equation}
+    \resizebox{0.95\hsize}{!}{$
+    \begin{bmatrix}
+        m & 0 & 0 & 0 & 0 & 0 \\
+        0 & m & 0 & 0 & 0 & 0 \\
+        0 & 0 & m & 0 & 0 & 0 \\
+        0 & 0 & 0 & I_x & 0 & 0 \\
+        0 & 0 & 0 & 0 & I_y & 0 \\
+        0 & 0 & 0 & 0 & 0 & I_z
+    \end{bmatrix}
+    \begin{bmatrix} \dot{u} \\ \dot{v} \\ \dot{w} \\ \dot{p} \\ \dot{q} \\ \dot{r} \end{bmatrix}
+    +
+    \begin{bmatrix}
+        0 & -mr & mq & 0 & 0 & 0 \\
+        mr & 0 & -mp & 0 & 0 & 0 \\
+        -mq & mp & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & I_z r & -I_y q \\
+        0 & 0 & 0 & -I_z r & 0 & I_x p \\
+        0 & 0 & 0 & I_y q & -I_x p & 0
+    \end{bmatrix}
+    \begin{bmatrix} u \\ v \\ w \\ p \\ q \\ r \end{bmatrix}
+    =
+    \begin{bmatrix} \sum F_x \\ \sum F_y \\ \sum F_z \\ \sum M_x \\ \sum M_y \\ \sum M_z \end{bmatrix}
+    $}
+\end{equation}
+
+\subsubsection{Équations scalaires}
+Le système matriciel ci-dessus correspond aux 6 équations scalaires d'Euler-Newton. Les termes de droite représentent la somme des forces et moments externes appliqués au corps :
+\begin{align}
+    m(\dot{u} - rv + qw) &= \sum F_x \\
+    m(\dot{v} - pw + ru) &= \sum F_y \\
+    m(\dot{w} - qu + pv) &= \sum F_z \\
+    I_x \dot{p} + (I_z - I_y)qr &= \sum M_x \\
+    I_y \dot{q} + (I_x - I_z)rp &= \sum M_y \\
+    I_z \dot{r} + (I_y - I_x)pq &= \sum M_z
+\end{align}
+
+
+
+
+
+
+\newpage
 % ==========================================
 % SECTION 2: VÉHICULES TERRESTRES
 % ==========================================
 \section{Véhicules Terrestres (Automobiles et Robots mobiles)}
 
-Cette section couvre les véhicules non-holonomes se déplaçant sur une surface (2D ou 2.5D).
+Cette section couvre les véhicules à roues! Le tableau \ref{tab:wheel_fidelity} présente une hiérarchie des modèles couramment utilisés pour les véhicules terrestres, allant des modèles les plus simples (particule) aux modèles les plus complexes (haute fidélité). Chaque niveau de modèle repose sur des hypothèses spécifiques et est adapté à des applications particulières, telles que la planification de trajectoire, le contrôle dynamique ou la simulation avancée.
 
-\subsection{Hiérarchie spécifique aux roues}
-
-% Insertion du Tableau 2 (Wheeled Vehicles)
 \begin{table}[htbp]
     \centering
-    \caption{\textbf{Abstractions pour véhicules à roues}}
-    \vspace{0.1cm}
-    \begin{tabular}{|p{0.15\linewidth}|p{0.25\linewidth}|p{0.25\linewidth}|p{0.25\linewidth}|}
+    \caption{\textbf{Hiérarchie de modèles pour véhicules à roues}}
+    \label{tab:wheel_fidelity}
+    \vspace{0.2cm}
+    \renewcommand{\arraystretch}{1.5} % Aère les lignes pour la lisibilité
+    \begin{tabular}{|p{0.26\linewidth}|p{0.30\linewidth}|p{0.30\linewidth}|}
         \hline
-        \textbf{Niveau} & \textbf{Modèle Bicyclette (Cin.)} & \textbf{Bicyclette Dynamique} & \textbf{Voiture Complète 3D} \\
+        \textbf{Type de modèle} & \textbf{Hypothèses principales} & \textbf{Utilité principale} \\
         \hline
-        \textbf{Hypothèse} & Pas de glissement & Glissement (Pneus), Roulis négligé & 4 roues, Suspension, Roulis/Tangage \\
+        
+        \textbf{Particule}  & 
+        Véhicule considéré comme un point $(x,y)$& 
+        Navigation globale (GPS) \\
         \hline
+        
+        \textbf{Bicyclette Cinématique}  & 
+        Contrainte de roulement sans glissement (basse vitesse). Géométrie d'Ackermann. & 
+        Planification de trajectoire locale, suivi de chemin à basse vitesse. \\
+        \hline
+        
+        \textbf{Bicyclette Dynamique}  & 
+        Mouvement planaire (3 DDL). Glissement des pneus modélisé. & 
+        Analyse et commande de maneuvres dynamiques\\
+        \hline
+        
+        \textbf{Véhicule Complet 3D} & 
+        Corps rigide 6 DDL. 4 roues distinctes. Prise en compte du transfert de charge (roulis/tangage) et des suspensions. & 
+        Analyse de stabilité, simulateur de conduites. \\
+        \hline
+        
+        \textbf{Haute Fidélité}  & 
+        Pneus et terrain déformables (FEA,DEM)  & 
+        Simulation pour validations avancées. \\
+        \hline
+        
     \end{tabular}
 \end{table}
 
-\subsection{Modèles Cinématiques (Basse vitesse)}
 
-Ces modèles supposent que les roues ne glissent pas (contrainte de roulement sans glissement). Ils sont valides à basse vitesse.
 
-\subsubsection{Architecture Ackermann et Modèle Bicyclette}
+\subsection{Modèle Bicyclette Cinématique}
+
+Ces modèles reposent sur l'hypothèse fondamentale que les roues ne glissent pas (contrainte de roulement sans glissement). Ils sont valides à basse vitesse, lorsque les accélérations latérales sont négligeables (pas de dérapage).
+
+\subsubsection{Architecture Ackermann et Simplification Bicyclette}
+
+Pour qu'un véhicule à quatre roues puisse effectuer un virage sans qu'aucune roue ne dérape, les axes de rotation de toutes les roues doivent concourir en un point unique, appelé le \textbf{Centre Instantané de Rotation (CIR)}, voir Figure \ref{fig:ackerman}. Dans un véhicule classique, cela impose une contrainte géométrique appelée \textit{condition d'Ackermann} : lors d'un virage, la roue intérieure doit braquer davantage que la roue extérieure, car elle parcourt un cercle de rayon plus petit.
+
+Le \textbf{modèle bicyclette} est une simplification qui consiste à regrouper les deux roues avant en une seule roue centrale virtuelle et les deux roues arrière en une seule roue arrière centrale. Cette approximation est valide tant que le véhicule est symétrique et que le transfert de charge latéral reste modéré (ce qui est cohérent avec l'hypothèse de basse vitesse).
+
+\begin{figure}[htbp]
+    \centering
+        \includegraphics[width=0.90\textwidth]{fig/ackerman.jpg}
+    \caption{Géométrie de direction d'Ackermann (gauche) et simplification bicyclette (droite). Notez que tous les axes convergent vers le CIR.}
+    \label{fig:ackerman}
+\end{figure}
+
+\subsubsection{Équations cinématiques}
+
+Nous cherchons à établir la relation entre les entrées de commande (vitesse longitudinale $u$ et angle de braquage $\delta$) et la variation de la posture du robot $\dot{\mathbf{q}} = [\dot{x}, \dot{y}, \dot{\theta}]^T$.
+
+\paragraph{Choix du point de référence :}
+Pour ce modèle cinématique simple, il est courant de définir la position $(x,y)$ du véhicule comme étant le \textbf{centre de l'essieu arrière}. Ce choix simplifie considérablement les équations car la vitesse latérale y est nulle (contrainte non-holonome). Si l'on désire un point de référence différents, il faut inclure des termes supplémentaires.
+
+\textbf{Relation géométrique :}
+En observant le triangle formé par le CIR, l'essieu arrière et l'essieu avant (voir Figure \ref{fig:bicyclemodel2}), on peut relier l'angle de braquage $\delta$ au rayon de courbure $R$ et à l'empattement $L$ (distance entre les essieux) :
+\begin{equation}
+    \tan(\delta) = \frac{L}{R} \quad \Rightarrow \quad R = \frac{L}{\tan(\delta)}
+\end{equation}
+
+\textbf{Relation cinématique :}
+Considérons que la vitesse longitudinale au centre de l'essieu arrière est $u$ et que le véhicule possède une vitesse angulaire $\dot{\theta}$. Dans le repère du véhicule, le vecteur vitesse au niveau de l'essieu avant possède :
+\begin{itemize}
+    \item Une composante longitudinale égale à $u$.
+    \item Une composante latérale égale à $L \dot{\theta}$ (due à la rotation du corps rigide autour de l'essieu arrière).
+\end{itemize}
+Le vecteur vitesse de la roue avant est donc $(u, L \dot{\theta})$. La contrainte de non-glissement impose que l'angle de braquage $\delta$ soit aligné avec ce vecteur vitesse :
+\begin{equation}
+    \tan(\delta) = \frac{L \dot{\theta}}{u} \quad \Rightarrow \quad \dot{\theta} = \frac{u}{L}\tan(\delta)
+\end{equation}
+
+\begin{figure}[htbp]
+    \centering
+        \includegraphics[width=0.90\textwidth]{fig/bicyclemodel2.jpg}
+    \caption{Illustration des contraintes non-holonomes : la vitesse instantanée de chaque roue doit être alignée avec l'orientation des roues (pas de glissement latéral).}
+    \label{fig:bicyclemodel2}
+\end{figure}
+
+\textbf{Modèle d'état :}
+On peut maintenant formuler les équations différentielles liant les entrées de commande à la configuration. En utilisant le vecteur de configuration $\mathbf{q} = [x, y, \theta]^T$ (position et orientation dans le plan) et le vecteur de commande $\mathbf{u} = [u, \delta]^T$ (vitesse longitudinale et angle de braquage), on obtient les équations du mouvement suivantes :
+\begin{align}
+    \dot{x} &= u \cos(\theta) \\
+    \dot{y} &= u \sin(\theta) \\
+    \dot{\theta} &= \frac{u}{L} \tan(\delta)
+\end{align}
+Ces équations correspondent à un modèle d'état de la forme $\dot{\mathbf{q}} = f(\mathbf{q}, \mathbf{u})$, où le vecteur d'état est identique au vecteur de configuration, caractéristique des modèles purement cinématiques.
+
+\begin{figure}[htbp]
+    \centering
+        \includegraphics[width=0.90\textwidth]{fig/bicyclemodel.jpg}
+    \caption{Variables d'état du modèle bicyclette cinématique. $L$ est l'empattement et $\theta$ représente l'orientation du véhicule.}
+    \label{fig:bicyclemodel}
+\end{figure}
+
+
+
+\subsection{Modèle Longitudinal}
+
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.90\textwidth]{fig/longitudinalmodel.jpg}
+	\caption{Forces longitudinales s'appliquant au véhicule}
+	\label{fig:longitudinalmodel}
+\end{figure}
+
+
+\subsection{Modèle Bicyclette Dynamique}
+
+Contrairement au modèle cinématique, le modèle dynamique prend en compte les forces, les masses et les inerties. On utilise le modèle planaire 3 DDL, avec les vitesses exprimées dans le repère du corps : $u$ (longitudinale), $v$ (latérale) et $r$ (vitesse angulaire de lacet). En considérant seulement les forces des pneus et une traînée aérodynamique, les équations sont:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+    m(\dot{u} - rv) &= (F_{x1} c_\delta - F_{y1} s_\delta) + F_{x2} - F_{aero} \\
+    m(\dot{v} + ru) &= (F_{x1} s_\delta + F_{y1} c_\delta) + F_{y2} \\
+    I_z \dot{r} &= a(F_{x1} s_\delta + F_{y1} c_\delta) - b F_{y2}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Avec les notations suivantes :
+\begin{itemize}
+    \item Indice $1$ : Roue avant (front), Indice $2$ : Roue arrière (rear).
+    \item $a, b$ : Distances du centre de gravité (CG) aux essieux avant et arrière.
+    \item $c_\delta, s_\delta$ : Notation compacte pour $\cos(\delta)$ et $\sin(\delta)$, où $\delta$ est l'angle de braquage.
+    \item $F_{xi}, F_{yi}$ : Forces exprimées \textbf{dans le repère de la roue} (alignées avec le pneu).
+    \item $F_{aero} = \frac{1}{2} \rho C_d A u |u|$ : Traînée aérodynamique s'opposant au mouvement.
+\end{itemize}
+
+\colab{Démonstration modèle bicyclette dynamique}{https://colab.research.google.com/drive/1NHcn2yDk9K5yCRhXo7X1MNb1Sp-bSHZh?usp=sharing}
+
+
+\begin{figure}[htbp]
+    \centering
+        \includegraphics[width=0.90\textwidth]{fig/dynamicbicycle.jpg}
+    \caption{Diagramme du corps libre. Les forces $F_{x,y}$ sont définies dans le repère de chaque roue.}
+    \label{fig:dynamic_bicycle}
+\end{figure}
+
+% \begin{figure}[htbp]
+%     \centering
+%         \includegraphics[width=0.90\textwidth]{fig/dynamic_bicycle.jpg}
+%     \caption{Cinématique de la roue : définition des vitesses locales et des angles de glissement.}
+%     \label{fig:wheel_slip}
+% \end{figure}
+
+\subsubsection{Cinématique : Vitesses locales aux roues}
+
+Les modèles de pneus sont basés sur des vitesses relatives à la roue, nous devons d'abord exprimer la vitesse du centre de chaque roue \textit{dans le repère de cette roue}.
+
+\paragraph{Vitesses aux essieux (Repère Châssis)}
+La cinématique du corps rigide nous donne la vitesse au point d'attache des essieux exprimée dans le repère du véhicule ($b$) :
+\begin{align}
+    \mathbf{v}_{1}^b &= [u, \quad v + a r]^T \\
+    \mathbf{v}_{2}^b &= [u, \quad v - b r]^T
+\end{align}
+
+\paragraph{Projection dans le repère de la roue}
+On projette ces vitesses dans le repère local de la roue ($w$). La roue avant ici n'a pas de rotation relative, mais pour la roue avant (braquée de $\delta$), on applique une rotation inverse :
+\begin{align}
+    v_{x1}^c &= u \cos\delta + (v + ar)\sin\delta \\
+    v_{y1}^c &= -u \sin\delta + (v + ar)\cos\delta
+\end{align}
+
+\subsubsection{Calcul des Glissements}
+
+Les modèles de pneus sont souvent défini en terme de variable de taux de glissement. Les définitions exactes peuvent varier selon le contexte. 
+
+\paragraph{Angle de dérive latéral ($\alpha$)}
+Défini par le ratio entre vitesse latérale et longitudinale dans le repère de la roue. Le signe négatif est une convention pour assurer que la force latérale s'oppose au glissement.
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+    \alpha_1 &= - \arctan\left( \frac{v_{y1}^c}{|v_{x1}^c| + \epsilon} \right)  \approx \delta - \arctan\left( \frac{v_{y1}^b}{|v_{x1}^b| + \epsilon}\right) \\
+    \alpha_2 &= - \arctan\left( \frac{v_{y2}^b}{|v_{x2}^b| + \epsilon} \right)
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%
+\note{Note:}{Nous avons inclus un $epsilon$ au dénominateur dans les équations, ce qui est généralement inclus dans les méthodes numérique pour éviter les instabilités du modèle autour de vitesse nulles.}
+
+\paragraph{Glissement longitudinal ($\kappa$)}
+Défini par la différence normalisée entre la vitesse tangentielle de la roue ($R\omega$) et la vitesse au sol ($v_{x}^w$).
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+    \kappa_1 = \frac{R_1 \omega_1 - v_{x1}^c}{|v_{x1}^c| + \epsilon}
+    \quad \quad 
+    \kappa_2 = \frac{R_2 \omega_2 - v_{x2}^b}{|v_{x2}^b| + \epsilon}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.3\textwidth]{fig/wheel3D.jpg}
+    \includegraphics[width=0.25\textwidth]{fig/wheelxy.jpg}
+    \includegraphics[width=0.25\textwidth]{fig/wheelxz.jpg}
+    \label{fig:wheelslip}
+    \caption{Axes, vitesses et angles pour les modèles de pneus ($v_y<0$)}
+\end{figure}
+
+
+
+\subsubsection{Modèles de forces}
+
+Une fois $\alpha$ et $\kappa$ calculés, la plupart des modèles de pneus ont la forme suivante:
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+    F_x = f(\alpha, \kappa, F_z) 
+    \quad \quad
+    F_y = f(\alpha, \kappa, F_z) 
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.3\textwidth]{fig/ckappa.jpg}
+    \includegraphics[width=0.3\textwidth]{fig/calpha.jpg}
+    \label{fig:typicaltire}
+    \caption{Courbes typique de pneus}
+\end{figure}
+
+
+
+\paragraph{Modèle Linéaire }
+Lorsque le glissement est modéré, une modèle linéaire peut faire des bonnes prédictions:
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+    F_{x} &= C_k \kappa \\
+    F_{y} &= C_\alpha \alpha
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+Les paramètres $C$ sont souvent appelé les paramètres de rigidité des pneus, $C_\alpha$ est typiquement appelé \textit{cornering stiffness} et est un paramètre important pour les caractéristiques de maneuvrabilité d'un véhicule. Pour le modèle linéaire de base, les forces $x$ et $y$ sont indépendantes, toutefois il est courant d'ajouter une saturation sur ces forces basée sur le \textbf{"Cercle de Friction"}, pour limiter la force totale du pneu à une limite supérieur disponible $\mu F_z$ :
+
+
+\paragraph{Modèle de Pacejka}
+Surnommé dans le domaine \textbf{\textit{Magic Formula}}, ce modèle empirique capture le comportement non-linéaire et la saturation douce du pneu. La forme utilisée pour la force longitudinale ($F_x$) et latérale ($F_y$) est :
+\begin{equation}
+    F(x) = D \sin(C \arctan(B x - E(B x - \arctan(B x))))
+\end{equation}
+Où $x$ est le glissement ($\alpha$ ou $\kappa$). Les coefficients contrôlent la forme de la courbe :
+\begin{itemize}
+    \item $B$ (Stiffness) : Pente à l'origine (relié à $C_\alpha$).
+    \item $C$ (Shape) : Forme de l'asymptote.
+    \item $D$ (Peak) : Valeur maximale (relié à $\mu F_z$).
+    \item $E$ (Curvature) : Courbure avant le pic.
+\end{itemize}
+
+
+
+
+
+\newpage
+\subsection{Dynamique de Suspensions}
+Lorsque le véhicule accélère ou tourne, le poids se transfère, modifiant la traction disponible.
 
 \begin{itemize}
-    \item \textbf{TODO:} Expliquer la géométrie Ackermann (centre de rotation instantané).
-    \item \textbf{TODO:} Dériver les équations cinématiques $\dot{x}, \dot{y}, \dot{\psi}$.
+    \item \textbf{TODO:} Expliquer le transfert de charge dynamique (Load transfer) longitudinal et latéral.
+    \item \textbf{TODO:} Modèle "Quart de véhicule" (Quarter Car) pour la dynamique verticale.
 \end{itemize}
 
 \begin{figure}[htbp]
 	\centering
-		\includegraphics[width=0.90\textwidth]{fig/ackerman.jpg}
-	\caption{Géométrie de direction d'Ackermann et simplification bicyclette}
-	\label{fig:ackerman}
+		\includegraphics[width=0.90\textwidth]{fig/simplesuspension.jpg}
+	\caption{Modèle de suspension (Quart de véhicule)}
+	\label{fig:simplesuspension}
 \end{figure}
 
-\begin{figure}[htbp]
-	\centering
-		\includegraphics[width=0.90\textwidth]{fig/bicyclemodel.jpg}
-	\caption{Variables d'état du modèle bicyclette cinématique}
-	\label{fig:bicyclemodel}
-\end{figure}
 
-\begin{figure}[htbp]
-	\centering
-		\includegraphics[width=0.90\textwidth]{fig/bicyclemodel2.jpg}
-	\caption{Contraintes non-holonomes (roulement sans glissement)}
-	\label{fig:bicyclemodel2}
-\end{figure}
-
-\subsubsection{Robots à conduite différentielle}
-\begin{itemize}
-    \item \textbf{TODO:} Ajouter le modèle unicycle / char d'assaut (tank drive) pour les robots de type Pioneer/Husky.
-\end{itemize}
 
 \subsection{Interaction Pneu-Sol et Terramechanics}
 
 Pour les modèles dynamiques, les forces ne sont plus infinies; elles dépendent de l'interaction entre la roue et le sol.
-
-\subsubsection{Modèles de Pneus (Sur route)}
 Sur route asphaltée, la déformation du pneu génère les forces.
 
 \begin{itemize}
@@ -248,40 +674,15 @@ En robotique tout-terrain (agricole, planétaire), le sol se déforme sous la ro
     \item \textbf{TODO:} Mentionner les modèles de cisaillement (Janosi-Hanamoto) pour la traction dans le sable/boue.
 \end{itemize}
 
-\subsection{Modèles Dynamiques}
 
-\subsubsection{Modèle Bicyclette Dynamique (Planar)}
-\begin{itemize}
-    \item \textbf{TODO:} Écrire les équations de Newton-Euler en 2D en utilisant les forces de pneus définies ci-dessus.
-    \item \textbf{TODO:} $\dot{v}_y = -u \dot{\psi} + \frac{1}{m}(F_{y,f} + F_{y,r})$ (Importance du terme centrifuge).
-\end{itemize}
 
-\subsubsection{Modèle Longitudinal}
-\begin{itemize}
-    \item \textbf{TODO:} Modèle de moteur, freinage et résistance aérodynamique simple.
-\end{itemize}
 
-\begin{figure}[htbp]
-	\centering
-		\includegraphics[width=0.90\textwidth]{fig/longitudinalmodel.jpg}
-	\caption{Forces longitudinales s'appliquant au véhicule}
-	\label{fig:longitudinalmodel}
-\end{figure}
 
-\subsubsection{Dynamique 3D et Suspensions}
-Lorsque le véhicule accélère ou tourne, le poids se transfère, modifiant la traction disponible.
 
-\begin{itemize}
-    \item \textbf{TODO:} Expliquer le transfert de charge dynamique (Load transfer) longitudinal et latéral.
-    \item \textbf{TODO:} Modèle "Quart de véhicule" (Quarter Car) pour la dynamique verticale.
-\end{itemize}
 
-\begin{figure}[htbp]
-	\centering
-		\includegraphics[width=0.90\textwidth]{fig/simplesuspension.jpg}
-	\caption{Modèle de suspension (Quart de véhicule)}
-	\label{fig:simplesuspension}
-\end{figure}
+
+
+
 
 % ==========================================
 % SECTION 3: VÉHICULES AÉRIENS
