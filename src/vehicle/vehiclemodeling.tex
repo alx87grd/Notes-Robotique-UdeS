@@ -1,49 +1,111 @@
 \chapter{Modélisation des véhicules}
 
-Ce chapitre présente divers modèles cinématiques et dynamiques de véhicules couramment utilisés dans un contexte de commande et de planification. Il propose un survol des approches de modélisation où un compromis entre fidélité et complexité est nécessaire. 
+Ce chapitre propose un survol des approches de modélisation couramment utilisés dans un contexte de commande et de planification.
 
-\note{Note:}{ Il est à noter que les approches de modélisation « haute fidélité » (telles que les éléments finis pour la déformation des pneus ou la mécanique des fluides numérique pour l'aérodynamisme complexe), généralement réservées à la validation en simulation, ne seront pas traitées ici. L'accent est mis sur les modèles d'ordre réduit exploitables pour la synthèse de lois de commande.}
 
 % ==========================================
 % SECTION 1: THÉORIE UNIFIÉE
 % ==========================================
-\section{Hiérarchie de modèles}
 
-Cette section établit le cadre mathématique commun à la majorité des véhicules (terrestres, aériens, marins) en définissant les niveaux d'abstraction, allant du simple point matériel au système multi-corps complexe.
-%
-Comme illustré au tableau \ref{tab:genericvehicles}, plusieurs niveaux d'abstraction sont envisageables pour modéliser un même véhicule. Chaque niveau repose sur des hypothèses simplificatrices qui réduisent la complexité mathématique au prix d'une diminution de la fidélité physique. Le choix du modèle approprié dépend intrinsèquement du contexte : l'application visée (planification globale, contrôle local, simulation), la complexité de l'environnement ou encore la capacité de calcul disponible.
+\section{Introduction : L'art de la simplification}
 
-Prenons l'analogie de la conduite automobile pour illustrer ces différents niveaux de granularité. Lorsqu'un conducteur planifie un trajet entre deux villes, ou lorsqu'il utilise un système de navigation GPS, le véhicule est assimilé à un simple point se déplaçant sur les segments d'un graphe ; les détails comme l'angle de braquage ou la commande des gaz sont ignorés à cette étape macroscopique. En revanche, pour effectuer une manœuvre précise comme un stationnement en parallèle, le conducteur doit planifier une trajectoire spatiale fine en tenant compte de la géométrie du véhicule et de ses contraintes de mouvement non-holonomes. Enfin, dans une situation limite comme un dérapage sur une plaque de glace, une compréhension de la dynamique, incluant les forces de friction et l'inertie, devient indispensable pour rétablir la stabilité.
+Modéliser un véhicule, c'est l'art de mentir intelligemment. Un véhicule réel est un système infiniment complexe : déformation des pneus, turbulence de l'air, jeu dans les engrenages, vibrations du châssis. Pourtant, pour piloter un robot ou planifier un trajet, nous n'avons pas besoin de toute cette complexité. Ce chapitre explore comment nous passons de la réalité physique à des équations mathématiques exploitables par un ordinateur. L'objectif n'est pas de trouver le modèle parfait, mais le modèle suffisant pour une tâche à accomplir. Ici dans ce chapitre, l'accent est mis sur les modèles exploitables pour la synthèse de lois de commande ou la planification de trajectoire. Les approches de modélisation haute fidélité, telles que les éléments finis pour la déformation des pneus ou la mécanique des fluides numérique pour l'aérodynamisme complexe, généralement réservées à la validation en simulation, ne seront pas traitées ici.
 
-Ainsi, pour les algorithmes de robotique, il est parfois suffisant d'utiliser un modèle particule $(x,y)$ pour la planification de chemin à haut niveau, alors qu'un modèle dynamique précis sera nécessaire pour calculer les forces de commande en temps réel. Il convient donc de considérer cet écosystème de modèles comme une boîte à outils, où chaque modèle est un instrument adapté à une tâche spécifique.
+\subsection{Le spectre de la fidélité}
 
+Imaginez trois situations de conduite différentes. Dans chacune, votre cerveau utilise un modèle différent:
+
+\begin{enumerate}
+    \item \textbf{Navigation (GPS) :} Vous planifiez un trajet de Montréal à Québec. À cette échelle, votre voiture est un simple \textbf{point} qui suit une ligne. La largeur de la voiture, son angle de braquage ou la pression des pneus n'ont aucune importance.
+    \item \textbf{Stationnement :} Vous vous garez dans une rue étroite. Ici, le modèle "point" ne suffit plus. Vous devez tenir compte de la \textbf{géométrie} : la voiture ne peut pas se déplacer latéralement (contrainte non-holonome), elle doit braquer et avancer.
+    \item \textbf{Conduite sur glace (Rallye) :} Vous prenez un virage serré sur une chaussée glissante. La géométrie ne suffit plus. Il faut comprendre la \textbf{physique} : l'inertie, la friction, le transfert de masse. Si vous tournez le volant, la voiture ne va pas nécessairement suivre la direction des roues.
+\end{enumerate}
+
+En robotique, la trousse à outil comprend une hiérarchie de modèles (voir Tableau \ref{tab:genericvehicles}). Pour un algorithme de conduite autonome, il est parfois suffisant d'utiliser un modèle particule $(x,y)$ pour la planification de chemin à haut niveau, alors qu'un modèle dynamique précis sera nécessaire pour calculer des forces de commande en temps réel. Cet \textbf{écosystème de modèles est donc une boîte à outils}, où chaque modèle est un instrument adapté à une tâche spécifique.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htb]
 	\centering
 		\includegraphics[width=0.70\textwidth]{fig/holonomicvehicle.jpg}
 	\caption{Modèle particule cinématique 2D pour un véhicule holonomique. La configuration est donnée par la position soit $\mathbf{q} = [x, y]^T \in \mathbb{R}^2$, l'état est identique à la configuration, et les actions sont les vitesses linéaires $\mathbf{u} = [v_x, v_y]^T \in \mathbb{R}^2$.}
 	\label{fig:holonomicvehicle}
 \end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\subsection{Espace de configuration}
 
-L'espace de configuration, formellement un ensemble noté $\mathcal{C}$, représente toutes les positions et orientations possibles du véhicule. Un point $\mathbf{q} \in \mathcal{C}$ définit la configuration géométrique du système à un instant donné, indépendamment de sa vitesse ou des forces qui s'y appliquent. La dimension de cet espace correspond au nombre de degrés de liberté (DDL) du système.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Les trois ingrédients de base d'un modèle de véhicule}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-La définition de $\mathbf{q}$ varie selon le niveau d'abstraction choisi. Pour une modélisation simplifiée de type particule la configuration se résume à la position cartésienne, soit $\mathbf{q} = [x, y]^T \in \mathbb{R}^2$ en 2D ou $\mathbf{q} = [x, y, z]^T \in \mathbb{R}^3$ en 3D. Pour un corps rigide évoluant sur un plan, comme une voiture ou un robot mobile classique, il est nécessaire d'ajouter l'orientation (le cap) à la position, ce qui donne $\mathbf{q} = [x, y, \psi]^T$. Mathématiquement, cet espace est le groupe spécial euclidien $SE(2)$. Enfin, pour un véhicule évoluant dans l'espace tridimensionnel, tel qu'un drone ou un avion, la configuration inclut la position et l'attitude complète, souvent représentée par des angles d'Euler ou des quaternions, appartenant alors au groupe $SE(3)$.
+Quel que soit le véhicule (drone, voiture, sous-marin), nous devons répondre à trois questions fondamentales pour le contrôler.
 
-\subsection{Espace d'état}
+\subsection{La configuration $\mathbf{q}$: "Où suis-je ?"}
 
-L'espace d'état $\mathcal{X}$ contient l'ensemble minimal de variables nécessaires pour prédire l'évolution future du système, connaissant les entrées futures. Le vecteur d'état,$\mathbf{x} \in \mathcal{X}$. Contrairement à la configuration qui ne décrit que la géométrie instantanée, l'état doit capturer la « mémoire » dynamique du système, i.e. pour un véhicule son énergie cinétique/momentum avec des variable de vitesses. Le nombre d'états, souvent noté $n$, est appelé l'ordre du système. Pour les modèles cinématiques, l'état est souvent équivalent à la configuration ($\mathbf{x} = \mathbf{q}$). En revanche, pour les modèles dynamiques, l'état doit inclure à la fois la configuration et les vitesses (linéaires et angulaires) pour propager les équations du mouvement. 
+La configuration, notée $\mathbf{q}$, est l'ensemble minimal de variables nécessaires pour décrire la posture géométrique du véhicule à un instant figé. L'ensemble de toutes les configurations possibles forme l'espace de configuration, noté $\mathcal{C}$, dont la dimension correspond au nombre de degrés de liberté (DDL) du système.
 
-\subsection{Espace d'action}
+La définition mathématique de $\mathbf{q}$ dépend du niveau d'abstraction choisi :
+\begin{itemize}
+    \item \textbf{Pour une particule (Point 2D/3D) :} La configuration se résume à la position cartésienne, soit $\mathbf{q} = [x, y]^T \in \mathbb{R}^2$ ou $\mathbf{q} = [x, y, z]^T \in \mathbb{R}^3$.
+    \item \textbf{Pour un corps rigide 2D (Robot mobile) :} Il est nécessaire d'ajouter l'orientation (le cap) à la position, ce qui donne $\mathbf{q} = [x, y, \psi]^T$. Mathématiquement, cet espace est le groupe spécial euclidien $SE(2)$.
+    \item \textbf{Pour un corps rigide 3D (Drone/Avion) :} La configuration inclut la position et l'attitude complète (souvent représentée par des angles d'Euler ou des quaternions), appartenant alors au groupe $SE(3)$.
+\end{itemize}
 
-L'espace d'action $\mathcal{U}$ définit l'ensemble des entrées de commande admissibles, notées $\mathbf{u}$. C'est à ce niveau que se fait la distinction majeure entre la planification purement géométrique et la commande physique. Dans le cadre d'un modèle cinématique, l'action correspond souvent à des vitesses généralisées, comme la vitesse d'avancement et la vitesse de rotation. L'hypothèse sous-jacente est qu'il existe des contrôleurs de bas niveau suffisamment performants pour asservir ces vitesses quasi-instantanément. À l'inverse, dans un modèle dynamique, l'action correspond aux grandeurs physiques réelles générées par les actionneurs, telles que les forces, les couples aux roues, la poussée des hélices ou les angles de braquage des ailerons. Ces entrées agissent sur les accélérations du système via les lois de la mécanique.
 
-\subsection{Modèle cinématique vs dynamique}
+\subsection{Les actions $\mathbf{u}$: "Que puis-je faire ?"}
 
-La distinction fondamentale entre ces deux familles de modèles réside dans la nature de la relation entre l'action et le mouvement. Un modèle cinématique décrit le mouvement possible du véhicule en fonction de contraintes géométriques, sans considérer les causes du mouvement. L'équation d'évolution est typiquement de la forme $\dot{\mathbf{q}} = \mathbf{N}(\mathbf{q})\mathbf{u}$. Ce type de modélisation est particulièrement adapté à la planification de trajectoire à basse vitesse, où les effets inertiels sont négligeables. À l'opposé, un modèle dynamique prend explicitement en compte la masse et l'inertie du véhicule à travers la seconde loi de Newton ($F=ma$). Il relie les forces et couples appliqués aux accélérations résultantes. L'utilisation d'un modèle dynamique devient indispensable lorsque les vitesses sont élevées, nécessitant la gestion de l'inertie, ou lorsque les interactions avec l'environnement sont complexes, comme dans le cas de la friction variable ou du dérapage. Il est aussi possible d'utiliser des intermédiaires. Par exemple, un modèle cinématique d'ordre deux, ou les actions sont des accélérations, les états sont les même que pour le modèle dynamique, mais les forces ne sont pas modélisées explicitement.
+Le vecteur d'action, noté $\mathbf{u}$, décrit les commandes ou les "entrées" que nous pouvons utiliser pour modifier le mouvement du véhicule. La nature de ces commandes change radicalement selon que l'on considère le véhicule comme un objet géométrique ou un système physique :
+\begin{itemize}
+    \item \textbf{Action Cinématique (Abstraite) :} On commande directement des vitesses (ex: "Avance à 1 m/s", "Tourne à 0.5 rad/s"). C'est l'hypothèse simplificatrice utilisée par la plupart des planificateurs de trajectoire.
+    \item \textbf{Action Dynamique (Réelle) :} On commande des efforts physiques (ex: "Couple moteur de 100 Nm", "Angle de braquage des roues", "Poussée des hélices"). C'est ce que le système de contrôle doit gérer en réalité à bas niveau.
+\end{itemize}
 
+Formellement, l'ensemble des entrées de commande admissibles est noté $\mathcal{U}$. Le vecteur $\mathbf{u} \in \mathcal{U}$ représente les variables d'entrée des équations du modèle utilisé. Lorsque qu'on utilise des actions abstraites, l'hypothèse sous-jacente est qu'il existe des contrôleurs de bas niveau suffisamment performants pour exécuter ces actions quasi-instantanément.
 
+\subsection{L'équation d'évolution : "Comment je bouge ?"}
+C'est le cœur de la modélisation. C'est la fonction qui prédit l'évolution de la configuration en fonction des actions. On distingue deux grandes familles :
+
+\paragraph{Modèles Cinématiques (Géométrie du mouvement)}
+Ces modèles décrivent le mouvement possible sans s'occuper des forces. Ils répondent à la question : \textit{"Si j'avance en tournant avec telle vitesse, comment vont évaluer mes coordonnées ?"} Ils sont typiquement utiles à basse vitesse. Lorsque les actions sont des vitesses, ces équations prennent la forme suivante, i.e. des équations différentielles de premier ordre:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+    \dot{\mathbf{q}} = \mathbf{N}(\mathbf{q})\mathbf{u}
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\paragraph{Modèles Dynamiques (Physique du mouvement)}
+Ces modèles utilisent la seconde loi de Newton ($F=ma$). Ils répondent à la question : \textit{"Si j'applique telles forces, comment vont évoluer mes coordonnées?"}. Lorsque les actions sont des forces, ces équations prennent la forme suivante, i.e. des équations différentielles d'ordre deux:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+    \ddot{\mathbf{q}} = f_q(\dot{\mathbf{q}},\mathbf{q},\mathbf{u})
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Parfois, on s'intéresse seulement à l'évolution des vitesses d'un véhicule. On peut alors travailler avec des équations qui n'inclut que l'évolution des vitesses, sans prédire l'évolution de la configuration. Dans cette situation, on peut utiliser un vecteur de vitesses $\mathbf{\nu}$ et des équations différentielles d'ordre un:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+    \dot{\mathbf{\nu}} = f_v(\dot{\mathbf{\nu}},\mathbf{u})
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Aucune propriétés ou force de doit dépendre d'une variable configuration pour pouvoir utiliser cette forme. On appelle parfois ces variables les coordonnées ignorables. Un exemple est la position $x$ d'un avion, il est possible de calculer l'évolution des vitesses de l'avion sans garder en mémoire l'évolution de sa position.
+
+\paragraph{Formalisme d'état}
+
+Pour un ordinateur, toutes ces notions sont unifiées sous la forme d'un système d'état. Le vecteur d'état, noté $\mathbf{x} \in \mathcal{X}$, est la "mémoire" du système nécessaire pour prédire le futur. L'ensemble $\mathcal{X}$ est l'espace d'état, et ses dimensions sont appelées l'ordre d'un système. Si $\mathcal{X}=\mathbb{R}^n$, on dira que le modèle est d'ordre $n$, ce qui correspond au nombres de variable indépendantes pour décrire l'état du système. 
+
+\begin{itemize}
+    \item \textbf{Pour un modèle cinématique}, l'état est simplement la configuration : $\mathbf{x} = \mathbf{q}$.
+    \item \textbf{Pour un modèle dynamique}, l'état doit inclure la configuration et les vitesses (linéaire et angulaire) : $\mathbf{x} = [\mathbf{q}, \dot{\mathbf{q}}]^T$. Sans connaître la vitesse actuelle, on ne peut pas prédire la position future.
+\end{itemize}
+
+L'équation générale de tout véhicule s'écrit alors sous la forme canonique :
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+    \dot{\mathbf{x}} = f(\mathbf{x}, \mathbf{u})
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+C'est la forme standard pour résoudre des équations différentielles, typiquement utilisé pour les simulations sur un ordinateur.
 
 
 
@@ -168,14 +230,14 @@ La distinction fondamentale entre ces deux familles de modèles réside dans la 
 
 
 \newpage
-\section{Équations du mouvement (dynamique) dans le repère du corps}
+\section{Équations du mouvement dans le repère du corps}
 
 Il est fréquent en robotique d'observer deux formulations dynamiques qui semblent distinctes : celle utilisée pour les bras manipulateurs (Partie I de ce cours) et celle utilisée pour les véhicules (Partie II). Il s'agit en fait de la même équation fondamentale, exprimée dans des systèmes de coordonnées différents.
 
 \subsection{Coordonnées généralisées vs repère du corps}
 
 \paragraph{Équation dans l'espace de configuration}
-Il est toujours possible d'écrire les équations de la dynamique d'un système mécanique en utilisant uniquement l'espace de configuration, tel que présenté pour les robots manipulateurs au chapitre \ref{sec:manip}. Pour un manipulateur, on exprime généralement la dynamique dans l'espace des coordonnées généralisées $\mathbf{q}$ (angles des joints). L'équation prend la forme standard :
+Il est toujours possible d'écrire les équations de la dynamique d'un système mécanique en utilisant uniquement l'espace de configuration, tel que présenté pour les robots manipulateurs \ref{sec:dynamic}. Pour un manipulateur, on exprime généralement la dynamique dans l'espace des coordonnées généralisées $\mathbf{q}$ (angles des joints). L'équation prend la forme standard :
 \begin{equation}
     \mathbf{H}(\mathbf{q})\ddot{\mathbf{q}} + \mathbf{C}(\mathbf{q}, \dot{\mathbf{q}})\dot{\mathbf{q}} + \mathbf{g}(\mathbf{q}) = \boldsymbol{\tau}_q
     \label{eq:lagrangian_dynamics}
@@ -194,18 +256,25 @@ Pour un corps rigide, $\mathbf{J}(\mathbf{q})$ est la matrice jacobienne (ou de 
 \paragraph{Équivalence}
 Le lien entre ces deux formulations s'établit par les relations suivantes :
 \begin{align}
-    \boldsymbol{\nu} &= \mathbf{J}(\mathbf{q}) \dot{\mathbf{q}}  \\
     \mathbf{H}(\mathbf{q}) &= \mathbf{J}^T(\mathbf{q}) \mathbf{M}_b \mathbf{J}(\mathbf{q}) \\
+    \boldsymbol{\nu} &= \mathbf{J}(\mathbf{q}) \dot{\mathbf{q}}  \\
     \boldsymbol{\tau}_q &= \mathbf{J}^T(\mathbf{q}) \boldsymbol{\tau}_b
 \end{align}
-On peut vérifier cette équivalence en comparant l'énergie cinétique $T$ exprimée dans les deux repères :
-\begin{align}
-    T = \frac{1}{2} \boldsymbol{\nu}^T \mathbf{M}_b \boldsymbol{\nu} 
-    = \frac{1}{2} (\mathbf{J} \dot{\mathbf{q}})^T \mathbf{M}_b (\mathbf{J} \dot{\mathbf{q}}) 
-    = \frac{1}{2} \dot{\mathbf{q}}^T (\underbrace{\mathbf{J}^T \mathbf{M}_b \mathbf{J}}_{\mathbf{H}(\mathbf{q})}) \dot{\mathbf{q}}
-\end{align}
+% On peut vérifier cette équivalence en comparant l'énergie cinétique $T$ exprimée dans les deux repères :
+% \begin{align}
+%     T = \frac{1}{2} \boldsymbol{\nu}^T \mathbf{M}_b \boldsymbol{\nu} 
+%     = \frac{1}{2} (\mathbf{J} \dot{\mathbf{q}})^T \mathbf{M}_b (\mathbf{J} \dot{\mathbf{q}}) 
+%     = \frac{1}{2} \dot{\mathbf{q}}^T (\underbrace{\mathbf{J}^T \mathbf{M}_b \mathbf{J}}_{\mathbf{H}(\mathbf{q})}) \dot{\mathbf{q}}
+% \end{align}
 
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
 \subsection{Forme vectorielle et matricielle}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Les équations de la dynamique d'un corps rigide sont souvent présentées initialement sous forme vectorielle, séparant la translation et la rotation :
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -361,6 +430,103 @@ Le système matriciel ci-dessus correspond aux 6 équations scalaires d'Euler-Ne
     I_z \dot{r} + (I_y - I_x)pq &= \sum M_z
 \end{align}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\subsection{Exemple avec un drone planaire}
+
+Le drone est un cas d'école pertinent pour illustrer la différence entre les deux coordonnées de modélisation. Il s'agit d'un système sous-actionné possédant 3 degrés de liberté ($x, y, \theta$) mais seulement deux entrées de commande : un poussée $f_1$ et ne poussée $f_2$.
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htbp]
+	\centering
+		\includegraphics[width=0.99\textwidth]{fig/planar_drone.jpg}
+	\caption{Modèle simplifié : Drone planaire (3-DOF)}
+	\label{fig:planar_drone}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\paragraph{Approche A : équations en coordonnées inertielles }
+
+C'est l'approche la plus intuitive pour visualiser le mouvement. On écrit la seconde loi de Newton directement pour les coordonnées globales ($x, y$):
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+    \underbrace{
+    \begin{bmatrix}
+        m & 0 & 0 \\
+        0 & m & 0 \\
+        0 & 0 & I
+    \end{bmatrix}
+    }_{\mathbf{H}(\mathbf{q})}
+    \begin{bmatrix} \ddot{x} \\ \ddot{y} \\ \ddot{\theta} \end{bmatrix}
+    +
+    \underbrace{
+    \begin{bmatrix} 0 \\ mg \\ 0 \end{bmatrix}
+    }_{\mathbf{g}(\mathbf{q})}
+    =
+    \underbrace{
+    \begin{bmatrix}
+        -\sin(\theta) & -\sin(\theta) \\
+        \cos(\theta) & \cos(\theta) \\
+        -L & L
+    \end{bmatrix}
+    }_{\mathbf{B}(\mathbf{q})}
+    \underbrace{
+    \begin{bmatrix} f_1 \\ f_2 \end{bmatrix}
+    }_{\mathbf{u}}
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+On remarque que la matrice d'inertie $\mathbf{H}$ est constante et diagonale (car exprimée dans le repère monde pour un corps symétrique simple), mais que la matrice d'actionneurs $\mathbf{B}(\mathbf{q})$ dépend fortement de l'orientation $\theta$, ce qui rend le système non-linéaire.
+
+
+\paragraph{Approche B : Équations dans le repère du corps}
+
+Si on utilise les vitesses exprimées dans le repère corps, l'équation équivalente sera:
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+    \underbrace{
+    \begin{bmatrix}
+        m & 0 & 0 \\
+        0 & m & 0 \\
+        0 & 0 & I
+    \end{bmatrix}
+    }_{\mathbf{M}_b}
+    \begin{bmatrix} \dot{u} \\ \dot{v} \\ \dot{r} \end{bmatrix}
+    +
+    \underbrace{
+    \begin{bmatrix}
+        0 & -mr & 0 \\
+        mr & 0 & 0 \\
+        0 & 0 & 0
+    \end{bmatrix}
+    }_{\mathbf{C}_b(\boldsymbol{\nu})}
+    \begin{bmatrix} u \\ v \\ r \end{bmatrix}
+    +
+    \underbrace{
+    \begin{bmatrix}
+        mg \sin(\theta) \\
+        mg \cos(\theta) \\
+        0
+    \end{bmatrix}
+    }_{\mathbf{g}_b(\mathbf{q})}
+    =
+    \underbrace{
+    \begin{bmatrix}
+        0 & 0 \\
+        1 & 1 \\
+        -L & L
+    \end{bmatrix}
+    }_{\mathbf{B}_b}
+    \underbrace{
+    \begin{bmatrix} f_1 \\ f_2 \end{bmatrix}
+    }_{\mathbf{u}}
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+Comparé à l'approche A, on note trois différences fondamentales :
+\begin{enumerate}
+    \item La matrice d'allocation $\mathbf{B}_b$ est \textbf{constante} (elle ne dépend plus de $\theta$). C'est un avantage majeur pour la synthèse de commande.
+    \item La matrice de Coriolis $\mathbf{C}_b(\boldsymbol{\nu})$ apparaît explicitement pour modéliser les forces virtuelles ressenties dans le repère tournant.
+    \item La gravité $\mathbf{g}_b(\mathbf{q})$ est le seul terme qui dépend de l'orientation $\theta$. Elle représente la projection du vecteur poids sur les axes du drone.
+\end{enumerate}
 
 
 
@@ -594,8 +760,8 @@ Une fois $\alpha$ et $\kappa$ calculés, la plupart des modèles de pneus ont la
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.3\textwidth]{fig/ckappa.jpg}
-    \includegraphics[width=0.3\textwidth]{fig/calpha.jpg}
+    \includegraphics[width=0.4\textwidth]{fig/ckappa.jpg}
+    \includegraphics[width=0.5\textwidth]{fig/calpha.jpg}
     \label{fig:typicaltire}
     \caption{Courbes typique de pneus}
 \end{figure}
@@ -635,10 +801,9 @@ Où $x$ est le glissement ($\alpha$ ou $\kappa$). Les coefficients contrôlent l
 \subsection{Dynamique de Suspensions}
 Lorsque le véhicule accélère ou tourne, le poids se transfère, modifiant la traction disponible.
 
-\begin{itemize}
-    \item \textbf{TODO:} Expliquer le transfert de charge dynamique (Load transfer) longitudinal et latéral.
-    \item \textbf{TODO:} Modèle "Quart de véhicule" (Quarter Car) pour la dynamique verticale.
-\end{itemize}
+
+
+\subsubsection{Modèle quart-de-véhicule}
 
 \begin{figure}[htbp]
 	\centering
@@ -648,33 +813,15 @@ Lorsque le véhicule accélère ou tourne, le poids se transfère, modifiant la 
 \end{figure}
 
 
+\newpage
+\subsection{Interaction Pneu-Sol et terramecanique}
 
-\subsection{Interaction Pneu-Sol et Terramechanics}
 
-Pour les modèles dynamiques, les forces ne sont plus infinies; elles dépendent de l'interaction entre la roue et le sol.
-Sur route asphaltée, la déformation du pneu génère les forces.
 
-\begin{itemize}
-    \item \textbf{TODO:} Définir le glissement longitudinal ($s$) et l'angle de dérive latéral ($\alpha$).
-    \item \textbf{TODO:} Présenter le modèle linéaire ($F_y = C_\alpha \alpha$) pour les faibles accélérations.
-    \item \textbf{TODO:} Présenter la courbe de Pacejka (Magic Formula) pour la saturation.
-\end{itemize}
-
-\begin{figure}[htbp]
-	\centering
-		\includegraphics[width=0.60\textwidth]{fig/slipcurve.jpg}
-	\caption{Courbe caractéristique d'un pneu : Force latérale vs Angle de dérive}
-	\label{fig:slipcurve}
-\end{figure}
-
-\subsubsection{Modèles de Sol (Hors route / Terramechanics)}
+\subsubsection{Modèles de Sol Bekker-Wong}
 En robotique tout-terrain (agricole, planétaire), le sol se déforme sous la roue.
 
-\begin{itemize}
-    \item \textbf{TODO:} Introduire les concepts de Terramechanics (Bekker-Wong).
-    \item \textbf{TODO:} Expliquer l'enfoncement ($z_{sink}$) et la résistance au roulement due au compactage du sol.
-    \item \textbf{TODO:} Mentionner les modèles de cisaillement (Janosi-Hanamoto) pour la traction dans le sable/boue.
-\end{itemize}
+
 
 
 
@@ -692,21 +839,6 @@ En robotique tout-terrain (agricole, planétaire), le sol se déforme sous la ro
 \newpage
 \section{Drones (Multirotors)}
 
-\subsection{Hiérarchie et Modélisation}
-Les drones sont typiquement modélisés comme des corps rigides 6-DOF propulsés par des hélices fixes.
-
-\subsection{Dynamique et Matrice d'allocation (Wrench Map)}
-\begin{itemize}
-    \item \textbf{TODO:} Lien entre vitesse des moteurs carrée $\omega_i^2$ et le torseur $[\mathbf{F}, \mathbf{M}]^T$.
-    \item \textbf{TODO:} Configuration Quadrotor (X ou +) vs Hexarotor.
-\end{itemize}
-
-\subsection{Modèles simplifiés}
-
-\subsubsection{Modèle linéarisé (Stationnaire)}
-\begin{itemize}
-    \item \textbf{TODO:} Utile pour le contrôle PID standard près de l'équilibre.
-\end{itemize}
 
 \subsubsection{Modèle Planaire (2D)}
 Utile pour introduire les concepts sans la complexité de la 3D.
@@ -718,26 +850,97 @@ Utile pour introduire les concepts sans la complexité de la 3D.
 	\label{fig:planar_drone}
 \end{figure}
 
+
+
 % ==========================================
 % SECTION 4: AVIONS
 % ==========================================
 \newpage
 \section{Avions (Ailes fixes)}
 
-\subsection{Modèles Cinématiques (Planification)}
-\begin{itemize}
-    \item \textbf{TODO:} Modèle de Dubins (Vitesse constante, rayon de courbure min).
-\end{itemize}
-
 \subsection{Aérodynamique et Dynamique de vol}
-Contrairement aux drones, la portance dépend de la vitesse d'avancement (Airspeed).
 
+
+\colab{Modèle avion planaire}{https://colab.research.google.com/drive/15RBFDTUYSq0dFLBRd0VKLxJxXOONSYJI?usp=sharing}
+
+
+
+% ==========================================
+% SECTION 4: AVIONS
+% ==========================================
+\newpage
+\section{Véhicules nautiques}
+
+
+\subsection{Modèle de manœuvre basse-vitesse}
+
+Cette section s'intéresse à la modélisation des navires et robots de surface. Bien qu'un navire évolue dans un espace 3D (6 DDL), pour les applications de positionnement dynamique ou de manœuvre de port, on utilise couramment un modèle planaire simplifié à 3 DDL :
 \begin{itemize}
-    \item \textbf{TODO:} Définir Angle d'attaque ($\alpha$) et Angle de dérapage ($\beta$).
-    \item \textbf{TODO:} Équations de base : Portance ($L = \frac{1}{2}\rho v^2 S C_L$) et Traînée ($D$).
-    \item \textbf{TODO:} Distinction Vitesse Sol vs Vitesse Air (Effet du vent).
+    \item \textbf{Surge ($u$)} : Avancement longitudinal.
+    \item \textbf{Sway ($v$)} : Dérive latérale.
+    \item \textbf{Yaw ($r$)} : Lacet (cap).
 \end{itemize}
 
-\newpage
-\section{Autres architectures (Fusées, Sous-marins)}
-\textbf{TODO:} Brève mention des similitudes (masse variable pour fusées, masse ajoutée pour sous-marins).
+Le modèle présenté ici est basé sur les travaux de Fossen \cite{fossen2021handbook}, spécifiquement les modèles de manœuvre à basse vitesse.
+
+\colab{Modèle de véhicule nautique planaire basse vitesse}{LINK_TODO}
+
+
+\subsection{Équations du mouvement}
+
+L'équation du mouvement dans le repère du corps suit la structure standard Newton-Euler, mais adaptée pour inclure les effets hydrodynamiques :
+\begin{equation}
+    \mathbf{M} \dot{\boldsymbol{\nu}} + \mathbf{C}(\boldsymbol{\nu})\boldsymbol{\nu} + \mathbf{d}(\boldsymbol{\nu}) = \mathbf{B} \mathbf{u}
+\end{equation}
+où :
+\begin{itemize}
+    \item $\boldsymbol{\nu} = [u, v, r]^T$ est le vecteur vitesse dans le repère du corps.
+    \item $\mathbf{M}$ est la matrice d'inertie (incluant théoriquement la masse ajoutée).
+    \item $\mathbf{d}(\boldsymbol{\nu})$ est les forces hydrodynamiques (traînée).
+    \item $\mathbf{B} \mathbf{u}$ représente les forces des propulseurs.
+\end{itemize}
+
+\subsubsection{Forces Hydrodynamiques}
+L'eau oppose une résistance complexe au mouvement. Le modèle implémenté combine deux effets, un amortissement visqueux linéaire qui domine à très basse vitesse et des lois de portances/trainées quadratique, similaires aux modèles aérodynamique des avions. L'approche utilisée calcule les coefficients de traînée $C_x, C_y, C_m$ en fonction de l'angle d'incidence avec l'eau :
+\begin{equation}
+    \alpha = -\arctan\left(\frac{v}{u}\right)
+\end{equation}
+Les forces sont ensuite calculées selon la pression dynamique :
+\begin{equation}
+    \mathbf{d}_{quad}(\boldsymbol{\nu}) 
+    =
+    \begin{bmatrix}
+        -\frac{1}{2} \rho A_{front} C_x(\alpha) V^2 \\[6pt]
+        -\frac{1}{2} \rho A_{lat} C_y(\alpha) V^2 \\[6pt]
+        -\frac{1}{2} \rho A_{lat} L_{oa} C_m(\alpha) V^2
+    \end{bmatrix}
+\end{equation}
+où $V^2 = u^2 + v^2$ et les $C_x,C_y,C_m$ sont des courbes de coefficients fonction de l'angle avec le courant. Dans un modèle simplifié (basé sur \cite{fossen2021handbook}), ces coefficients sont approximés par des fonctions trigonométriques:
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+    C_x(\alpha) &= -C_{x,max} \cos(\alpha) |\cos(\alpha)| \\
+    C_y(\alpha) &= C_{y,max} \sin(\alpha) |\sin(\alpha)| \\
+    C_m(\alpha) &= C_{m,max} \sin(2\alpha)
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Propulsion}
+
+Si la propulsion est un propulseur orientable situé à l'arrière du bateau, la force de proulsion est un vecteur de force 2D $\mathbf{u} = [T_x, T_y]^T$ appliqué à une distance $l_t$ derrière le centre de gravité (par exemple, un moteur hors-bord ou un safran orientable).
+
+La relation entre la commande et les efforts généralisés sur le corps est donnée par la matrice d'allocation $\mathbf{B}$ :
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+    \boldsymbol{\tau} = \mathbf{B} \mathbf{u} = 
+    \begin{bmatrix}
+        1 & 0 \\
+        0 & 1 \\
+        0 & -l_t
+    \end{bmatrix}
+    \begin{bmatrix} T_x \\ T_y \end{bmatrix}
+    =
+    \begin{bmatrix} T_x \\ T_y \\ -l_t T_y \end{bmatrix}
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+On remarque qu'une force latérale $T_y$ génère à la fois une force de dérive et un moment de lacet, créant un couplage fort typique des navires.
