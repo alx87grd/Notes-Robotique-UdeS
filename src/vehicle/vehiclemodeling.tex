@@ -943,11 +943,107 @@ Utile pour introduire les concepts sans la complexité de la 3D.
 \newpage
 \section{Avions (Ailes fixes)}
 
-\subsection{Aérodynamique et Dynamique de vol}
 
+\subsection{Modèle d'avion 3DDL (Plan vertical)}
+
+TODO: Section en construction!
+
+Cette section aborde la modélisation d'un aéronef à ailes fixes, dans le plan vertical (vue de côté). Le modèle à 3 DDL permet d'étudier la dynamique longitudinale :
+\begin{itemize}
+    \item \textbf{Surge ($u$)} : Vitesse longitudinale (axe du fuselage).
+    \item \textbf{Heave ($v$)} : Vitesse verticale (axe perpendiculaire aux ailes).
+    \item \textbf{Pitch ($r$)} : Vitesse de tangage (rotation du nez).
+\end{itemize}
+
+Ce modèle capture les dynamiques essentielles de décrochage et de stabilité.
 
 \colab{Modèle avion planaire}{https://colab.research.google.com/drive/15RBFDTUYSq0dFLBRd0VKLxJxXOONSYJI?usp=sharing}
 
+\subsection{Équations du mouvement}
+
+On peut utiliser les équations génériques du corps rigide planaire, mais en incluant les forces aérodynamique et la gravité. Une particularité du modèle d'avion, est qu'une des actions est une position, l'angle de la gouverne, donc pas une source de force. Dans les équations, cela ce reflète comme un dépendance directe du vecteur de force aérodynamique à cette entrée
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+    \mathbf{M} \dot{\boldsymbol{\nu}} + \mathbf{C}(\boldsymbol{\nu})\boldsymbol{\nu} + \mathbf{g}(\mathbf{q}) + \mathbf{f}_{aero}(\boldsymbol{\nu}, \delta) = \mathbf{B} \mathbf{f_p}
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%0
+où :
+\begin{itemize}
+    \item $\boldsymbol{\nu} = [u, v, r]^T$ est le vecteur vitesse dans le repère du corps.
+    \item $\mathbf{g}(\mathbf{q})$ est le vecteur gravité projeté dans le repère du corps (voir section \ref{sec:rigidbody2D}).
+    \item $\mathbf{f}_{aero}(\boldsymbol{\nu}, \delta_e$ représente les forces de portance, traînée et moment.
+    \item $\mathbf{B} \mathbf{f_p}$ représente les forces des propulseurs.
+\end{itemize}
+
+\subsubsection{Forces Aérodynamiques}
+
+ToDO: Insérer figure ici!!!
+
+Deux forces aérodynamiques s'appliquent sur le véhicule aux \textbf{centres de poussée} (CP) de l'aile et de la queue:
+\begin{enumerate}
+    \item L'aile principale, situé à une distance $l_{w}$ arrière du CG.
+    \item Queue, situé à une distance $l_{t}$ arrière du c.g., offrant le bras de levier nécessaire à la stabilité et au contrôle.
+\end{enumerate}
+
+\paragraph{Forces dans le repère vent }
+L'air génère des forces quadratiques dépendantes de la vitesse $V = \sqrt{u^2+v^2}$ et de l'angle d'attaque $\alpha$ :
+\begin{equation}
+    \alpha = \arctan\left(\frac{v}{u}\right)
+\end{equation}
+
+Les forces sont définies par les coefficients de portance ($C_L$), de traînée ($C_D$) et de moment ($C_m$). Ces coefficients sont définis dans le repère du flux d'air. Pour les intégrer au modèle corps rigide, on définit d'abord le vecteur des forces dans le repère vent :
+\begin{equation}
+    \mathbf{f}^w_{aero}
+    = 
+    \begin{bmatrix}
+        -\frac{1}{2} \rho S C_D V^2 \\
+        \frac{1}{2} \rho S C_L V^2 \\
+        \frac{1}{2} \rho S \bar{c} C_m V^2
+    \end{bmatrix}
+\end{equation}
+Notez que la traînée ($C_D$) s'oppose au mouvement (signe négatif sur l'axe $x_w$) et la portance ($C_L$) agit perpendiculairement (axe $y_w$).
+
+On projette ensuite ces forces dans le repère du corps à l'aide d'une matrice de rotation dépendant de l'angle d'attaque $\alpha$. L'équation de transformation est :
+\begin{equation}
+    \mathbf{f}^b_{aero} = 
+    \begin{bmatrix}
+        \cos\alpha & -\sin\alpha & 0 \\
+        \sin\alpha & \cos\alpha & 0 \\
+        0 & 0 & 1
+    \end{bmatrix}
+    \mathbf{f}^w_{aero}
+\end{equation}
+
+Pour un modèle de simulation "tout régime" (incluant le vol normal et les acrobaties/décrochage), on peut approximer les courbes caractéristiques d'une aile (profil symétrique) par :
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+    C_L(\alpha) &= C_{L,max} \sin(2\alpha) \\
+    C_D(\alpha) &= C_{D,0} + C_{D,max} \sin^2(\alpha) \\
+    C_m(\alpha) &= -C_{m,max} \sin(\alpha) \cos(\alpha)
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\paragraph{Somme des forces et moments au CG}
+Le force aérodynamique générale $\mathbf{f}_{aero}(\boldsymbol{\nu}, \delta)$ appliqué au centre de gravité est la somme des contributions de chaque surface.
+
+TODO: détails à venir
+
+\subsection{Propulsion et Vecteur de Commande}
+
+Le vecteur de commande est $\mathbf{u} = [f_p, \delta_e]^T$. Ici nous avons une force (propulsion) et une configuration géométrique (angle $\delta_e$).
+
+\begin{enumerate}
+    \item \textbf{Poussée ($f_p$)} : Force générée par le moteur, appliquée généralement selon l'axe longitudinal $x$ du corps. Elle entre dans l'équation via la matrice $\mathbf{B}$.
+    \item \textbf{Élévateur ($\delta_e$)} : Comme vu précédemment, il n'apparaît pas dans la matrice $\mathbf{B}$ linéaire classique, mais modifie directement le vecteur $\mathbf{f}_{aero}$.
+\end{enumerate}
+
+\begin{equation}
+    \mathbf{B}\mathbf{f}_p = 
+    \begin{bmatrix}
+        1 \\ 0 \\ 0
+    \end{bmatrix} f_p
+\end{equation}
 
 
 % ==========================================
@@ -959,6 +1055,8 @@ Utile pour introduire les concepts sans la complexité de la 3D.
 
 \subsection{Modèle de manœuvre basse-vitesse}
 
+TODO: Section en construction!
+
 Cette section s'intéresse à la modélisation des navires et robots de surface. Bien qu'un navire évolue dans un espace 3D (6 DDL), pour les applications de positionnement dynamique ou de manœuvre de port, on utilise couramment un modèle planaire simplifié à 3 DDL :
 \begin{itemize}
     \item \textbf{Surge ($u$)} : Avancement longitudinal.
@@ -966,7 +1064,9 @@ Cette section s'intéresse à la modélisation des navires et robots de surface.
     \item \textbf{Yaw ($r$)} : Lacet (cap).
 \end{itemize}
 
-Le modèle présenté ici est basé sur les travaux de Fossen \cite{fossen2021handbook}, spécifiquement les modèles de manœuvre à basse vitesse.
+ToDO: Insérer figure ici!!!
+
+Le modèle présenté ici est basé sur le livre de Fossen \cite{fossen2021handbook}, spécifiquement les modèles de manœuvre à basse vitesse.
 
 \colab{Modèle de véhicule nautique planaire basse vitesse}{LINK_TODO}
 

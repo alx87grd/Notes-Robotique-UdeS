@@ -212,6 +212,26 @@ Chaque ligne de la matrice $\mathbf{A}$ et du vecteur $\mathbf{b}$ correspond à
         \mathbf{A}(t_f)
     \end{bmatrix} \mathbf{p} = \begin{bmatrix} \mathbf{x}_0 \\ \mathbf{x}_f \end{bmatrix}
 \end{equation}
+
+Les vecteurs $\mathbf{x}_0$ et $\mathbf{x}_f$ contiennent les valeurs désirées des $M$ premières dérivées aux bornes (position, vitesse, accélération, etc.) :
+\begin{equation}
+    \mathbf{x}_0 = \begin{bmatrix} s(0) \\ \dot{s}(0) \\ \ddot{s}(0) \\ \vdots \end{bmatrix} , \quad
+    \mathbf{x}_f = \begin{bmatrix} s(t_f) \\ \dot{s}(t_f) \\ \ddot{s}(t_f) \\ \vdots \end{bmatrix}
+\end{equation}
+
+La sous-matrice $\mathbf{A}(t)$, de dimension $(M+1) \times (N+1)$, relie les paramètres du polynôme aux dérivées à l'instant $t$. Ses éléments sont donnés par la relation de dérivation $A_{k,i} = \frac{i!}{(i-k)!}t^{i-k}$ :
+\begin{equation}
+    \mathbf{A}(t) = 
+    \begin{bmatrix}
+        1 & t & t^2 & t^3 & \cdots & t^N \\
+        0 & 1 & 2t & 3t^2 & \cdots & N t^{N-1} \\
+        0 & 0 & 2 & 6t & \cdots & N(N-1) t^{N-2} \\
+        \vdots & \vdots & \vdots & \vdots & \ddots & \vdots \\
+        0 & 0 & 0 & \cdots & \cdots & \frac{N!}{(N-M)!} t^{N-M}
+    \end{bmatrix}
+\end{equation}
+
+
 Si le nombre de contraintes $N_c$ est exactement égal au nombre de paramètres ($N_c = N+1$), la solution est unique et obtenue par inversion directe : $\mathbf{p} = \mathbf{A}^{-1}\mathbf{b}$.
 
 \begin{figure}[H]
