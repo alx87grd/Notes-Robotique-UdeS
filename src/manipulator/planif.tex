@@ -188,37 +188,66 @@ qui sont illustrée à la Figure \ref{fig:poly3}.
 Une option pour avoir des trajectoires plus lisses est d'utiliser une fonction polynomiale d'ordre 5. Avec 5 paramètres il est possible de rajouter deux contraintes pour avoir une accélération qui débute et termine à une valeur de zéro, ce qui permet d'avoir aucune discontinuité en terme d'accélération, voir Figure \ref{fig:poly5} pour un allure de ce type de profile. Il est à noter que puisque nous avons rajouter 2 paramètres et 2 contraintes, comme pour le profile d'ordre 3 le profil d'ordre 5 a seulement $t_f$ comme paramètre libre. 
 
 
-\subsubsection{Profil temporel polynomial d'ordre $n$}
 
-Le concept de trajectoire polynomial ce générale jusqu'à un ordre $n$.
+\subsubsection{Généralisation : Profil polynomial d'ordre $n$}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[ht]
-		%\vspace{-10pt}
-        \centering
-		\includegraphics[width=0.90\textwidth]{fig/polynomial_traj_draft.jpg}
-        \caption{Trajectiore polynomial d'ordre $n$}
-		\label{fig:poly_n}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-Si ont désire imposer $n$ conditions frontières, i.e. position, vitesse, accélération, etc. à $t_o$ et à $t_f$, alors le système est parfaitement contraint et il est possible de calculer les $n$ paramètres en inversant la matrice suivante:
-
-( voir notre manuscrites d'Alex février 2024)
-
-À venir!
-
-%%%%%%%%%%%%%%%%%%
+Il est possible de généraliser l'approche polynomiale pour satisfaire un nombre arbitraire de conditions frontières. Soit un polynôme d'ordre $N$ décrit par le vecteur de paramètres $\mathbf{p} \in \mathbb{R}^{N+1}$ :
 \begin{align}
-s(t) = 
-\\
-\dot{s}(t) = 
+    s(t) &= p_0 + p_1 t + p_2 t^2 + \dots + p_N t^N = \sum_{i=0}^N p_i t^i
 \end{align}
-%%%%%%%%%%%%%%%%%
+Les dérivées successives (vitesse, accélération, jerk, snap, etc.) s'obtiennent linéairement par rapport aux paramètres :
+\begin{align}
+    \frac{d^{(k)} s(t)}{dt^{(k)}}  = \sum_{i=k}^N \frac{i!}{(i-k)!} p_i t^{i-k}
+\end{align}
 
 
 
-% \subsubsection{Courbe en S}
+Le problème de planification revient à trouver le vecteur $\mathbf{p}$ qui satisfait toutes les contraintes. Cela se formule comme un système linéaire $\mathbf{A}\mathbf{p} = \mathbf{b}$.
+
+\paragraph{Construction de la matrice de contraintes $\mathbf{A}$}
+Chaque ligne de la matrice $\mathbf{A}$ et du vecteur $\mathbf{b}$ correspond à une contrainte imposée sur une dérivée $k$ à un instant $t$. Dans le cas simple d'une trajectoire point-à-point (départ à $t=0$, arrivée à $t=t_f$), la matrice est structurée en deux blocs :
+\begin{equation}
+    \begin{bmatrix}
+        \mathbf{A}(0) \\
+        \mathbf{A}(t_f)
+    \end{bmatrix} \mathbf{p} = \begin{bmatrix} \mathbf{x}_0 \\ \mathbf{x}_f \end{bmatrix}
+\end{equation}
+Si le nombre de contraintes $N_c$ est exactement égal au nombre de paramètres ($N_c = N+1$), la solution est unique et obtenue par inversion directe : $\mathbf{p} = \mathbf{A}^{-1}\mathbf{b}$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.90\textwidth]{fig/polynomial_traj_draft.jpg}
+    \caption{Illustration d'une trajectoire polynomiale d'ordre $n$.}
+    \label{fig:poly_n}
+\end{figure}
+
+\paragraph{Optimisation (Système sous-contraint)}
+
+Une approche puissante consiste à utiliser un polynôme d'ordre supérieur au minimum requis (par exemple, un ordre 12 pour seulement 6 conditions limites). Le système $\mathbf{A}\mathbf{p} = \mathbf{b}$ devient alors sous-contraint : il existe une infinité de solutions possibles. Pour choisir la "meilleure" trajectoire parmi cette infinité, on définit une fonction de coût $J$ qui permet de définir des coûts associés à l'énergie des dérivées d'ordre supérieur. Le coût est défini comme une somme pondérée des intégrales du carré des dérivées (vitesse, accélération, jerk, snap, etc.) :
+\begin{equation}
+    J(\mathbf{p}) = \sum_{k} w_k \int_{0}^{t_f} (\frac{d^{(k)} s(t)}{dt^{(k)}} )^2 dt = \mathbf{p}^T \mathbf{Q} \mathbf{p}
+\end{equation}
+Où $\mathbf{Q}$ est une matrice hessienne symétrique définie positive calculée analytiquement en fonction de $t_f$.
+
+Le problème devient alors un problème d'optimisation quadratique sous contraintes linéaires:
+\begin{align}
+    \min_{\mathbf{p}} \quad & \frac{1}{2} \mathbf{p}^T \mathbf{Q} \mathbf{p} \\
+    \text{sujet à} \quad & \mathbf{A}\mathbf{p} = \mathbf{b}
+\end{align}
+qui a une solution analytique exacte:
+\begin{equation}
+    \mathbf{p}^* = \mathbf{Q}^{-1}\mathbf{A}^T (\mathbf{A}\mathbf{Q}^{-1}\mathbf{A}^T)^{-1} \mathbf{b}
+\end{equation}
+Cette méthode permet de générer des trajectoires "Minimum Jerk" ou "Minimum Snap" très douces, idéales pour les drones ou les robots manipulateurs rapides. Voir implémentation ici: \url{https://github.com/SherbyRobotics/pyro/blob/master/pyro/planning/trajectorygeneration.py}
+
+
+
+
+
+
+
+
+
 
 % À venir!
 
@@ -358,33 +387,3 @@ L'approche la plus simpliste est d'utiliser la méthode point à point présent�
 Une alternative est d'utiliser des fonctions d'interpolation pour générer une trajectoire plus lisse. Une approche est d'utiliser des polynômes cubique pour chaque segment, avec des contraintes de continuité en position et vitesse à chaque point intermédiaire. Il est aussi possible de spécifier des vecteurs de vitesses désirées à chaque point intermédiaire, qui peuvent être inclus comme des contraintes pour déterminer les paramètres des polynômes. Il existe plusieurs méthodes d'interpolation qui peuvent être utilisées pour ce type de problème, une autre méthode populaire est les \textit{B-spline}. 
 
 
-\newpage
-\section{Planéité différentielle}
-\label{sec:searchalgo}
-
-Le concept de planéité différentielle, en anglais \textit{differential flatness}, peut être très utile pour planifier des trajectoires pour des systèmes sous-actionnés. Le principe est le suivant: certains systèmes ont des variables sorties qui ont une propriété spéciale, i.e. nommée la planéité différentielle, qui est que tout les états et forces du système sont entièrement définis par ces variables et leurs dérivées supérieures. Par exemple, la position de l'effecteur pour un bras manipulateur, le centre de masse d'un drone quadcopter, le point milieu entre les deux roues arrières d'une voiture ont cette propriété. Pour une bras manipulateur pleinement actionné, les forces nécessaires aux joints sont reliés à l'accélération à l'effecteur. Pour un drone, les forces de propulsion sont reliés à la quatrième dérivée temporelle de la position du centre de masse, souvent appelé le \textit{snap}.
-
-Ce concept peut être exploité pour générer plus facilement des trajectoires faisable qui respecte la dynamique du système. L'idée est de définir la trajectoire désirée du système en définissant une trajectoire continue juste qu'à un ordre $n$ (le minimum est variable selon le système), qui permet d'ensuite calculer tous les autres états et forces à partir de cet trajectoire et les dérivées supérieures de celle-ci. Typiquement, on peut utiliser une paramétrisation de type polynomiale d'ordre $n$ pour garantir que les dérivées supérieur sont définies jusqu'à l'ordre $n$. Il est particulièrement intéressant d'effectuer une optimisation des paramètres de la trajectoire pour minimiser un métrique qui correspond à l'effort des actionneurs, comme le snap pour un drone, de sorte à obtenir des mouvements gracieux. Par rapport à d'autre méthode d'optimisation de trajectoire, cette méthodologie est intéressante car l'espace de recherche est limité à des paramètres d'une trajectoire polynomiales qui garantissent la faisabilité, et l'optimisation est une problème de programmation quadratique qui est garantit de converger en temps fini. 
-
-À venir!
-
-
-
-\newpage
-\section{Algorithmes d'optimisation de trajectoires}
-
-\video{Introduction à la commande optimale}{https://youtu.be/3x6Vg-RRZ50}
-
-\colab{Démo d'introduction à l'optimisation de trajectoires}{https://colab.research.google.com/drive/1yq2GHAkvO6fTF2W-tRbACDBa9_scec2k?usp=sharing}
-
-À venir!
-
-Mots clés: programmation quadratique, \textit{direct collocation}, \textit{shooting}
-
-\newpage
-\section{Algorithmes de recherche}
-\label{sec:searchalgo}
-
-À venir!
-
-Mots clés: RRT, RRT*

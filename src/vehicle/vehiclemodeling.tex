@@ -18,7 +18,7 @@ Imaginez trois situations de conduite différentes. Dans chacune, votre cerveau 
 \begin{enumerate}
     \item \textbf{Navigation (GPS) :} Vous planifiez un trajet de Montréal à Québec. À cette échelle, votre voiture est un simple \textbf{point} qui suit une ligne. La largeur de la voiture, son angle de braquage ou la pression des pneus n'ont aucune importance.
     \item \textbf{Stationnement :} Vous vous garez dans une rue étroite. Ici, le modèle "point" ne suffit plus. Vous devez tenir compte de la \textbf{géométrie} : la voiture ne peut pas se déplacer latéralement (contrainte non-holonome), elle doit braquer et avancer.
-    \item \textbf{Conduite sur glace (Rallye) :} Vous prenez un virage serré sur une chaussée glissante. La géométrie ne suffit plus. Il faut comprendre la \textbf{physique} : l'inertie, la friction, le transfert de masse. Si vous tournez le volant, la voiture ne va pas nécessairement suivre la direction des roues.
+    \item \textbf{Conduite sur glace :} Vous prenez un virage serré sur une chaussée glissante. La géométrie ne suffit plus. Il faut comprendre la \textbf{physique} : l'inertie, la friction, le transfert de masse. Si vous tournez le volant, la voiture ne va pas nécessairement suivre la direction des roues.
 \end{enumerate}
 
 En robotique, la trousse à outil comprend une hiérarchie de modèles (voir Tableau \ref{tab:genericvehicles}). Pour un algorithme de conduite autonome, il est parfois suffisant d'utiliser un modèle particule $(x,y)$ pour la planification de chemin à haut niveau, alors qu'un modèle dynamique précis sera nécessaire pour calculer des forces de commande en temps réel. Cet \textbf{écosystème de modèles est donc une boîte à outils}, où chaque modèle est un instrument adapté à une tâche spécifique.
@@ -57,11 +57,11 @@ La définition mathématique de $\mathbf{q}$ dépend du niveau d'abstraction cho
 
 Le vecteur d'action, noté $\mathbf{u}$, décrit les commandes ou les "entrées" que nous pouvons utiliser pour modifier le mouvement du véhicule. La nature de ces commandes change radicalement selon que l'on considère le véhicule comme un objet géométrique ou un système physique :
 \begin{itemize}
-    \item \textbf{Action Cinématique (Abstraite) :} On commande directement des vitesses (ex: "Avance à 1 m/s", "Tourne à 0.5 rad/s"). C'est l'hypothèse simplificatrice utilisée par la plupart des planificateurs de trajectoire.
+    \item \textbf{Action Cinématique (Abstraite) :} On commande directement des vitesses (ex: "Avance à 1 m/s", "Tourne à 0.5 rad/s"). C'est l'hypothèse simplificatrice utilisée par la plupart des planificateurs de trajectoire. L'hypothèse sous-jacente est qu'il existe des contrôleurs de bas niveau suffisamment performants pour exécuter ces actions quasi-instantanément.
     \item \textbf{Action Dynamique (Réelle) :} On commande des efforts physiques (ex: "Couple moteur de 100 Nm", "Angle de braquage des roues", "Poussée des hélices"). C'est ce que le système de contrôle doit gérer en réalité à bas niveau.
 \end{itemize}
 
-Formellement, l'ensemble des entrées de commande admissibles est noté $\mathcal{U}$. Le vecteur $\mathbf{u} \in \mathcal{U}$ représente les variables d'entrée des équations du modèle utilisé. Lorsque qu'on utilise des actions abstraites, l'hypothèse sous-jacente est qu'il existe des contrôleurs de bas niveau suffisamment performants pour exécuter ces actions quasi-instantanément.
+Formellement, l'ensemble des entrées de commande admissibles est noté $\mathcal{U}$. Le vecteur $\mathbf{u} \in \mathcal{U}$ représente les variables d'entrée des équations du modèle utilisé.
 
 \subsection{L'équation d'évolution : "Comment je bouge ?"}
 C'est le cœur de la modélisation. C'est la fonction qui prédit l'évolution de la configuration en fonction des actions. On distingue deux grandes familles :
@@ -75,20 +75,20 @@ Ces modèles décrivent le mouvement possible sans s'occuper des forces. Ils ré
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \paragraph{Modèles Dynamiques (Physique du mouvement)}
-Ces modèles utilisent la seconde loi de Newton ($F=ma$). Ils répondent à la question : \textit{"Si j'applique telles forces, comment vont évoluer mes coordonnées?"}. Lorsque les actions sont des forces, ces équations prennent la forme suivante, i.e. des équations différentielles d'ordre deux:
+Ces modèles utilisent la seconde loi de Newton ($F=ma$). Ils répondent à la question : \textit{"Si j'applique telles forces, comment vont évoluer mes coordonnées?"}. Lorsque les actions sont des forces, ces équations prennent la forme d'équations différentielles d'ordre deux:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
     \ddot{\mathbf{q}} = f_q(\dot{\mathbf{q}},\mathbf{q},\mathbf{u})
 \end{equation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Parfois, on s'intéresse seulement à l'évolution des vitesses d'un véhicule. On peut alors travailler avec des équations qui n'inclut que l'évolution des vitesses, sans prédire l'évolution de la configuration. Dans cette situation, on peut utiliser un vecteur de vitesses $\mathbf{\nu}$ et des équations différentielles d'ordre un:
+Parfois, on s'intéresse seulement à l'évolution des vitesses d'un véhicule. On peut alors travailler avec des équations qui n'inclut que l'évolution des vitesses, sans prédire l'évolution de la configuration. Dans cette situation, on peut utiliser un vecteur de vitesses généralisées $\mathbf{\nu}$ et des équations différentielles d'ordre un:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
     \dot{\mathbf{\nu}} = f_v(\dot{\mathbf{\nu}},\mathbf{u})
 \end{equation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Aucune propriétés ou force de doit dépendre d'une variable configuration pour pouvoir utiliser cette forme. On appelle parfois ces variables les coordonnées ignorables. Un exemple est la position $x$ d'un avion, il est possible de calculer l'évolution des vitesses de l'avion sans garder en mémoire l'évolution de sa position.
+Lorsque aucune propriétés ou forces ne dépend d'une variable configuration, on l'appelle parfois une coordonnée ignorable. On peut alors ignorer l'équation qui prédit d'élolution de cette variable et simplifier le système d'équations. Un exemple est la position $x$ d'un avion, il est possible de calculer l'évolution des vitesses de l'avion sans garder en mémoire l'évolution de sa position. Un contre-exemple est le tanguage d'un avion, l'angle d'attaque et donc la force de portance en dépende.
 
 \paragraph{Formalisme d'état}
 
@@ -96,7 +96,7 @@ Pour un ordinateur, toutes ces notions sont unifiées sous la forme d'un systèm
 
 \begin{itemize}
     \item \textbf{Pour un modèle cinématique}, l'état est simplement la configuration : $\mathbf{x} = \mathbf{q}$.
-    \item \textbf{Pour un modèle dynamique}, l'état doit inclure la configuration et les vitesses (linéaire et angulaire) : $\mathbf{x} = [\mathbf{q}, \dot{\mathbf{q}}]^T$. Sans connaître la vitesse actuelle, on ne peut pas prédire la position future.
+    \item \textbf{Pour un modèle dynamique}, l'état doit généralement inclure la configuration et les vitesses (linéaire et angulaire) : $\mathbf{x} = [\mathbf{q}, \dot{\mathbf{q}}]^T$. Sans connaître la vitesse actuelle, on ne peut pas prédire la position future.
 \end{itemize}
 
 L'équation générale de tout véhicule s'écrit alors sous la forme canonique :
@@ -111,120 +111,127 @@ C'est la forme standard pour résoudre des équations différentielles, typiquem
 
 % Insertion du Tableau 1 (Generic Vehicles) en mode paysage
 \begin{landscape}
-    % ==========================================
-    % TABLE 1: GENERIC / HOLONOMIC MODELS (FR) - SIMPLIFIÉ
-    % ==========================================
-    \begin{table}[htbp]
-        \centering
-        \caption{\textbf{Abstractions de véhicules génériques}}
-        \label{tab:genericvehicles}
-        \vspace{0.1cm}
-        \setlength{\tabcolsep}{4pt} % Espacement légèrement augmenté
-        % Ajustement des largeurs : 1 col de desc + 5 cols de données
-        \begin{tabular}{|L{0.09\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|}
-            \hline
-            \textbf{Caractér.} & 
-            \textbf{Niveau 1 : Particule cinématique} (Ordre 1) & 
-            \textbf{Niveau 2 : Particule dynamique} (Ordre 2) & 
-            \textbf{Niveau 3 : Corps rigide cin.} (Ordre 1) & 
-            \textbf{Niveau 5 : Corps rigide dyn. 2D} & 
-            \textbf{Niveau 6 : Corps rigide dyn. 3D} \\
-            \hline
-    
-             \textbf{n} & 
-            2 & 
-            4 & 
-            3 & 
-            6 & 
-            12 
-            \\
-            \hline
-            
-            \textbf{Modèle dynamique} & 
-            $\dot{x} = v_x$ 
-            \newline 
-            $\dot{y} = v_y$
-            & 
-            $\ddot{x} = a_x$ 
-            \newline 
-            $\ddot{y} = a_y$
-            \newline 
-             & 
-            $\dot{\mathbf{p}} = \mathbf{R}(\psi)\mathbf{v}_{b}$ \newline $\dot{\psi} = r$  & 
-            $m(\dot{u}-vr) = F_x$ \newline $m(\dot{v}+ur) = F_y$ \newline $I_z \dot{r} = M_z$ 
-            & 
-            $m(\dot{\mathbf{v}} + \omega \times \mathbf{v}) = \mathbf{F}$ \newline $\mathbf{I}\dot{\omega} + \omega \times \mathbf{I}\omega = \mathbf{M}$ \\
-            \hline
-    
-            \textbf{Espace de config.} $\mathbf{q}$ & 
-            $\mathbf{q} = [x, y]^T$ & 
-            $\mathbf{q} = [x, y]^T$ & 
-            $\mathbf{q} = [x, y, \psi]^T$ & 
-            $\mathbf{q} = [x, y, \psi]^T$ & 
-            $\mathbf{q} \in \mathbb{R}^{6}$ (Pos, Euler) \\ \hline
-            
-            \textbf{Espace d'état} $\mathbf{x}$ & 
-            $\mathbf{x} = [x, y]^T$ & 
-            $\mathbf{x} = [x, y, v_x, v_y]^T$ & 
-            $\mathbf{x} = [x, y, \psi]^T$ & 
-            $\mathbf{x} = [x, y, \psi, u, v, r]^T$ & 
-            $\mathbf{x} \in \mathbb{R}^{12}$ \newline (Pos, Euler, VitLin, VitAng) \\
-            \hline
-            
-            \textbf{Espace d'action} $\mathbf{u}$ & 
-            $\mathbf{u} = [v_x, v_y]^T$ & 
-            $\mathbf{u} = [a_x, a_y]^T$ & 
-            $\mathbf{u} = [u, v, r]^T$ \newline (Vit. Corps) & 
-            $\mathbf{u} = [F_x, F_y, M_z]^T$ \newline (Torseur 2D) & 
-            $\mathbf{u} = [\mathbf{F}, \mathbf{M}]^T$ \newline (Torseur 3D) \\
-            \hline
-            
-            \textbf{Modèle Env. / Carte} & 
-            Carte traversabilité $trav(x,y) \in [0, 1]$ & 
-            Carte traversabilité $trav(x,y) \in [0, 1]$ \newline
-            Champ hauteur 2.5D \newline $z(x,y)$
-            & 
-            $trav(x,y) \in [0, 1]$ \newline
-            $z(x,y) \in \mathbb{R}^1$
-            & 
-            $trav(x,y) \in [0, 1]$ \newline
-            $z(x,y) \in \mathbb{R}^1$
-            & 
-            $trav(x,y) \in [0, 1]$ \newline
-            $z(x,y) \in \mathbb{R}^1$
-            \\
-            \hline
-            
-            \textbf{Contr. d'état} & 
-            Positions traversables \newline
-            $\mathbf{q} \in \mathcal{C}_{free}$ & 
-            Positions traversables \newline
-            $\mathbf{q} \in \mathcal{C}_{free}$ \newline
-            Vitesses réalisables \newline
-            $\mathbf{u} \in \mathcal{V}_{feasible}$ & 
-            $\mathbf{q} \in \mathcal{C}_{free} \subseteq \mathbb{R}^3$ 
-            & 
-            $\mathbf{q} \in \mathcal{C}_{free} \subseteq \mathbb{R}^3$ \newline
-            $\mathbf{u} \in \mathcal{V}_{feasible} \subseteq \mathbb{R}^3$ 
-            & 
-            $\mathbf{q} \in \mathcal{C}_{free} \subseteq \mathbb{R}^6$ \newline
-            $\mathbf{u} \in \mathcal{V}_{feasible} \subseteq \mathbb{R}^6$  
-            \\
-            \hline
-            
-            \textbf{Contr. d'action} & 
-            Vitesses réalisables \newline
-            $\mathbf{u} \in \mathcal{V}_{feasible}$ & 
-            Accélérations réalisables \newline
-            $\mathbf{u} \in \mathcal{A}_{feasible}(x)$ & 
-            $\mathbf{u} \in \mathcal{V}_{feasible} \subseteq \mathbb{R}^3$  & 
-            $\mathbf{u} \in \mathcal{F}_{feasible}(x)$ & 
-            $\mathbf{u} \in \mathcal{F}_{feasible}(x)$\\
-            \hline
-            
-        \end{tabular}
-    \end{table}
-    \end{landscape}
+\subsection{Exemples de niveaux d'abstractions génériques pour véhicules}
+
+Le tableau suivant donne quelques exemple de niveaux d'abstractions de véhicules généralement utilisé dans un contexte de commande, planification et analyse. Les modèles de particule sont typiquement utilisés pour planifier des chemins en fonction d'une carte d'obstacles. On peut utiliser une particule dynamique si on veut planifier le détail d'un profil de vitesse et des rayons de courbures réalisables, par exemple si on essaye d'optimiser une ligne de course sur un circuit. Ensuite, les modèles corps rigide cinématiques sont typiquement utilisés pour synthétisé des lois de commande pour des régimes à basse vitesse. C'est aussi le niveau d’abstraction qui fait apparaître le cap d'un véhicule et qui serait adapté pour planifier un stationnement parallèle par exemple. Finalement, les modèles dynamique de corps rigide sont utile pour les analyses de stabilité et synthétiser des lois de commande pour les drones, avions, etc. 
+
+
+
+% ==========================================
+% TABLE 1: GENERIC / HOLONOMIC MODELS (FR) - SIMPLIFIÉ
+% ==========================================
+\begin{table}[htbp]
+    \centering
+    \caption{\textbf{Abstractions de véhicules génériques}}
+    \label{tab:genericvehicles}
+    \vspace{0.1cm}
+    \setlength{\tabcolsep}{4pt} % Espacement légèrement augmenté
+    % Ajustement des largeurs : 1 col de desc + 5 cols de données
+    \begin{tabular}{|L{0.09\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|L{0.17\linewidth}|}
+        \hline
+        \textbf{Caractér.} & 
+        \textbf{Particule cinématique} (Ordre 1) & 
+        \textbf{Particule dynamique} (Ordre 2) & 
+        \textbf{Corps rigide cinématique 2D} (Ordre 1) & 
+        \textbf{Corps rigide dynamique 2D} & 
+        \textbf{Corps rigide dynamique 3D} \\
+        \hline
+
+         \textbf{n} & 
+        2 & 
+        4 & 
+        3 & 
+        6 & 
+        12 
+        \\
+        \hline
+        
+        \textbf{Modèle dynamique} & 
+        $\dot{x} = v_x$ 
+        \newline 
+        $\dot{y} = v_y$
+        & 
+        $\ddot{x} = a_x$ 
+        \newline 
+        $\ddot{y} = a_y$
+        \newline 
+         & 
+        $\dot{\mathbf{p}} = \mathbf{R}(\psi)\mathbf{v}_{b}$ \newline $\dot{\psi} = r$  & 
+        $m(\dot{u}-vr) = F_x$ \newline $m(\dot{v}+ur) = F_y$ \newline $I_z \dot{r} = M_z$ 
+        & 
+        $m(\dot{\mathbf{v}} + \omega \times \mathbf{v}) = \mathbf{F}$ \newline $\mathbf{I}\dot{\omega} + \omega \times \mathbf{I}\omega = \mathbf{M}$ \\
+        \hline
+
+        \textbf{Espace de config.} $\mathbf{q}$ & 
+        $\mathbf{q} = [x, y]^T$ & 
+        $\mathbf{q} = [x, y]^T$ & 
+        $\mathbf{q} = [x, y, \psi]^T$ & 
+        $\mathbf{q} = [x, y, \psi]^T$ & 
+        $\mathbf{q} \in \mathbb{R}^{6}$ (Pos, Euler) \\ \hline
+        
+        \textbf{Espace d'état} $\mathbf{x}$ & 
+        $\mathbf{x} = [x, y]^T$ & 
+        $\mathbf{x} = [x, y, v_x, v_y]^T$ & 
+        $\mathbf{x} = [x, y, \psi]^T$ & 
+        $\mathbf{x} = [x, y, \psi, u, v, r]^T$ & 
+        $\mathbf{x} \in \mathbb{R}^{12}$ \newline (Pos, Euler, VitLin, VitAng) \\
+        \hline
+        
+        \textbf{Espace d'action} $\mathbf{u}$ & 
+        $\mathbf{u} = [v_x, v_y]^T$ & 
+        $\mathbf{u} = [a_x, a_y]^T$ & 
+        $\mathbf{u} = [u, v, r]^T$ \newline (Vit. Corps) & 
+        $\mathbf{u} = [F_x, F_y, M_z]^T$ \newline (Torseur 2D) & 
+        $\mathbf{u} = [\mathbf{F}, \mathbf{M}]^T$ \newline (Torseur 3D) \\
+        \hline
+        
+        % \textbf{Modèle Env. / Carte} & 
+        % Carte traversabilité $trav(x,y) \in [0, 1]$ & 
+        % Carte traversabilité $trav(x,y) \in [0, 1]$ \newline
+        % Champ hauteur 2.5D \newline $z(x,y)$
+        % & 
+        % $trav(x,y) \in [0, 1]$ \newline
+        % $z(x,y) \in \mathbb{R}^1$
+        % & 
+        % $trav(x,y) \in [0, 1]$ \newline
+        % $z(x,y) \in \mathbb{R}^1$
+        % & 
+        % $trav(x,y) \in [0, 1]$ \newline
+        % $z(x,y) \in \mathbb{R}^1$
+        % \\
+        % \hline
+        
+        \textbf{Contraintes d'état} & 
+        Positions traversables \newline
+        $\mathbf{q} \in \mathcal{C}_{free}$ & 
+        Positions traversables \newline
+        $\mathbf{q} \in \mathcal{C}_{free}$ \newline
+        Vitesses réalisables \newline
+        $\mathbf{u} \in \mathcal{V}_{feasible}$ & 
+        $\mathbf{q} \in \mathcal{C}_{free} \subseteq \mathbb{R}^3$ 
+        & 
+        $\mathbf{q} \in \mathcal{C}_{free} \subseteq \mathbb{R}^3$ \newline
+        $\mathbf{u} \in \mathcal{V}_{feasible} \subseteq \mathbb{R}^3$ 
+        & 
+        $\mathbf{q} \in \mathcal{C}_{free} \subseteq \mathbb{R}^6$ \newline
+        $\mathbf{u} \in \mathcal{V}_{feasible} \subseteq \mathbb{R}^6$  
+        \\
+        \hline
+        
+        \textbf{Contraintes d'action} & 
+        Vitesses réalisables \newline
+        $\mathbf{u} \in \mathcal{V}_{feasible}$ & 
+        Accélérations réalisables \newline
+        $\mathbf{u} \in \mathcal{A}_{feasible}(x)$ & 
+        $\mathbf{u} \in \mathcal{V}_{feasible} \subseteq \mathbb{R}^3$  & 
+        $\mathbf{u} \in \mathcal{F}_{feasible}(x)$ & 
+        $\mathbf{u} \in \mathcal{F}_{feasible}(x)$\\
+        \hline
+        
+    \end{tabular}
+\end{table}
+
+\end{landscape}
 
 
 
@@ -444,7 +451,7 @@ Le drone est un cas d'école pertinent pour illustrer la différence entre les d
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\paragraph{Approche A : équations en coordonnées inertielles }
+\paragraph{Approche A : Équations en coordonnées inertielles }
 
 C'est l'approche la plus intuitive pour visualiser le mouvement. On écrit la seconde loi de Newton directement pour les coordonnées globales ($x, y$):
 %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -456,7 +463,9 @@ C'est l'approche la plus intuitive pour visualiser le mouvement. On écrit la se
         0 & 0 & I
     \end{bmatrix}
     }_{\mathbf{H}(\mathbf{q})}
+    \underbrace{
     \begin{bmatrix} \ddot{x} \\ \ddot{y} \\ \ddot{\theta} \end{bmatrix}
+    }_{\ddot{\mathbf{q}}}
     +
     \underbrace{
     \begin{bmatrix} 0 \\ mg \\ 0 \end{bmatrix}
@@ -482,7 +491,7 @@ On remarque que la matrice d'inertie $\mathbf{H}$ est constante et diagonale (ca
 
 Si on utilise les vitesses exprimées dans le repère corps, l'équation équivalente sera:
 %%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{equation}
+\begin{align}
     \underbrace{
     \begin{bmatrix}
         m & 0 & 0 \\
@@ -490,7 +499,9 @@ Si on utilise les vitesses exprimées dans le repère corps, l'équation équiva
         0 & 0 & I
     \end{bmatrix}
     }_{\mathbf{M}_b}
+    \underbrace{
     \begin{bmatrix} \dot{u} \\ \dot{v} \\ \dot{r} \end{bmatrix}
+    }_{\dot{\mathbf{\nu}}}
     +
     \underbrace{
     \begin{bmatrix}
@@ -499,7 +510,9 @@ Si on utilise les vitesses exprimées dans le repère corps, l'équation équiva
         0 & 0 & 0
     \end{bmatrix}
     }_{\mathbf{C}_b(\boldsymbol{\nu})}
+    \underbrace{
     \begin{bmatrix} u \\ v \\ r \end{bmatrix}
+    }_{\mathbf{\nu}}
     +
     \underbrace{
     \begin{bmatrix}
@@ -508,7 +521,7 @@ Si on utilise les vitesses exprimées dans le repère corps, l'équation équiva
         0
     \end{bmatrix}
     }_{\mathbf{g}_b(\mathbf{q})}
-    =
+    &=
     \underbrace{
     \begin{bmatrix}
         0 & 0 \\
@@ -518,16 +531,88 @@ Si on utilise les vitesses exprimées dans le repère corps, l'équation équiva
     }_{\mathbf{B}_b}
     \underbrace{
     \begin{bmatrix} f_1 \\ f_2 \end{bmatrix}
-    }_{\mathbf{u}}
-\end{equation}
+    }_{\mathbf{u}} \\
+    \underbrace{
+    \begin{bmatrix} \dot{x} \\ \dot{y} \\ \dot{\theta} \end{bmatrix}
+    }_{\dot{\mathbf{q}}}
+    &=
+    \underbrace{
+    \begin{bmatrix}
+        \cos(\theta) & -\sin(\theta) & 0 \\
+        \sin(\theta) & \cos(\theta) & 0 \\
+        0 & 0 & 1
+    \end{bmatrix}
+    }_{J^{-1}}
+    \underbrace{
+    \begin{bmatrix} u \\ v \\ r \end{bmatrix}
+    }_{\boldsymbol{\nu}}
+\end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 Comparé à l'approche A, on note trois différences fondamentales :
 \begin{enumerate}
-    \item La matrice d'allocation $\mathbf{B}_b$ est \textbf{constante} (elle ne dépend plus de $\theta$). C'est un avantage majeur pour la synthèse de commande.
+    \item La matrice d'allocation $\mathbf{B}_b$ est \textbf{constante} (elle ne dépend plus de $\theta$). 
     \item La matrice de Coriolis $\mathbf{C}_b(\boldsymbol{\nu})$ apparaît explicitement pour modéliser les forces virtuelles ressenties dans le repère tournant.
-    \item La gravité $\mathbf{g}_b(\mathbf{q})$ est le seul terme qui dépend de l'orientation $\theta$. Elle représente la projection du vecteur poids sur les axes du drone.
+    \item La gravité $\mathbf{g}_b(\mathbf{q})$ est le seul terme qui dépend de l'orientation $\theta$. Elle représente la projection du vecteur poids dans le repère tournant du drone.
 \end{enumerate}
 
+
+
+
+\newpage
+\section{Nomenclature et Notation}
+
+Afin d'unifier la présentation des différents modèles (terrestres, marins, aériens) et de clarifier la distinction entre cinématique et dynamique, nous utiliserons la notation standard résumée dans le tableau \ref{tab:nomenclature}.
+
+\begin{table}[htbp]
+    \centering
+    \caption{\textbf{Nomenclature des variables et symboles mathématiques}}
+    \label{tab:nomenclature}
+    \vspace{0.2cm}
+    \renewcommand{\arraystretch}{1.5}
+    \setlength{\tabcolsep}{5pt}
+    \begin{tabular}{|c|l|p{0.50\linewidth}|}
+        \hline
+        \textbf{Symbole} & \textbf{Concept} & \textbf{Description} \\
+        \hline
+        \hline
+        \multicolumn{3}{|c|}{\textbf{Espaces et Variables de Configuration}} \\
+        \hline
+        $\mathbb{R}^n$ & Espace Euclidien & Espace vectoriel réel de dimension $n$ (ex: position pure). \\
+        \hline
+        $SE(n)$ & Groupe Spécial Euclidien & Espace des mouvements rigides (Rotation + Translation). \\
+        \hline
+        $\mathbf{q}$ & Configuration & Posture géométrique instantanée (ex: $\mathbf{q} = [x, y, \theta]^T$). \\
+        \hline
+        $\dot{\mathbf{q}}, \ddot{\mathbf{q}}$ & Dérivées de config. & Vitesse et accélération généralisées dans l'espace de configuration (ex: $\dot{\mathbf{q}} = [\dot{x}, \dot{y}, \dot{\theta}]^T$). \\
+        \hline
+        \hline
+        \multicolumn{3}{|c|}{\textbf{Cinématique (Repère du Corps)}} \\
+        \hline
+        $\mathbf{v}_b$ & Vitesse Linéaire & Vitesse de translation du CG exprimée dans le repère du corps (ex: $[u, v, w]^T$). \\
+        \hline
+        $\boldsymbol{\omega}_b$ & Vitesse Angulaire & Vitesse de rotation exprimée dans le repère du corps (ex: $[p, q, r]^T$). \\
+        \hline
+        $\boldsymbol{\nu}$ & Vitesse Généralisée & Vecteur regroupant vitesses linéaires et angulaires du corps : $\boldsymbol{\nu} = [\mathbf{v}_b^T, \boldsymbol{\omega}_b^T]^T$. \\
+        \hline
+        $\dot{\boldsymbol{\nu}}$ & Accélération du Corps & Dérivée temporelle des vitesses du corps. \\
+        \hline
+        $\mathbf{J}(\mathbf{q})$ & Matrice Jacobienne & Matrice de transformation liant les vitesses du corps aux dérivées de configuration : $\mathbf{J}(\mathbf{q}) \dot{\mathbf{q}} = \boldsymbol{\nu}$. \\
+        \hline
+        \hline
+        \multicolumn{3}{|c|}{\textbf{Dynamique et Inertie}} \\
+        \hline
+        $m$ & Masse & Masse totale du véhicule. \\
+        \hline
+        $\mathbf{I}_b$ & Tenseur d'Inertie & Matrice $3 \times 3$ des moments d'inertie exprimée dans le repère du corps. \\
+        \hline
+        $\mathbf{M}_b$ & Matrice d'Inertie (Corps) & Matrice de masse généralisée ($6 \times 6$) constante dans le repère du corps (blocs $m\mathbf{I}_{3\times3}$ et $\mathbf{I}_b$). \\
+        \hline
+        $\mathbf{H}(\mathbf{q})$ & Matrice d'Inertie (Config) & Matrice d'inertie exprimée dans l'espace de configuration (dépend de $\mathbf{q}$). Liée par $\mathbf{H} = \mathbf{N}^{-T} \mathbf{M}_b \mathbf{N}^{-1}$. \\
+        \hline
+        $\boldsymbol{\tau}$ & Efforts Généralisés & Vecteur des forces et moments appliqués sur le corps. Ils peuvent être définit dans les coordonnées généralisée ou dans le repère du corps. \\
+        \hline
+    \end{tabular}
+\end{table}
 
 
 
@@ -808,7 +893,7 @@ Lorsque le véhicule accélère ou tourne, le poids se transfère, modifiant la 
 \begin{figure}[htbp]
 	\centering
 		\includegraphics[width=0.90\textwidth]{fig/simplesuspension.jpg}
-	\caption{Modèle de suspension (Quart de véhicule)}
+	\caption{Modèle de suspension 1-DDL (Quart de véhicule)}
 	\label{fig:simplesuspension}
 \end{figure}
 
