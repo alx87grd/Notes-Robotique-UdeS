@@ -679,7 +679,7 @@ T = \frac{\partial A}{\partial \col{x}} =
 
 
 
-\begin{example}[Gradient of Quadratic Function]
+\begin{example}{Gradient of Quadratic Function}{}
 Finding the gradient $\frac{\partial f}{\partial \underline{x}}$ of the quadratic function $f=\underline{x}^T A \underline{x}$. First converting to index notations:
 \begin{align}
 f = \sum_{ij}{x_i A_{ij} x_j}
@@ -699,7 +699,7 @@ Which correspond in matrix form, with the numerator layout convention, to:
 \end{align}
 \end{example}
 
-\begin{example}[Least square solution derivation in vector form]
+\begin{example}{Least square solution derivation in vector form}{}
 Minimizing the error norm $\|\underline{e}\|^2$ of the estimation problem $\underline{e} = A \underline{\hat{x}} - \underline{b}$ by selecting the parameters $\underline{\hat{x}}$. If the gradient of the error norm with respect to the parameter vector is set to zero:
 \begin{align}
 \underline{0} &= \frac{\partial \|\underline{e}\|^2 }{\partial \underline{\hat{x}}} = \frac{\partial (\underline{e}^T \underline{e} )}{\partial \underline{\hat{x}}} = 2 \, \underline{e}^T \frac{\partial \underline{e} }{\partial \underline{\hat{x}}} = 2\, (A \underline{\hat{x}} - \underline{b})^T A 

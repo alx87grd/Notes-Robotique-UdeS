@@ -279,7 +279,7 @@ La figure \ref{fig:vecposprop} illustre les propriétés de base des vecteurs de
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % \paragraph{Addition}
-\begin{property}[Addition]
+\begin{property}{Addition}{}
 %
 Un vecteur position peut être décomposé en une addition de vecteurs qui passent par des points intermédiaires:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -289,7 +289,7 @@ Un vecteur position peut être décomposé en une addition de vecteurs qui passe
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{property}
 %
-\begin{property}[Inversion]
+\begin{property}{Inversion}{}
 %
 L'inversion de l'origine et la destination est équivalente à la négation du vecteur de position:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -299,7 +299,7 @@ L'inversion de l'origine et la destination est équivalente à la négation du v
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{property}
 %
-\begin{property}[Vecteurs unitaires]
+\begin{property}{Vecteurs unitaires}{}
 %
 Les vecteurs positions peuvent être exprimés comme des \textbf{combinaisons de distances et directions} qui sont représentées respectivement par des paires de scalaires $l_i$ et vecteurs unitaires $\hat{n}_i$ (qui représente des directions dans l'espace):
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -311,7 +311,7 @@ Les vecteurs positions peuvent être exprimés comme des \textbf{combinaisons de
 
 
 
-\begin{property}[Norme]
+\begin{property}{Norme}{}
 La norme d'un vecteur position, i.e. sa longueur, peut être calculée en effectuant un produit scalaire du vecteur avec lui même:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
@@ -321,7 +321,7 @@ La norme d'un vecteur position, i.e. sa longueur, peut être calculée en effect
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{property}
 
-\begin{property}[Projection]
+\begin{property}{Projection}{}
 La longueur $d$ d'un vecteur position $\vec{r}$ projeté selon un axe particulier correspond au produit scalaire du vecteur position avec un vecteur unitaire $\hat{n}$ aligné sur cet axe:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
@@ -332,7 +332,7 @@ d = \vec{r} \bullet \hat{n} = \| \vec{r} \|  \cos \angle (\vec{r},\hat{n})
 Cette opération est aussi appelée \textbf{projection d'un vecteur sur un axe} et illustrée à la figure \ref{fig:distproj}. 
 \end{property}
 
-\begin{property}[Angle]
+\begin{property}{Angle}{}
 Le produit scalaire de deux vecteurs unitaires est égale au cosinus de l'angle qui les sépare puisqu'ils ont une dimension unitaire:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
@@ -388,7 +388,7 @@ La démarche utilisée pour calculer des positions avec les vecteurs géométriq
 \video{Exemple de calcul avec les vecteurs géométrique de position}{https://youtu.be/YqmyBJPJmP0}
 
 
-\begin{example}[Calcul de la hauteur d'un robot]
+\begin{example}{Calcul de la hauteur d'un robot}{}
 \label{sec:hauteurrobot}
 
 Un exemple est ici donné pour le calcul de la hauteur de l'effecteur d'un robot à 3 DDL, illustré à la figure \ref{fig:vecposphi}, avec l'aide des vecteurs géométriques de position. Comme illustré à la Figure \ref{fig:vecposcons}, par inspection il est possible de déterminer la relation vectorielle suivante:
@@ -954,7 +954,7 @@ La matrice de rotation $^bR^a$ consiste donc à des produits scalaires entre les
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{example}[Matrice de rotation dans le plan calculée par trigonométrie]
+\begin{example}{Matrice de rotation dans le plan calculée par trigonométrie}{}
 
 La figure \ref{fig:basechange2d} montre un exemple d'un vecteur $\vec{r}$ en 2 dimensions exprimé dans deux base vectorielles $b$ et $a$. Comme illustré à la figure \ref{fig:r_trigo}, avec une construction de triangles il est possible de déterminer par trigonométrie les relations entre les composantes dans les deux bases, et donc la matrice de rotation ${}^aR^b$. L'approche par trigonométrie est toutefois limitée pour les rotations en 3D, une approche vectorielle plus simple et plus universelle pour calculer des matrices de rotation est présentée à la section \ref{sec:calmat}.
 %%%%%%%%%%%%%
@@ -1220,7 +1220,7 @@ La matrice $^aR^b$ peut donc être formée grâce à la définition \eqref{eq:ma
 Cette section présente plusieurs propriétés des matrices de rotation qui sont utiles dans un contexte de changement de bases vectorielles.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{property}[Norme des colonnes et rangés]
+\begin{property}{Norme des colonnes et rangés}{}
 
 Les colonnes $\col{c}_i$ et les rangés $\col{r}_i$ d'une matrice de rotation ont une norme égale à 1:
 %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1249,7 +1249,7 @@ L’identité trigonométrique suivante est souvent utile pour ce type de calcul
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{property}[Matrice identité]
+\begin{property}{Matrice identité}{}
 Une matrice de rotation est réduite à une matrice identitée lorsque les bases vectorielle sont coïncidentes. Par exemple, pour les matrices de rotation élémentaires des équations \eqref{eq:rot3theta}, \eqref{eq:rot2theta} et \eqref{eq:rot1theta}, lorsque l'angle est égale à zéro, les matrices sont réduites à des matrices identités:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
@@ -1266,7 +1266,7 @@ R_1( \theta ) = R_2( \theta ) = R_3( \theta ) = I_{3\times3} =
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{property}[Inversion]
+\begin{property}{Inversion}{}
 Pour inverser la direction d'une opération de changement de base, il suffit de multiplier par l'inverse de la matrice de rotation:
 %%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
@@ -1287,7 +1287,7 @@ R^{-1} &= R^T \\
 \end{property}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{property}[Changements de base successifs]
+\begin{property}{Changements de base successifs}{}
 Des changements de base successifs $a \rightarrow b \rightarrow c \rightarrow ... \rightarrow z$  peuvent être combinés en une seule matrice de rotation en multipliant les matrices de rotation intermédiaires par la gauche:
 %%%%%%%%%%%%%%%%%%%
 \begin{align}
@@ -1308,7 +1308,7 @@ Notez que selon la notation utilisée dans ces notes, \textbf{les lettres des ba
 \end{property}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{property}[Non-commutativité]
+\begin{property}{Non-commutativité}{}
 Le produit des matrices de rotation n'est toutefois pas commutatif, sauf pour des petites rotations infinitésimales. L'ordre de multiplication des matrices est donc important et généralement:
 %%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
@@ -1325,7 +1325,7 @@ R_i( \theta_1 ) R_i( \theta_2 )  = R_i( \theta_2 ) R_i( \theta_1 ) = R_i( \theta
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{example}[Réorganisation des vecteurs unitaires]
+\begin{example}{Réorganisation des vecteurs unitaires}{}
 %
 La figure \ref{fig:r_reorg} illustre deux bases vectorielles qui ont des vecteurs unitaires parallèles mais avec des directions et un ordre différents. Pour calculer la matrice de rotation associée $^bR^a$, la première étape est d'identifier la relation entre les vecteurs unitaires $\hat{a}_i$ et $\hat{b}_i$. 
 %
@@ -1383,7 +1383,7 @@ Il est donc maintenant possible d'assembler la matrice de rotation $^bR^a$ basé
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{example}[Réorganisation des vecteurs unitaires et rotation selon un axe]
+\begin{example}{Réorganisation des vecteurs unitaires et rotation selon un axe}{}
 %
 Un exemple de calcul d'une matrice de rotation $^bR^a$ est donné pour une base $a$ qui subit une révolution de $\theta$ degrés autour de l'axe $\hat{b}_3$ par rapport à une base $b$, mais ici avec des vecteurs unitaires qui sont définis avec des directions différentes, tel qu'illustré à la figure \ref{fig:rot3}, et ce n'est donc pas un cas de rotation élémentaire. Pour construire la matrice de rotation, la première étape est de dessiner les deux bases avec une origine commune, dans une configuration où la rotation $\theta$ est relativement faible (pour simplifier la visualisation). On peut constater que le vecteur unitaire $\hat{a}_1$ est aligné avec l'axe de rotation, donc indépendant de $\theta$ et toujours donné par $\hat{a}_1=-\hat{b}_3$. Ensuite, par inspection, il est possible d'exprimer chaque vecteur unitaire $\hat{a}_i$ comme une combinaison des vecteurs unitaires $\hat{b}_i$, avec des relations trigonométriques simples comme illustrés par les figures \ref{fig:rot3_a1} et \ref{fig:rot3_a2}. 
 %
@@ -1439,7 +1439,7 @@ Il est donc maintenant possible d'assembler la matrice de rotation $^bR^a$ basé
 \end{example}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{example}[Calcul de la position globale de l'effecteur d'un robot]
+\begin{example}{Calcul de la position globale de l'effecteur d'un robot}{}
 \label{sec:exer-cinematique-base}
 %
 Dans cet exemple, le robot précédemment étudié (Figure \ref{fig:vecposunipro}) est ici analysé à nouveau mais cette fois avec l'aide des bases vectorielles. L'objectif est ici de calculer la position du point $D$ par rapport au point $A$ exprimée dans la base vectorielle $a$. Comme illustré à la figure \ref{fig:vecposbase1}, la première étape est de décrire la position qui doit être calculée en terme de vecteurs de position géométriques:
@@ -1619,7 +1619,7 @@ Trouvez la correspondance entre les angles $\theta_i$ et $\varphi_i$ et vérifie
 \end{example}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{example}[Distance projetée calculée avec les vecteur-colonnes]
+\begin{example}{Distance projetée calculée avec les vecteur-colonnes}{}
 %
 Comme illustré à la figure \ref{fig:exprojcomp}, cet exemple démontre comment calculer la distance projetée $d_n$ d'un vecteur $\vec{r}_{C/A}$ selon un axe décrit par $\hat{n}$, connaissant les vecteur-colonnes de composantes:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2163,7 +2163,7 @@ Détails à venir!
 
 \newpage
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{example}[Cinématique d'un robot mobile]
+\begin{example}{Cinématique d'un robot mobile}{}
 %\subsection{Exemple: cinématique d'un robot mobile}
 
 La figure illustre un exemple où un véhicule et les points d’intérêts qu'il trouve doivent être localisés par rapport à une base. La cinématique de ce problème peut se résumer à calculer la matrice de transformation $^AT^B$, qui peut être construite à partir de la définition:
@@ -2522,7 +2522,7 @@ Les matrices de transformation globales de tous les repères mobiles vers le rep
 
 
 %%%%%%%%%%%%%%%%%%%%%%
-\begin{example}[Cinématique pour un robot avec deux joints]
+\begin{example}{Cinématique pour un robot avec deux joints}{}
 %\subsection{Exemple de la cinématique pour un robot avec deux joints}
 
 Un exemple est ici présenté de calcul de la cinématique directe pour le robot illustré à la figure \ref{fig:kinex} qui possède un joint rotatif et un joint prismatique. L'objectif est ici de calculer les coordonnées du point $D_o$ dans le repère fixe $\{ A_o, \hat{a}_1, \hat{a}_2, \hat{a}_3\}$ comme un fonction de la configuration des joints. Trois méthodes de résolution sont présentées, une méthode minimaliste qui utilise seulement les équations vectorielles, une méthode matricielle qui utilise les vecteur-colonnes et les matrices de rotation, ainsi qu'une méthode utilisant les coordonnées homogènes. 
@@ -2847,7 +2847,7 @@ Donc lorsque la convention est utilisée, la matrice de transformation entre deu
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\subsubsection{Exemple pour un robot anthropomorphique avec les paramètres \textit{DH}}
-\begin{example}[Cinématique d'un robot anthropomorphique avec les paramètres \textit{DH}]
+\begin{example}{Cinématique d'un robot anthropomorphique avec les paramètres \textit{DH}}{}
 \label{sec:dhex}
 
 La Figure \ref{fig:dh3} illustre l'utilisation de la convention \textit{DH} pour déterminer la matrice de transformation qui représente la pose de l'effecteur. 
@@ -2932,7 +2932,7 @@ En pratique, les contrôleurs de robot trouvent généralement indirectement les
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\subsection{Exemple:}
-\begin{example}[Cinématique inverse d'un robot à deux joints rotatifs]
+\begin{example}{Cinématique inverse d'un robot à deux joints rotatifs}{}
 
 Cet exemple illustre une résolution analytique de la cinématique inverse d'un robot simple à deux joints rotatifs dans le plan, illustré à la figure \ref{fig:invkin}.
 

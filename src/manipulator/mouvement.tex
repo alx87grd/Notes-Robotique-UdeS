@@ -615,7 +615,7 @@ Pour les sections suivantes, s'il n'est pas préciser autrement on va toujours t
 \video{Exemple de calcul de la matrice jacobienne}{https://youtu.be/qgqDscXSsMM}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{example}[Cinématique différentielle d'un robot cartésien]
+\begin{example}{Cinématique différentielle d'un robot cartésien}{}
 
 La Figure \ref{fig:jaco_robot_cart} illustre un robot planaire constitué de deux actionneurs linéaires basé sur des vis à billes qui sont assemblés à 90 degrées. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -669,7 +669,7 @@ Il est a noter ici que: \textbf{1)} la matrice Jacobienne est diagonale car chaq
 \end{example}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{example}[Cinématique différentielle d'un robot à deux joints]
+\begin{example}{Cinématique différentielle d'un robot à deux joints}{}
 
 \label{sec:kindiff_2dof}
 
@@ -726,7 +726,7 @@ On peut alors trouver la relation différentielle en dérivant par rapport au te
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{example}[Cinématique différentielle d'un robot à trois joints]
+\begin{example}{Cinématique différentielle d'un robot à trois joints}{}
 \label{sec:diffkinrobot3dofex}
 
 Les Figures \pageref{fig:jaco_3dof_a} et \ref{fig:jaco_3dof_b} illustre la cinématique différentielle d'un robot à trois joints dans une configuration qui permet de bien visualiser indépendamment les effets du mouvement de chaque joint. 
@@ -781,7 +781,7 @@ Certaine configuration $\col{q}$ d'un robot manipulateur peuvent être singuliè
 Ces situations correspondent aussi à lorsque les colonnes de $J$ sont co-linéaires, et qu'aucune combinaison linéaire ne permet de déplacer l'effecteur dans au moins une direction (la matrice jacobienne a un espace-nul gauche, voir section \ref{sec:leftnullspace} pour les notions d'algèbre linéaire associées). 
 
 
-\begin{example}[Singularités d'un robot manipulateur planaire à 2 joints]
+\begin{example}{Singularités d'un robot manipulateur planaire à 2 joints}{}
 
 Pour un robot manipulateur à deux DDl comme décrit à l'exemple \ref{sec:kindiff_2dof}, le Jacobien est donné par:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -907,7 +907,7 @@ et minimise la norme du vecteur-colonne $\col{\dot{q}}$. Le second terme produit
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{example}[Exemple de cinématique différentielle inverse pour une situation sous-contrainte]
+\begin{example}{Exemple de cinématique différentielle inverse pour une situation sous-contrainte}{}
 Le robot de l'exemple \ref{sec:diffkinrobot3dofex} est ici analysé en termes de cinématique différentielle, la Figure \ref{fig:robot_redo_a} illustre la présence de plusieurs solutions possibles et la Figure \ref{fig:robot_redo_c} illustre l'utilisation de la matrice pseudo-inverse pour obtenir la solution optimale ainsi que le nullspace. 
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -992,7 +992,7 @@ Un méthode pratique pour la cinématique inverse dans ce contexte est la métho
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{example}[Exemple de cinématique différentielle inverse pour une situation sur-contrainte]
+\begin{example}{Exemple de cinématique différentielle inverse pour une situation sur-contrainte}{}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
@@ -1083,7 +1083,7 @@ On obtient donc une équation quadratique pour laquelle l'ensemble des solutions
 
 Un lien peu aussi être fait directement avec les valeurs singulière de la matrice $J$. Détails à venir!
 
-\begin{example}[Indice de manipulabilité pour un robot à 2 DDL]
+\begin{example}{Indice de manipulabilité pour un robot à 2 DDL}{}
 
 Une exemple simple pour illustré l'indice de manipulabilité est un robot planaire à 2 DDL comme illutré à la Figure \ref{fig:2dof_manip_graph}, pour lequel on peut analyser la manipulabilité pour divers position de l'effecteur sur l'axe horizontal. La manipulabilité est nulle lorsque le coude est complètement plié (le robot est sur une singularité et ne peut bouger horizontalement), nulle lorsque le coude est complètement déplié (le robot est sur une singularité de ne peut bouger horizontalement) et optimale entre les deux lorsque le coude est partielement plié.
 

@@ -1,0 +1,338 @@
+\chapter{Analyse de la stabilité}
+\label{chap:stability}
+
+\section{Introduction}
+
+Lorsqu'on dispose des équations du mouvement, il est toujours possible de simuler le futur à partir de conditions initiales spécifiques $\mathbf{x}(t = 0)$. Cependant, cette simulation ne décrit qu'une trajectoire unique. Rien ne garantit qu'un comportement très différent n'émergera pas si l'on modifie légèrement ces conditions initiales. L'objectif de l'analyse de stabilité d'un système dynamique est de \textbf{tirer des conclusions génériques sur l'évolution future du système pour un ensemble de conditions initiales}, sans avoir à calculer chaque trajectoire. On s'intéresse typiquement au comportement asymptotique, c'est-à-dire l'état du système lorsque $t \rightarrow \infty$, souvent on cherche à savoir s'il va converger sur une position cible:
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{equation}
+    \lim_{t \rightarrow \infty} \mathbf{x}(t) = \mathbf{x}_{d} \, ?
+\end{equation}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% Parfois, on va se limiter à conclure qu'il va rester proche de la cible. Différent types de conclusions sont possibles selon le type de système à l'étude.
+
+\video{Introduction à l'analyse de stabilité pour les systèmes non-linéaires}{https://youtu.be/q0Oqa5J3zEk}
+
+\subsection{Cadre de référence}
+
+Dans cette section, le niveau d'abstraction le plus générique d'équations dynamiques est utilisé, avec deux variantes: les systèmes dynamiques dit autonome ou non-autonomes.
+
+\begin{definition}{Système Autonome}{sys_auto}
+    Un système dynamique est dit \textbf{autonome} si sa dynamique ne dépend pas explicitement du temps $t$, mais uniquement de l'état actuel $\mathbf{x}$.
+    \begin{equation}
+        \dot{\mathbf{x}} = f(\mathbf{x})
+    \end{equation}
+\end{definition}
+
+\begin{definition}{Système Non-Autonome}{sys_non_auto}
+    Un système dynamique est dit \textbf{non-autonome} si sa dynamique dépend explicitement de la variable temporelle $t$.
+    \begin{equation}
+        \dot{\mathbf{x}} = f(\mathbf{x},t)
+    \end{equation}
+\end{definition}
+
+C'est équations peuvent représenter tout genre de systèmes dynamique, en boucle ouverte ou fermée, tant qu'on est en présence d'équations en temps continu. Typiquement, un système en boucle fermée, avec une loi de commande $\pi$ pour une cible fixe, va donner un système autonome:
+%%%%%%%%%%%%%%%%%
+\begin{equation}
+    \dot{\mathbf{x}} = f_{BO}(\mathbf{x},\mathbf{u}) 
+    \quad \text{avec} \quad
+    \mathbf{u} = \pi(\mathbf{x})
+    \quad \Rightarrow \quad
+    \dot{\mathbf{x}} = f_{BO}(\mathbf{x},\pi(\mathbf{x})) = f_{BF}(\mathbf{x})
+\end{equation}
+%%%%%%%%%%%%%%%%%
+Alors qu'un système en boucle fermée, avec une loi de commande $\pi$ ciblant une trajectoire temporelle $\mathbf{x}_d(t)$, va donner un système non-autonome:
+%%%%%%%%%%%%%%%%%
+\begin{equation}
+    \dot{\mathbf{x}} = f_{BO}(\mathbf{x},\mathbf{u}) 
+    \quad \text{avec} \quad
+    \mathbf{u} = \pi(\mathbf{x},\mathbf{x}_d(t))
+    \quad \Rightarrow \quad
+    \dot{\mathbf{x}} = f_{BO}(\mathbf{x},\pi(\mathbf{x},\mathbf{x}_d(t))) = f_{BF}(\mathbf{x},t)
+\end{equation}
+%%%%%%%%%%%%%%%%%
+
+\paragraph{Généralité de l'analyse à l'origine}
+
+En pratique, on va chercher à analyser si un système dynamique va se stabiliser à une configuration arbitraire désirée $\mathbf{x}_d$. Dans cette section, les techniques sont présentés pour analyser la stabilité de l'origine du système $\mathbf{x} = \mathbf{0}$. Cette focalisation sur l'origine n'est pas une restriction, mais une simplification notationnelle. Il est toujours possible de ramener l'étude d'un point d'équilibre quelconque à l'étude de l'origine via un changement de variable.
+
+\begin{theorem}{Translation du Point d'Équilibre}{equilibrium_translation}
+    L'analyse de stabilité d'un système autonome $\dot{\mathbf{x}} = f(\mathbf{x})$ pour un point arbitraire $\mathbf{x}_d$ est équivalente à l'analyse de stabilité de l'origine d'un système autonome $\dot{\mathbf{x}}_e = f_e(\mathbf{x}_e)$ défini avec les transformation suivantes:
+    \begin{align}
+        \mathbf{x}_e &= \mathbf{x}_d - \mathbf{x} \\
+        \dot{\mathbf{x}}_e &= \dot{\mathbf{x}}_d - \dot{\mathbf{x}} = -f(\mathbf{x})
+    \end{align}
+\end{theorem}
+
+On peut donc toujours définir l'état du système comme l'erreur par rapport à la cible désirée, et ainsi tout les analyses peuvent viser l'origine sans perte de généralité.
+
+
+
+
+\section{Définitions de la stabilité}
+
+Comme établi à la section précédente, nous considérons ici la stabilité de l'origine $\mathbf{x} = \mathbf{0}$. L'analyse de stabilité vise à caractériser le comportement des trajectoires du système lorsqu'elles sont perturbées par rapport à cet équilibre. Trois définitions fondamentales sont typiquement utilisés:
+
+\begin{definition}{Stabilité (au sens de Lyapunov)}{lyapunov_stability}
+    L'équilibre $\mathbf{x} = \mathbf{0}$ est dit \textbf{stable} si, pour tout rayon $\epsilon > 0$, il existe un rayon $r > 0$ tel que :
+    \begin{equation}
+        \|\mathbf{x}(t_0)\| < r \implies \|\mathbf{x}(t)\| < \epsilon, \quad \forall t \geq t_0
+    \end{equation}
+    \textbf{Interprétation :} Si le système démarre proche de l'équilibre (dans la boule $r$), il ne s'éloignera jamais au-delà d'une certaine limite supérieure (la boule $\epsilon$).
+\end{definition}
+
+\begin{definition}{Stabilité Asymptotique}{asymp_stability}
+    L'équilibre est dit \textbf{asymptotiquement stable} s'il est stable (au sens de Lyapunov) et qu'il existe un rayon $r > 0$ tel que :
+    \begin{equation}
+        \|\mathbf{x}(t_0)\| < r \implies \lim_{t \to \infty} \mathbf{x}(t) = \mathbf{0}
+    \end{equation}
+    \textbf{Interprétation :} Le système ne fait pas que rester borné, il finit par retourner exactement à l'équilibre. C'est la condition minimale requise pour la plupart des systèmes de commande en robotique, i.e. l'erreur tend vers zéro.
+\end{definition}
+
+\begin{definition}{Stabilité Exponentielle}{exp_stability}
+    L'équilibre est dit \textbf{exponentiellement stable} s'il existe des constantes positives $\alpha > 0$ et $\lambda > 0$ et qu'il existe un rayon $r > 0$ tel que : :
+    \begin{equation}
+         \|\mathbf{x}(t_0)\| < r \implies \|\mathbf{x}(t)\| \leq \alpha \|\mathbf{x}(t_0)\| e^{-\lambda (t-t_0)}
+    \end{equation}
+    \textbf{Interprétation :} La convergence vers l'équilibre est rapide et bornée par une enveloppe exponentielle décroissante. 
+\end{definition}
+
+\subsection{Stabilité Locale vs Globale}
+
+Dans les définitions ci-dessus, si conditions sont valides pour des états initiaux situés à l'intérieur d'un certain rayon $r$, on parle alors de \textbf{stabilité locale}.
+
+\begin{definition}{Stabilité Globale}{global_stability}
+    Une propriété de stabilité est dite \textbf{globale} si elle est valide pour n'importe quelle condition initiale, aussi grande soit-elle. Autrement dit, si le rayon d'attraction est infini :
+    \begin{equation}
+        r \rightarrow \infty
+    \end{equation}
+\end{definition}
+
+
+\section{Méthode Directe de Lyapunov}
+
+L'approche privilégiée pour analyser la stabilité des systèmes non-linéaires est appelée la \textit{Méthode Directe de Lyapunov}. Le principe est de proposer une fonction scalaire $V(\mathbf{x})$, appelée \textit{fonction candidate de Lyapunov}, qui représente une sorte d'énergie généralisée du système, et d'observer son évolution temporelle. L'idée de base est de vérifier que 1) l'origine du système est un minimum d'énergie, et 2) que l'énergie est toujours décroissante. Ces deux conditions permettre de conclure que le système va nécessairement converger vers l'origine. Quelques définitions sont nécessaires pour formaliser ces concepts:
+
+\begin{definition}{Voisinage}{neighborhood}
+    Un ensemble $\Omega \subset \mathbb{R}^n$ qui contient l'origine $\mathbf{x}=\mathbf{0}$ en son intérieur, est appelé un \textbf{voisinage de l'origine}.
+    \begin{equation}
+        \mathbf{0} \in \Omega \subseteq \mathbb{R}^n
+    \end{equation}
+    C'est donc une région autour de l'origine dans l'espace d'état. Ce sous-ensemble est utile pour définir des propriétés locales.
+\end{definition}
+
+
+\begin{definition}{Fonction Définie Positive}{positive_definite}
+    Une fonction $V(\mathbf{x})$ est dite \textbf{définie positive} dans $\Omega$ si :
+    \begin{enumerate}
+        \item $V(\mathbf{0}) = 0$
+        \item $V(\mathbf{x}) > 0$ pour tout $\mathbf{x} \in \Omega$ tel que $\mathbf{x} \neq \mathbf{0}$.
+    \end{enumerate}
+    \textit{Si $V(\mathbf{x}) \geq 0$, la fonction est dite \textbf{semi-définie positive}.}
+\end{definition}
+
+\begin{definition}{Fonction Définie Négative}{negative_definite}
+    Une fonction $V(\mathbf{x})$ est dite \textbf{définie négative} dans $\Omega$ si :
+    \begin{enumerate}
+        \item $V(\mathbf{0}) = 0$
+        \item $V(\mathbf{x}) < 0$ pour tout $\mathbf{x} \in \Omega$ tel que $\mathbf{x} \neq \mathbf{0}$.
+    \end{enumerate}
+    \textit{Si $V(\mathbf{x}) \leq 0$ la fonction est dite \textbf{semi-définie négative}.}
+\end{definition}
+
+\begin{definition}{Fonction Radialement Non-Bornée}{radially_unbounded}
+    Une fonction $V(\mathbf{x})$ est dite \textbf{radialement non-bornée}  si elle tend vers l'infini dans toutes les directions :
+    \begin{equation}
+        V(\mathbf{x}) \to \infty \quad \text{quand} \quad \|\mathbf{x}\| \to \infty
+    \end{equation}
+    Cette propriété est nécessaire pour garantir la stabilité \textbf{globale}.
+\end{definition}
+
+
+
+\subsection{Systèmes Autonomes}
+
+Pour les systèmes autonomes $\dot{\mathbf{x}} = f(\mathbf{x})$, l'analyse repose sur le signe de la dérivée de $V$ par rapport au temps :
+\begin{equation}
+    \dot{V}(\mathbf{x}) = \frac{\partial V}{\partial \mathbf{x}}  f(\mathbf{x})
+\end{equation}
+
+\begin{theorem}{Stabilité de Lyapunov (Locale)}{lyap_local}
+    Soit $\Omega$ un voisinage de l'origine. S'il existe une fonction scalaire $V(\mathbf{x})$ continûment différentiable telle que, pour tout $\mathbf{x} \in \Omega$ :
+    \begin{enumerate}
+        \item $V(\mathbf{x})$ est \textbf{définie positive} ($V(\mathbf{0})=0$ et $V(\mathbf{x})>0$ ailleurs).
+        \item $\dot{V}(\mathbf{x})$ est \textbf{semi-définie négative} ($\dot{V}(\mathbf{x}) \leq 0$).
+    \end{enumerate}
+    Alors l'origine est \textbf{stable au sens de Lyapunov}.
+\end{theorem}
+
+\begin{theorem}{Stabilité Asymptotique Locale}{lyap_local}
+    Soit $\Omega$ un voisinage de l'origine. S'il existe une fonction scalaire $V(\mathbf{x})$ continûment différentiable telle que, pour tout $\mathbf{x} \in \Omega$ :
+    \begin{enumerate}
+        \item $V(\mathbf{x})$ est \textbf{définie positive} ($V(\mathbf{0})=0$ et $V(\mathbf{x})>0$ ailleurs).
+        \item $\dot{V}(\mathbf{x})$ est \textbf{définie négative} ($\dot{V}(\mathbf{x}) < 0$).
+    \end{enumerate}
+    Alors l'origine est \textbf{asymptotiquement stable}.
+\end{theorem}
+
+\begin{theorem}{Stabilité Asymptotique Globale}{lyap_local}
+    S'il existe une fonction scalaire $V(\mathbf{x})$ continûment différentiable telle que, pour tout $\mathbf{x} \in \mathbb{R}^n$ :
+    \begin{enumerate}
+        \item $V(\mathbf{x})$ est \textbf{définie positive} ($V(\mathbf{0})=0$ et $V(\mathbf{x})>0$ ailleurs).
+        \item $\dot{V}(\mathbf{x})$ est \textbf{définie négative} ($\dot{V}(\mathbf{x}) < 0$).
+        \item $V(\mathbf{x})$ est radialement non-bornée ($V(\mathbf{x}) \rightarrow \infty \quad \text{quand} \quad \|\mathbf{x}\| \rightarrow \infty$)
+    \end{enumerate}
+    Alors l'origine est \textbf{globalement asymptotiquement stable}.
+\end{theorem}
+
+
+
+\paragraph{Le problème de la dérivée semi-définie}
+
+Avec les systèmes mécaniques, la dérivée de l'énergie totale est souvent liée à la puissance dissipée par les frottements, et cette expression est souvent seulement semi-définie négative car elle s'annule dès que la vitesse est nulle, même si la position n'est pas à l'équilibre. Le théorème de Lyapunov simple ne permet pas de conclure à la convergence asymptotique (seulement à la stabilité). On peut toutefois utilise le principe d'invariance pour prouver une convergence asymptotique.
+
+\begin{definition}{Ensemble Invariant}{invariant_set}
+    Un ensemble $M$ est dit invariant si toute trajectoire démarrant dans $M$ reste dans $M$ pour tout $t \geq 0$.
+\end{definition}
+
+\begin{theorem}{Principe d'Invariance de LaSalle}{lasalle}
+    Pour un système autonome avec une fonction Lyapunov $V(\mathbf{x})$ définie positive et $\dot{V}(\mathbf{x}) \leq 0$. Si on défini un ensemble de point $E$ où la dérivée de l'énergie s'annule :
+    \begin{equation}
+        E = \{ \mathbf{x} \mid \dot{V}(\mathbf{x}) = 0 \}
+    \end{equation}
+    Alors, $\mathbf{x}$ converge vers $M$, le plus grand \textbf{ensemble invariant} contenu dans $E$. 
+\end{theorem}
+
+\textbf{Application:} Si $\dot{V}=0$ implique que l'accélération est non-nulle (le système ne peut pas rester là, donc ce n'est pas un ensemble invariant) sauf lorsque $\mathbf{x}= 0$, alors le plus grand ensemble invariant contenu dans $E$ est simplement $\mathbf{x}= 0$. Dans ce cas on retrouve la même conclusion de stabilité asymptotique que l'on aurait obtenue avec la dérivée de l'énergie définie négative.
+
+\subsection{Systèmes Non-Autonomes}
+
+Pour les systèmes dépendant du temps $\dot{\mathbf{x}} = f(\mathbf{x}, t)$ on peut utiliser le Lemme de Barbalat pour analyser la convergence.
+
+\begin{theorem}{Lemme de Barbalat}{barbalat}
+    Soit $f: [0, \infty) \to \mathbb{R}$ une fonction différentiable. Si les deux conditions suivantes sont respectées :
+    \begin{enumerate}
+        \item $f(t)$ possède une limite finie :
+        \begin{equation}
+            \lim_{t \to \infty} f(t) = L < \infty
+        \end{equation}
+        \item $\dot{f}(t)$ est uniformément continue (condition souvent vérifiée en montrant que $\ddot{f}$ est bornée).
+    \end{enumerate}
+    Alors, la dérivée converge vers zéro :
+    \begin{equation}
+        \lim_{t \to \infty} \dot{f}(t) = 0
+    \end{equation}
+\end{theorem}
+
+Ce résultat mathématique est utilisé pour formuler un théorème fondamental pour l'analyse des systèmes variables dans le temps, souvent appelé "Lyapunov-like Lemma" :
+
+\begin{theorem}{Lemme de type Lyapunov}{lyap_like}
+    Pour un système non-autonome, si une fonction scalaire $V(\mathbf{x}, t)$ satisfait les trois conditions suivantes :
+    \begin{enumerate}
+        \item $V(\mathbf{x}, t)$ est bornée inférieurement (souvent par 0) :
+        \begin{equation}
+            V(\mathbf{x}, t) \geq V_{min}
+        \end{equation}
+        \item $\dot{V}(\mathbf{x}, t)$ est semi-définie négative :
+        \begin{equation}
+            \dot{V}(\mathbf{x}, t) \leq 0
+        \end{equation}
+        \item $\dot{V}(\mathbf{x}, t)$ est uniformément continue (souvent vérifié si $\ddot{V}$ est bornée).
+    \end{enumerate}
+    Alors, la dérivée de la fonction de Lyapunov converge vers zéro :
+    \begin{equation}
+        \lim_{t \to \infty} \dot{V}(\mathbf{x}, t) = 0
+    \end{equation}
+\end{theorem}
+
+
+% \section{Analyse des systèmes linéaires}
+
+
+
+% \section{Analyse des systèmes non-linéaires}
+
+
+
+
+
+
+\newpage
+
+\section{Passivité}
+
+Intuitivement, un système est \textbf{passif} s'il ne génère pas d'énergie interne. Il ne peut que stocker l'énergie qu'on lui fournit ou la dissiper. Cette propriété est utile car la mise en connexion (de systèmes passifs) conserve cette propriété. On peut donc utiliser ce concept pour conclure sur la stabilité de plusieurs systèmes interconnecté sans connaître le détail de certains sous-système sauf qu'ils ont la propriété d'être passif.
+
+\subsection{Définitions Formelles}
+
+Considérons un système dynamique avec un état $\mathbf{x}$, une entrée $\mathbf{u}$ et une sortie $\mathbf{y}$.
+
+\begin{definition}{Système Passif}{passivity}
+    Un système est dit \textbf{passif} s'il existe une fonction scalaire continue $S(\mathbf{x}) \geq 0$, appelée \textbf{fonction de stockage}, telle que $\forall t \geq t_0$ :
+    
+    \textbf{Forme intégrale :}
+    \begin{equation}
+        \underbrace{S(\mathbf{x}(t)) - S(\mathbf{x}(t_0))}_{\text{Énergie stockée}} \leq \underbrace{\int_{t_0}^{t} \mathbf{y}(\tau)^T \mathbf{u}(\tau) d\tau}_{\text{Énergie fournie}}
+    \end{equation}
+    
+    \textbf{Forme différentielle} :
+    \begin{equation}
+        \dot{S}(\mathbf{x}) \leq \mathbf{y}^T \mathbf{u}
+    \end{equation}
+    \textit{Interprétation : Le taux de variation de l'énergie interne est inférieur à la puissance fournie. La différence est l'énergie dissipée.}
+\end{definition}
+
+Il existe des variantes plus strictes de la passivité, utiles pour prouver la convergence asymptotique.
+
+\begin{definition}{Variantes de la Passivité}{strict_passivity}
+    Soit $S(\mathbf{x})$ une fonction de stockage.
+    \begin{itemize}
+        \item \textbf{Strictement Passif :} S'il existe une fonction définie positive $\psi(\mathbf{x})$ (dissipation interne) telle que :
+        \begin{equation}
+             \dot{S}(\mathbf{x}) \leq \mathbf{y}^T \mathbf{u} - \psi(\mathbf{x})
+        \end{equation}
+        
+        \item \textbf{Strictement Passif en Sortie :} S'il existe $\varepsilon > 0$ tel que :
+        \begin{equation}
+            \dot{S}(\mathbf{x}) \leq \mathbf{y}^T \mathbf{u} - \varepsilon \|\mathbf{y}\|^2
+        \end{equation}
+        
+        \item \textbf{Sans Perte:} Si l'égalité stricte est respectée :
+        \begin{equation}
+            \dot{S}(\mathbf{x}) = \mathbf{y}^T \mathbf{u}
+        \end{equation}
+        \textit{Exemple : Un système purement inertiel (masse pure) ou purement conservatif (ressort).}
+    \end{itemize}
+\end{definition}
+
+\subsection{Lien avec Lyapunov}
+
+Il existe un lien direct entre passivité et stabilité au sens de Lyapunov. La fonction de stockage $S(\mathbf{x})$, qui représente l'énergie interne, peut être vue comme une fonction candidate de Lyapunov. Si un système est passif, alors en l'absence d'apport d'énergie extérieur (entrée $\mathbf{u}=\mathbf{0}$), l'énergie stockée ne peut pas augmenter :
+\begin{equation}
+    \mathbf{u}=\mathbf{0} \implies \dot{S}(\mathbf{x}) \leq 0
+\end{equation}
+Ainsi, \textbf{tout système passif est stable} (au sens de Lyapunov) si sa fonction de stockage est définie positive.
+
+
+
+\subsection{Passivité des systèmes linéaires (LTI)}
+
+
+Pour les systèmes linéaires, la passivité peut être vérifiée directement dans le domaine fréquentiel, sans chercher explicitement la fonction $S(\mathbf{x})$. 
+
+\begin{theorem}{Passivité d'un système LTI}{passivity_lti}
+Pour un système LTI stable avec une matrice de fonction de transferts $H(s)$, le système est passif si et seulement si :
+$$ H(j\omega) + H(j\omega)^H \geq 0 \quad \forall \omega \in \mathbb{R} $$
+où $H(j\omega)^H$ est la transposée hermitienne de $H(j\omega)$.
+\end{theorem}
+
+\begin{theorem}{Passivité d'une fonction de transfert}{passivity_tf}
+    Pour un système linéaire stable de fonction de transfert $H(s)$. Le système est passif si et seulement si :
+    \begin{equation}
+        \text{Re}\{H(j\omega)\} \geq 0, \quad \forall \omega \in \mathbb{R}
+    \end{equation}
+    Cela signifie que que la phase de $H(j\omega)$ reste bornée à $\pm$ 90 degrées:
+    \begin{equation}
+        |\text{arg}(H(j\omega))| \leq \frac{\pi}{2}
+    \end{equation}
+\end{theorem}

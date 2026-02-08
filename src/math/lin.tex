@@ -436,7 +436,7 @@ m     = dim( col(A) ) + dim( N(A^T) )  = r + dim( N(A^T) )
 Une matrice $A$ va avoir un espace nul gauche seulement lorsqu'elle a une rang déficient. La présence d'un espace nul gauche indique un système sur-contraint, i.e. un surplus d'équations. Il y aura donc plusieurs sorties $\col{y}$ pour lesquelles il n'y a pas de solutions $\col{x}$.
 
 
-\begin{example}[Espace-nul gauche de la matrice jacobienne d'un robot manipulateur]
+\begin{example}{Espace-nul gauche de la matrice jacobienne d'un robot manipulateur}{}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
@@ -482,7 +482,7 @@ Une matrice $A$ va avoir un espace nul seulement lorsqu'elle a une rang déficie
 %
 
 \newpage
-\begin{example}[Espace-nul de la matrice jacobienne d'un robot manipulateur]
+\begin{example}{Espace-nul de la matrice jacobienne d'un robot manipulateur}{}
 La figure \ref{fig:4spaces_ex1} illustre la signification physique de l'espace nul d'une matrice qui relie la vitesse des joints d'un robot manipulateur à la vitesse de son effecteur.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
@@ -586,7 +586,7 @@ Les grandes catégories de situations possibles illustrés à la figure \ref{fig
 
 
 \newpage
-\begin{example}[Système d'équation parfaitement contraint]
+\begin{example}{Système d'équation parfaitement contraint}{}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
@@ -597,7 +597,7 @@ Les grandes catégories de situations possibles illustrés à la figure \ref{fig
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{example}
 
-\begin{example}[Système d'équation sous-contraint]
+\begin{example}{Système d'équation sous-contraint}{}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
@@ -608,7 +608,7 @@ Les grandes catégories de situations possibles illustrés à la figure \ref{fig
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{example}
 
-\begin{example}[Système d'équation sur-contraint]
+\begin{example}{Système d'équation sur-contraint}{}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
@@ -619,7 +619,7 @@ Les grandes catégories de situations possibles illustrés à la figure \ref{fig
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{example}
 
-\begin{example}[Système d'équation non-inversible]
+\begin{example}{Système d'équation non-inversible}{}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
@@ -814,7 +814,7 @@ Pour ensuite utiliser la méthode des moindres-carrés pour obtenir un estimé d
 
 
 
-\begin{example}[Régression linéaire avec les moindres-carrés]
+\begin{example}{Régression linéaire avec les moindres-carrés}{}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
 	\centering
@@ -974,7 +974,7 @@ Il est à noter que la matrice $A$ doit avoir des rangés indépendantes pour qu
 
 
 \newpage
-\begin{example}[Utilisation d'une matrice pseudo-inverse]
+\begin{example}{Utilisation d'une matrice pseudo-inverse}{}
 Pour cet exemple, un robot doit produire un force de 14 N sur un mur. Pour y parvenir le courant électrique dans les trois moteurs doit être ajusté. La relation entre la force et le courant dans les moteurs est linéaire et illustrée ci-dessous. On cherche ici une solution qui minimise les pertes joules $ri^2$ dans les moteurs. Comme il y a plusieurs solutions possible pour atteindre le niveau de force désiré, et que la fonction coût à minimiser est quadratique, une matrice pseudo-inverse droite peut être utilisée pour calculer la solution optimale directement, voir Figure \ref{fig:pseudo-inverse-ex1}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
@@ -1126,7 +1126,7 @@ Ensuite, si la matrice $V$ est inversible (ce qui explique la condition d'indép
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{example}[Exemple de diagonalisation pour une dillatation en 2D]
+\begin{example}{Exemple de diagonalisation pour une dillatation en 2D}{}
 \label{sec:ExempleDeDiagonalisationPourUneDillatationEn2D}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1209,7 +1209,7 @@ A^p = A \; A \; \hdots \; A = V \Lambda V^{-1} \; V \Lambda V^{-1} \;  \hdots \;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{example}[Exemple de calcul de l'évolution d'un système discret]
+\begin{example}{Exemple de calcul de l'évolution d'un système discret}{}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 La suite de Fibonacci est définie par une séquence de chiffre pour lequel le prochain est la somme des deux précédents:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
