@@ -6,12 +6,16 @@
 \section{Introduction}
 
 Ce chapitre présente des méthodes pour déterminer les relations entre les divers forces agissant sur un robot manipulateur lorsque le système est à l'équilibre. La matrice jacobienne $J$, la même matrice de la relation de cinématique différentielle de l'équation \ref{eq:diffkinrel}, permet de transformer une force cartésienne $\col{f}_E$, que l'effecteur du robot applique sur l'environnement, en couples (ou force pour un joint prismatique) équivalents $\col{\tau}$ dans le domaine des joints:
+
+\begin{definition}{Transformation efforts articulaires $\leftrightarrow$ efforts à l'effecteur}{}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \col{\tau} &= J\left( \, \col{q} \, \right)^T \, \col{f}_E
 \label{eq:static1}
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{definition}
+
 Cette relation permet de calculer les liens entre les forces externes et les forces produites par les actionneurs sans avoir à déterminer toutes les forces internes du systèmes, ce qui particulièrement utile pour les robots manipulateurs et sera exploité par les méthodes de ce chapitre. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[H]
@@ -198,6 +202,7 @@ Lorsqu'un robot manipulateur est sur une singularité, la transposée de la matr
 Si la bilan d'énergie effectué à la section \ref{sec:manipstatic} est fait en incluant l'énergie potentielle, un terme de forces conservatrices $\col{g}$ doit être ajouté à l'équation de la balance des forces dans le systèmes. On nommera ici ce vecteur $\col{g}$ car pour les robots manipulateur, c'est généralement un vecteur de forces gravitationnelles. 
 
 %%%%%%%%%%%%%%%%
+\begin{definition}{Relation statique avec forces conservatrices}{}
 \begin{align}
 \col{\tau} &= J\left( \, \col{q} \, \right)^T \, \col{f}_E +  g( \col{q} )
 \quad \quad \text{avec:  }
@@ -206,6 +211,7 @@ Si la bilan d'énergie effectué à la section \ref{sec:manipstatic} est fait en
 }_{\text{Gradient de l'énergie potentielle}}
 \label{eq:staticgravity}
 \end{align}
+\end{definition}
 %%%%%%%%%%%%%%%
 
 \note{Note:}{Le vecteur colonne par lequel on prend les dérivés partielles de $V$ est ici noté avec une transposition pour respecter la convention (voir section \ref{sec:vectoropindex}) pour obtenir pour $\col{g}$ un vecteur-colonne $n \times 1$ plutôt que un vecteur-rangé $1 \times n$. }

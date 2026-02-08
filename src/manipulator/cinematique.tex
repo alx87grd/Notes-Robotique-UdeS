@@ -5,6 +5,9 @@ Ce chapitre présente des méthodes pour modéliser et analyser la position de s
 
 
 
+% Le reste du chapitre commence ici...
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -227,9 +230,11 @@ La notion de vecteur géométrique permet de travailler avec des \textbf{vecteur
 
 \textbf{Un vecteur position nécessite deux points pour être défini}, une origine et une destination. Notez que c'est particulier des vecteurs positions, la plupart des autres vecteurs utilisés en physique (vitesse, accélération, force, champ électrique, etc.) ont un point d'application mais sont indépendants d'un choix d’origine. Dans ces notes, les vecteurs positions seront notés:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Vecteur position}{}
 \begin{equation}
 \vec{r}_{B/A}  \quad =  \quad \text{Vecteur position du point $B$ par rapport au point $A$}
 \end{equation} 
+\end{definition}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 où $A$ est le point d'origine et $B$ le point de destination, tel qu'illustré à la figure \ref{fig:vecpos}. Parfois, la notation équivalente $\vec{AB}$ est utilisée dans la littérature. Ces vecteurs  peuvent être utilisés pour faire des constructions géométriques indépendamment d'un choix de système de coordonnées. 
 %
@@ -836,6 +841,7 @@ La matrice de rotation est un raccourci pour projeter un vecteur position sur tr
 
 Une matrice de rotation est définie par les produits scalaires des vecteurs unitaires qui forment deux bases vectorielles:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Matrice de rotation}{}
 \begin{align}
 {}^aR^b &= 
 \left[ \begin{array}{c c c} 
@@ -851,6 +857,7 @@ Une matrice de rotation est définie par les produits scalaires des vecteurs uni
 \end{array} \right]
 \label{eq:cosinusdirecteurs}
 \end{align} 
+\end{definition}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Les produits scalaires correspondent aussi aux cosinus des angles entre les vecteurs unitaires, c'est pourquoi la matrice de rotation est aussi parfois appelée la \textbf{matrice des cosinus directeurs}. Par inspection de l'équation \eqref{eq:cosinusdirecteurs}, on remarque que les colonnes de la matrice ${}^aR^b$ correspondent aux vecteur-colonnes des composantes des vecteurs unitaires $\hat{b}_i$ exprimées dans la base $a$ et que les rangés de la matrice ${}^aR^b$ correspondent à la transposée des vecteur-colonnes des composantes des vecteurs unitaires $\hat{a}_i$ exprimées dans la base $b$. Cela permet donc des définitions équivalentes plus compactes:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1725,12 +1732,15 @@ En robotique, il est souvent utile de placer un point de référence ainsi qu'un
 
 Comme illustré à la figure \ref{fig:repere}, les coordonnées cartésiennes ($x$, $y$, $z$) d'un point $P$ correspondent directement aux composantes du vecteur position avec comme origine l'intersection des axes du système de coordonnées (le point $A_o$) et exprimé dans une base vectorielle $a$ alignée sur les axes du système de coordonnées:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Coordonnées cartésiennes dans un repère}{}
+Des coordonnées cartésiennes $(x,y,z)$ basé sur le repère $\{A_o,\hat{a}_1,\hat{a}_2,\hat{a}_3\}$ représentent le vecteur suivant:
 \begin{align}
 \col{r}_{P/A_o}^a = \left[ \begin{array}{c} 
 x \\ y \\ z
 \end{array} \right]   \quad \Leftrightarrow \quad
 \vec{r}_{P/A_o} = x \, \hat{a}_{1} + y \, \hat{a}_{2} + z \, \hat{a}_{3}
 \end{align} 
+\end{definition}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Un système de coordonnées est toujours implicitement attaché à un repère, même s'il n'est pas explicitement défini. L'ensemble de l'origine des axes et des vecteurs unitaires alignés sur ces axes forment un repère. 
 
@@ -1871,6 +1881,7 @@ Les trois premières rangés des équations matricielles \eqref{eq:homo1} et \eq
 
 Si on substitut les définitions, la matrice de transformation peut être définie directement en termes de vecteurs de vecteurs unitaires et du vecteur géométrique qui définie la translation d'une origine à l'autre:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Matrice de transformation}{}
 \begin{align}
 {}^AT^B &= 
 \left[ \begin{array}{c c } 
@@ -1885,6 +1896,7 @@ Si on substitut les définitions, la matrice de transformation peut être défin
 \end{array} \right] 
 \label{eq:transformationdef}
 \end{align} 
+\end{definition}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -2828,6 +2840,7 @@ d
 %%%%%%%%%%%%%%%%%%%%
 La matrice de transformation peut alors être assemblée:
 %%%%%%%%%%%%%%%%%%%
+\begin{definition}{Matrice de transformation avec les paramètres DH}{}
 \begin{align}
 {}^AT^{B}(d,\theta,r,\alpha) &=
 \left[ \begin{array}{c c c c }
@@ -2838,6 +2851,7 @@ s\theta & c\theta c\alpha  & -c\theta s\alpha  & r s\theta\\
 \end{array}  \right]  
 \label{eq:Tdh}
 \end{align} 
+\end{definition}
 %%%%%%%%%%%%%%%%%%%%
 Donc lorsque la convention est utilisée, la matrice de transformation entre deux repères successifs a toujours la forme ci-dessus, et il suffit d'identifier les quatre paramètres DH de chaque joints. 
 

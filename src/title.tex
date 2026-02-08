@@ -1,36 +1,50 @@
-﻿%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Title
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\newgeometry{top=1.5in,bottom=1in,left=1in,right=1in}
+\newgeometry{top=1in,bottom=0.5in,left=1in,right=1in}
 \begin{titlepage}
+    \centering
+    \parskip=0pt 
+    
+    % 1. En-tête
+    % \vspace*{0.2cm}
+    \textsc{\LARGE Notes de cours}\\[1.5cm]
 
-\center 
- 
-%\vfill 
+    % 2. Le Titre Encadré (Style Tcolorbox standardisé)
+    \begin{tcolorbox}[
+        enhanced,
+        colback=white,          % Fond blanc
+        colframe=UdeSGreen,     % Cadre Vert UdeS
+        coltext=black,          % Texte Noir
+        boxrule=3pt,            % Épaisseur du trait (solide)
+        arc=4mm,                % Rayon de l'arrondi (comme vos définitions)
+        auto outer arc,
+        width=\linewidth,       % Largeur totale
+        top=1.2cm, bottom=1.2cm,% Marges internes (aération)
+        halign=center,          % Texte centré
+        center                  % Boîte centrée
+    ]
+        { \textsc{ \huge \bfseries 
+         Robotique: \\[0.3cm] Modélisation, Analyse et Commande
+         }
+        }
+    \end{tcolorbox}
 
-\textsc{\LARGE 
-Notes de cours
-}\\[1.5cm] 
+    \vspace{1.5cm}
 
-\rule{\linewidth}{0.5mm} \\[0.4cm]
-{\huge \bfseries 
-%Modélisation, analyse, conception et commande des systèmes robotisés
-Modélisation, analyse et commande des systèmes robotisés
-}\\[0.4cm] 
-\rule{\linewidth}{0.5mm} \\[1.5cm]
- 
-{\large Préparé par}\\[1cm]
-{\LARGE Pr. Alexandre \textsc{Girard} }\\[1cm] 
-{\LARGE Département de Génie Mécanique }\\[1cm]
+    % 3. Auteur
+    {\large Préparé par}\\[0.5cm]
+    {\LARGE \bfseries Pr. Alexandre \textsc{Girard}}\\[0.8cm]
+    
+    {\LARGE Université de Sherbrooke}
 
-\includegraphics[width=0.9\textwidth]{fig/udes.pdf}\\[2.1cm] 
+    \vspace{1cm}
 
-{\large Dernière mise à jour le \today}\\[1.5cm] 
+    % 4. Logo
+    \includegraphics[width=0.8\textwidth]{fig/udes.pdf}
 
-%https://youtube.com/playlist?list=PL6adNeJ0A8Usz7zUXuEZHe5ul8ZADvQAD
+    \vspace{1cm}
 
-\vfill 
+    % 5. Date
+    {\large Dernière mise à jour le \today}
+    \vspace*{1cm}
 
 \end{titlepage}
 \restoregeometry

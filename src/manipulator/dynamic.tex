@@ -131,10 +131,12 @@ Le tableau ci-dessous présente les variables qui sont utilisée dans ce chapitr
 
 L'équation des manipulateur caractérise la dynamique d'un système robotique décrite dans l'espace des coordonnées des joints:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Équation des manipulateurs}{}
 \begin{align}
 H(\col{q}) \col{\ddot{q}} + C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q}) = B(\col{q}) \col{u}  + J^T(\col{q}) \col{f}_{R_E}
 \label{eq:manipulator}
 \end{align}
+\end{definition}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 où $\col{q}$ est le vecteur des forces généralisée, $H$ est la matrice d'inertie, $C$ est la matrice des forces de Coriolis/centrifuge, $\col{d}$ est un vecteur de force dissipatrices, $\col{g}$ un vecteur de forces conservatrices (typiquement la gravité), $B$ est une matrice qui transforme le vecteur des forces des actionneurs $\col{u}$ (les entrées du système) en forces généralisée $\col{\tau}$, et $J^T$ la transposée de la matrice jacobienne associée au point d'application $E$ d'une force externe $\col{f}_{R_E}$.
 
@@ -357,7 +359,6 @@ H \col{\ddot{q}} + \col{h} = \col{\tau}
 
 TODO: Uniformiser le nom des variables pour cette section.
 
-\newline
 Parfois il peut être utile de travailler avec des systèmes de coordonnées supplémentaire à l'espace des joints. La Figure \ref{fig:coord} montre quelques espaces supplémentaires qui peuvent être utilisés. 
 %
 \begin{figure}[H]
