@@ -41,9 +41,13 @@ En robotique, la trousse à outil comprend une hiérarchie de modèles (voir Tab
 
 Quel que soit le véhicule (drone, voiture, sous-marin), nous devons répondre à trois questions fondamentales pour le contrôler.
 
-\subsection{La configuration $\mathbf{q}$: "Où suis-je ?"}
+\subsection{La configuration $\col{q}$: "Où suis-je ?"}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{La configuration}{}
 La configuration, notée $\mathbf{q}$, est l'ensemble minimal de variables nécessaires pour décrire la posture géométrique du véhicule à un instant figé. L'ensemble de toutes les configurations possibles forme l'espace de configuration, noté $\mathcal{C}$, dont la dimension correspond au nombre de degrés de liberté (DDL) du système.
+\end{definition}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 La définition mathématique de $\mathbf{q}$ dépend du niveau d'abstraction choisi :
 \begin{itemize}
@@ -55,13 +59,17 @@ La définition mathématique de $\mathbf{q}$ dépend du niveau d'abstraction cho
 
 \subsection{Les actions $\mathbf{u}$: "Que puis-je faire ?"}
 
-Le vecteur d'action, noté $\mathbf{u}$, décrit les commandes ou les "entrées" que nous pouvons utiliser pour modifier le mouvement du véhicule. La nature de ces commandes change radicalement selon que l'on considère le véhicule comme un objet géométrique ou un système physique :
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Les actions}{}
+Le vecteur d'action, noté $\mathbf{u}$, décrit les commandes que nous pouvons utiliser pour modifier le mouvement du véhicule. L'ensemble des entrées de commande admissibles est noté $\mathcal{U}$. Le vecteur $\mathbf{u} \in \mathcal{U}$ représente les variables d'entrée des équations du modèle utilisé.
+\end{definition}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ La nature de ces commandes change radicalement selon que l'on considère le véhicule comme un objet géométrique ou un système physique :
 \begin{itemize}
     \item \textbf{Action Cinématique (Abstraite) :} On commande directement des vitesses (ex: "Avance à 1 m/s", "Tourne à 0.5 rad/s"). C'est l'hypothèse simplificatrice utilisée par la plupart des planificateurs de trajectoire. L'hypothèse sous-jacente est qu'il existe des contrôleurs de bas niveau suffisamment performants pour exécuter ces actions quasi-instantanément.
     \item \textbf{Action Dynamique (Réelle) :} On commande des efforts physiques (ex: "Couple moteur de 100 Nm", "Angle de braquage des roues", "Poussée des hélices"). C'est ce que le système de contrôle doit gérer en réalité à bas niveau.
 \end{itemize}
-
-Formellement, l'ensemble des entrées de commande admissibles est noté $\mathcal{U}$. Le vecteur $\mathbf{u} \in \mathcal{U}$ représente les variables d'entrée des équations du modèle utilisé.
 
 \subsection{L'équation d'évolution : "Comment je bouge ?"}
 C'est le cœur de la modélisation. C'est la fonction qui prédit l'évolution de la configuration en fonction des actions. On distingue deux grandes familles :
@@ -69,30 +77,42 @@ C'est le cœur de la modélisation. C'est la fonction qui prédit l'évolution d
 \paragraph{Modèles Cinématiques (Géométrie du mouvement)}
 Ces modèles décrivent le mouvement possible sans s'occuper des forces. Ils répondent à la question : \textit{"Si j'avance en tournant avec telle vitesse, comment vont évaluer mes coordonnées ?"} Ils sont typiquement utiles à basse vitesse. Lorsque les actions sont des vitesses, ces équations prennent la forme suivante, i.e. des équations différentielles de premier ordre:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Forme générique d'un modèle cinématique}{}
 \begin{equation}
     \dot{\mathbf{q}} = \mathbf{N}(\mathbf{q})\mathbf{u}
 \end{equation}
+\end{definition}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \paragraph{Modèles Dynamiques (Physique du mouvement)}
 Ces modèles utilisent la seconde loi de Newton ($F=ma$). Ils répondent à la question : \textit{"Si j'applique telles forces, comment vont évoluer mes coordonnées?"}. Lorsque les actions sont des forces, ces équations prennent la forme d'équations différentielles d'ordre deux:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Forme générique d'un modèle dynamique (configuration)}{}
 \begin{equation}
     \ddot{\mathbf{q}} = f_q(\dot{\mathbf{q}},\mathbf{q},\mathbf{u})
 \end{equation}
+\end{definition}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Parfois, on s'intéresse seulement à l'évolution des vitesses d'un véhicule. On peut alors travailler avec des équations qui n'inclut que l'évolution des vitesses, sans prédire l'évolution de la configuration. Dans cette situation, on peut utiliser un vecteur de vitesses généralisées $\mathbf{\nu}$ et des équations différentielles d'ordre un:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Forme générique d'un modèle dynamique (vitesses)}{}
 \begin{equation}
     \dot{\mathbf{\nu}} = f_v(\dot{\mathbf{\nu}},\mathbf{u})
 \end{equation}
+\end{definition}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Lorsque aucune propriétés ou forces ne dépend d'une variable configuration, on l'appelle parfois une coordonnée ignorable. On peut alors ignorer l'équation qui prédit d'élolution de cette variable et simplifier le système d'équations. Un exemple est la position $x$ d'un avion, il est possible de calculer l'évolution des vitesses de l'avion sans garder en mémoire l'évolution de sa position. Un contre-exemple est le tanguage d'un avion, l'angle d'attaque et donc la force de portance en dépende.
 
 \paragraph{Formalisme d'état}
 
-Pour un ordinateur, toutes ces notions sont unifiées sous la forme d'un système d'état. Le vecteur d'état, noté $\mathbf{x} \in \mathcal{X}$, est la "mémoire" du système nécessaire pour prédire le futur. L'ensemble $\mathcal{X}$ est l'espace d'état, et ses dimensions sont appelées l'ordre d'un système. Si $\mathcal{X}=\mathbb{R}^n$, on dira que le modèle est d'ordre $n$, ce qui correspond au nombres de variable indépendantes pour décrire l'état du système. 
+Pour un ordinateur, toutes ces notions sont unifiées sous la forme d'un système d'état. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Vecteur d'état $\col{x}$}{}
+Le vecteur d'état, noté $\mathbf{x} \in \mathcal{X}$, comprend toutes les variable "mémoire" du système nécessaire pour prédire le futur. L'ensemble $\mathcal{X}$ est l'espace d'état, et ses dimensions sont appelées l'ordre d'un système. Si $\mathcal{X}=\mathbb{R}^n$, on dira que le modèle est d'ordre $n$, ce qui correspond au nombres de variable indépendantes pour décrire l'état du système. 
+\end{definition}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{itemize}
     \item \textbf{Pour un modèle cinématique}, l'état est simplement la configuration : $\mathbf{x} = \mathbf{q}$.
@@ -100,10 +120,12 @@ Pour un ordinateur, toutes ces notions sont unifiées sous la forme d'un systèm
 \end{itemize}
 
 L'équation générale de tout véhicule s'écrit alors sous la forme canonique :
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Équations du mouvement sous la forme de modèle d'état}{}
 \begin{equation}
     \dot{\mathbf{x}} = f(\mathbf{x}, \mathbf{u})
 \end{equation}
+\end{definition}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 C'est la forme standard pour résoudre des équations différentielles, typiquement utilisé pour les simulations sur un ordinateur.
 
@@ -245,28 +267,37 @@ Il est fréquent en robotique d'observer deux formulations dynamiques qui semble
 
 \paragraph{Équation dans l'espace de configuration}
 Il est toujours possible d'écrire les équations de la dynamique d'un système mécanique en utilisant uniquement l'espace de configuration, tel que présenté pour les robots manipulateurs \ref{sec:dynamic}. Pour un manipulateur, on exprime généralement la dynamique dans l'espace des coordonnées généralisées $\mathbf{q}$ (angles des joints). L'équation prend la forme standard :
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Dynamique d'un système mécanique avec coordonnées généralisées}{}
 \begin{equation}
     \mathbf{H}(\mathbf{q})\ddot{\mathbf{q}} + \mathbf{C}(\mathbf{q}, \dot{\mathbf{q}})\dot{\mathbf{q}} + \mathbf{g}(\mathbf{q}) = \boldsymbol{\tau}_q
     \label{eq:lagrangian_dynamics}
 \end{equation}
+\end{definition}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Ici, la matrice d'inertie $\mathbf{H}(\mathbf{q})$ varie continuellement avec la configuration du robot (ex: lorsque le bras se déplie, l'inertie augmente). Il est théoriquement possible d'écrire la dynamique d'un véhicule sous cette forme, en utilisant les coordonnées généralisées appropriées (ex: position et orientation dans l'espace inertiel). Cependant, il est généralement plus pratique de formuler la dynamique des véhicules en utilisant des vitesses définies dans un repère attaché au corps du véhicule.
 
 \paragraph{Repère du corps}
 Pour un véhicule (drone, sous-marin), on préfère exprimer les vitesses $\boldsymbol{\nu}$ et les forces dans le repère attaché au corps, car les forces aérodynamiques/hydrodynamiques et les mesures des capteurs s'y expriment naturellement. L'équation devient :
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Dynamique d'un système mécanique avec vitesses généralisées}{}
 \begin{align}
     \mathbf{M}_b \dot{\boldsymbol{\nu}} + \mathbf{C}_b(\boldsymbol{\nu})\boldsymbol{\nu} + \mathbf{g}_b(\mathbf{q}) &= \boldsymbol{\tau}_b \label{eq:newton_euler_dynamics}
     \\
     \mathbf{J}(\mathbf{q}) \dot{\mathbf{q}} &= \boldsymbol{\nu}
 \end{align}
+\end{definition}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Pour un corps rigide, $\mathbf{J}(\mathbf{q})$ est la matrice jacobienne (ou de transformation cinématique) faisant le lien entre le repère inertiel et le repère du corps. En utilisant le repère attaché au corps, la matrice d'inertie $\mathbf{M}_b$ du véhicule est typiquement constante. Toutefois, on note l'apparition de termes de Coriolis et centrifuges dans $\mathbf{C}_b(\boldsymbol{\nu})$ qui n'étaient pas présents sous cette forme dans les coordonnées généralisées. Ces termes apparaissent car le repère du corps est un référentiel non-inertiel (en rotation).
 
-\paragraph{Équivalence}
+\begin{property}{Équivalence des formulations}{}
 Le lien entre ces deux formulations s'établit par les relations suivantes :
 \begin{align}
     \mathbf{H}(\mathbf{q}) &= \mathbf{J}^T(\mathbf{q}) \mathbf{M}_b \mathbf{J}(\mathbf{q}) \\
     \boldsymbol{\nu} &= \mathbf{J}(\mathbf{q}) \dot{\mathbf{q}}  \\
     \boldsymbol{\tau}_q &= \mathbf{J}^T(\mathbf{q}) \boldsymbol{\tau}_b
 \end{align}
+\end{property}
 % On peut vérifier cette équivalence en comparant l'énergie cinétique $T$ exprimée dans les deux repères :
 % \begin{align}
 %     T = \frac{1}{2} \boldsymbol{\nu}^T \mathbf{M}_b \boldsymbol{\nu} 
@@ -285,21 +316,23 @@ Le lien entre ces deux formulations s'établit par les relations suivantes :
 
 Les équations de la dynamique d'un corps rigide sont souvent présentées initialement sous forme vectorielle, séparant la translation et la rotation :
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Équations de Netwon-Euler (vectorielles)}{}
 \begin{align}
-        m (\dot{\mathbf{v}}_b + \boldsymbol{\omega}_b \times \mathbf{v}_b) &= \mathbf{F}_b \\
-        \mathbf{I}_b \dot{\boldsymbol{\omega}}_b + \boldsymbol{\omega}_b \times (\mathbf{I}_b \boldsymbol{\omega}_b) &= \mathbf{M}_b
+        m (\dot{\vec{v}}_b + \vec{\omega}_b \times \vec{v}_b) &= \vec{F}_b \\
+        \tensor{I}_b \bullet \dot{\vec{\omega}}_b + \vec{\omega}_b \times (\tensor{I}_b \bullet \vec{\omega}_b) &= \vec{M}_b
     \label{eq:newton_euler_vec}
 \end{align}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Dans ces équations :
 \begin{itemize}
     \item $m$ est la masse totale du véhicule.
-    \item $\mathbf{I}_b$ est le tenseur d'inertie du véhicule exprimé dans le repère du corps (matrice $3 \times 3$ constante).
-    \item $\mathbf{v}_b$ et $\boldsymbol{\omega}_b$ sont les vitesses linéaire et angulaire dans le repère du corps.
-    \item $\mathbf{F}_b$ et $\mathbf{M}_b$ sont la force et le moment appliqués sur le corps.
+    \item $\tensor{I}_b$ est le tenseur d'inertie du véhicule.
+    \item $\vec{v}_b$ et $\vec{\omega}_b$ sont les vitesses linéaire et angulaire du corps rigide.
+    \item $\vec{F}_b$ et $\vec{M}_b$ sont la force et le moment appliqués sur le corps.
 \end{itemize}
+\end{definition}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Pour obtenir la forme matricielle unifiée, on définit les vecteurs de vitesses et d'effort généralisés :
+Pour obtenir la forme matricielle unifiée, on définit les vecteurs de vitesses et d'effort généralisés avec les composantes des vecteurs, exprimées dans le repère tournant du corps::
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
     \boldsymbol{\nu} = \begin{bmatrix}
@@ -312,14 +345,14 @@ Pour obtenir la forme matricielle unifiée, on définit les vecteurs de vitesses
     \end{bmatrix}  
 \end{equation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-En utilisant l'opérateur matriciel antisymétrique $S(\cdot)$ pour le produit vectoriel (tel que $\mathbf{a} \times \mathbf{b} = S(\mathbf{a})\mathbf{b}$), on peut réécrire les équations vectorielles (\ref{eq:newton_euler_vec}) ainsi :
+En utilisant l'opérateur matriciel antisymétrique $S(\cdot)$ pour le produit vectoriel (tel que $\vec{a} \times \vec{b} = S(\mathbf{a})\mathbf{b}$), on peut réécrire les équations vectorielles de Newton-Euler en format matriciel:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Équations de Netwon-Euler (matricielles)}{}
 \begin{align}
     m \dot{\mathbf{v}}_b + m S(\boldsymbol{\omega}_b) \mathbf{v}_b &= \mathbf{F}_b  \\
     \mathbf{I}_b \dot{\boldsymbol{\omega}}_b + S(\boldsymbol{\omega}_b) \mathbf{I}_b \boldsymbol{\omega}_b &= \mathbf{M}_b  
 \label{eq:newton_euler_mat}
 \end{align}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Ce système se regroupe finalement en une seule équation matricielle par blocs, correspondant à la forme (\ref{eq:newton_euler_dynamics}) :
 \begin{equation}
     \underbrace{
@@ -349,6 +382,8 @@ Ce système se regroupe finalement en une seule équation matricielle par blocs,
         \mathbf{M}_b
     \end{bmatrix}
 \end{equation}
+\end{definition}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Corps planaire (3 DDL)}
 \label{sec:rigidbody2D}
@@ -376,12 +411,11 @@ L'équation matricielle du mouvement $\mathbf{M}_b \dot{\boldsymbol{\nu}} + \mat
     \end{bmatrix}
     \begin{bmatrix} u \\ v \\ r \end{bmatrix}
     =
-    \begin{bmatrix} \sum F_x \\ \sum F_y \\ \sum M_z \end{bmatrix}
+    \begin{bmatrix} \sum F_x^b \\ \sum F_y^b \\ \sum M_z^b \end{bmatrix}
     \label{eq:planar_body_dynamics}
 \end{equation}
 
-\subsubsection{Équations scalaires}
-En effectuant le produit matriciel, on obtient les équations scalaires. Les termes de droite représentent la somme de toutes les forces et moments externes (propulsion, aérodynamisme, contact pneu-sol, etc.) agissant sur le corps :
+Les termes de droite représentent la somme de toutes les forces et moments externes (propulsion, aérodynamisme, contact pneu-sol, etc.) agissant sur le corps. En effectuant le produit matriciel, on obtient les équations scalaires. 
 \begin{align}
     m(\dot{u} - rv) &= \sum F_x \\
     m(\dot{v} + ru) &= \sum F_y \\
@@ -715,12 +749,16 @@ Le vecteur vitesse de la roue avant est donc $(u, L \dot{\theta})$. La contraint
 \end{figure}
 
 \textbf{Modèle d'état :}
-On peut maintenant formuler les équations différentielles liant les entrées de commande à la configuration. En utilisant le vecteur de configuration $\mathbf{q} = [x, y, \theta]^T$ (position et orientation dans le plan) et le vecteur de commande $\mathbf{u} = [u, \delta]^T$ (vitesse longitudinale et angle de braquage), on obtient les équations du mouvement suivantes :
+On peut maintenant formuler les équations différentielles liant les entrées de commande à la configuration. En utilisant le vecteur de configuration $\mathbf{q} = [x, y, \theta]^T$ (position et orientation dans le plan) et le vecteur de commande $\mathbf{u} = [V, \delta]^T$ (vitesse longitudinale et angle de braquage), on obtient les équations du mouvement suivantes :
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Modèle bicyclette cinématique}{}
 \begin{align}
-    \dot{x} &= u \cos(\theta) \\
-    \dot{y} &= u \sin(\theta) \\
-    \dot{\theta} &= \frac{u}{L} \tan(\delta)
+    \dot{x} &= V \cos(\theta) \\
+    \dot{y} &= V \sin(\theta) \\
+    \dot{\theta} &= \frac{V}{L} \tan(\delta)
 \end{align}
+\end{definition}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Ces équations correspondent à un modèle d'état de la forme $\dot{\mathbf{q}} = f(\mathbf{q}, \mathbf{u})$, où le vecteur d'état est identique au vecteur de configuration, caractéristique des modèles purement cinématiques.
 
 \begin{figure}[htbp]
@@ -745,12 +783,14 @@ Ces équations correspondent à un modèle d'état de la forme $\dot{\mathbf{q}}
 \subsection{Modèle Bicyclette Dynamique}
 
 Le modèle bicyclette dynamique prend en compte les forces, les masses et les inerties dans le plan avec 3 DDL. On réutilise les équations de corps rigide (voir section \ref{sec:rigidbody2D}) avec les vitesses exprimées dans le repère du corps : $u$ (longitudinale), $v$ (latérale) et $r$ (vitesse angulaire de lacet), et on ajoute  les forces des pneus et une traînée aérodynamique:
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Modèle bicyclette dynamique}{}
 \begin{align}
     m(\dot{u} - rv) &= (F_{x1} c_\delta - F_{y1} s_\delta) + F_{x2} - F_{aero} \\
     m(\dot{v} + ru) &= (F_{x1} s_\delta + F_{y1} c_\delta) + F_{y2} \\
     I_z \dot{r} &= a(F_{x1} s_\delta + F_{y1} c_\delta) - b F_{y2}
 \end{align}
+\end{definition}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ou, tel qu'illustré à la figure \ref{fig:dynamic_bicycle} :
 \begin{itemize}
@@ -797,29 +837,45 @@ La roue avant ici n'a pas de rotation relative au corp, mais la roue avant est b
     \mathbf{v}_{1}^c &= [u \cos\delta + (v + ar)\sin\delta, \quad -u \sin\delta + (v + ar)\cos\delta]^T
 \end{align}
 
-\subsubsection{Calcul des Glissements}
-
-Les modèles de pneus sont souvent défini en terme de variable de taux de glissement. Les définitions exactes peuvent varier selon le contexte. 
-
-\paragraph{Angle de dérive latéral ($\alpha$)}
-Défini par le ratio entre vitesse latérale et longitudinale dans le repère de la roue. Le signe négatif est une convention pour assurer que la force latérale s'oppose au glissement.
+Finalement les forces des pneus peuvent être calculés avec des fonctions de modèle de pneus, voir section \ref{sec:tire}. Les taux de glissements avant et arrière peuvent ici être calculé directement à partir des variables de vitesses ainsi:
 %%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
     \alpha_1 &= - \arctan\left( \frac{v_{y1}^c}{|v_{x1}^c| + \epsilon} \right)  \approx \delta - \arctan\left( \frac{v_{y1}^b}{|v_{x1}^b| + \epsilon}\right) \\
     \alpha_2 &= - \arctan\left( \frac{v_{y2}^b}{|v_{x2}^b| + \epsilon} \right)
+    \\
+    \kappa_1 &= \frac{R_1 \omega_1 - v_{x1}^c}{|v_{x1}^c| + \epsilon}
+    \\
+    \kappa_2 &= \frac{R_2 \omega_2 - v_{x2}^b}{|v_{x2}^b| + \epsilon}
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%
-\note{Note:}{Nous avons inclus un $epsilon$ au dénominateur dans les équations, ce qui est généralement inclus dans les méthodes numérique pour éviter les instabilités du modèle autour de vitesse nulles.}
 
-\paragraph{Glissement longitudinal ($\kappa$)}
-Défini par la différence normalisée entre la vitesse tangentielle de la roue ($R\omega$) et la vitesse au sol ($v_{x}^w$).
+
+
+\newpage
+\subsection{Modélisation des forces d'intéractions pneus/route}
+\label{sec:tire}
+La plupart des modèles de pneus ont la forme suivante: défini en terme de variable de taux de glissement et de la force normale:
 %%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Forme des modèles de pneus}{}
 \begin{align}
-    \kappa_1 = \frac{R_1 \omega_1 - v_{x1}^c}{|v_{x1}^c| + \epsilon}
-    \quad \quad 
-    \kappa_2 = \frac{R_2 \omega_2 - v_{x2}^b}{|v_{x2}^b| + \epsilon}
+    F_x = f(\alpha, \kappa, F_z) 
+    \quad \quad
+    F_y = f(\alpha, \kappa, F_z) 
 \end{align}
+\end{definition}
 %%%%%%%%%%%%%%%%%%%%%%%%
+La figure \ref{fig:typicaltire} illustre des courbes typiques pour ces fonctions.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\textwidth]{fig/ckappa.jpg}
+    \includegraphics[width=0.5\textwidth]{fig/calpha.jpg}
+    \label{fig:typicaltire}
+    \caption{Courbes typique de pneus}
+\end{figure}
+
+
+\subsubsection{Définition des glissements}
+Deux variables de ratio de glissement sont typiquement utilisées comme intermédiaire pour calculer les forces. Les taux sont calculées à partir de la vitesse relative du centre d'une roue par rapport au sol, exprimée dans un repère local aligné avec la roue, et de sa vitesse de rotation, voir figure \ref{fig:wheelslip}.
 
 \begin{figure}[h]
     \centering
@@ -830,36 +886,37 @@ Défini par la différence normalisée entre la vitesse tangentielle de la roue 
     \caption{Axes, vitesses et angles pour les modèles de pneus ($v_y<0$)}
 \end{figure}
 
-
-
-\subsubsection{Modèles de forces}
-
-Une fois $\alpha$ et $\kappa$ calculés, la plupart des modèles de pneus ont la forme suivante:
+\begin{definition}{Angle de dérive latéral ($\alpha$)}{}
+Défini par le ratio entre vitesse latérale et longitudinale dans le repère de la roue. Le signe négatif est une convention pour assurer que la force latérale s'oppose au glissement.
 %%%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
-    F_x = f(\alpha, \kappa, F_z) 
-    \quad \quad
-    F_y = f(\alpha, \kappa, F_z) 
+    \alpha &= - \arctan\left( \frac{v_{y}}{|v_{x}| + \epsilon} \right) 
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%
+\end{definition}
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.4\textwidth]{fig/ckappa.jpg}
-    \includegraphics[width=0.5\textwidth]{fig/calpha.jpg}
-    \label{fig:typicaltire}
-    \caption{Courbes typique de pneus}
-\end{figure}
+\begin{definition}{Glissement longitudinal ($\kappa$)}{}
+Défini par la différence normalisée entre la vitesse tangentielle de la roue ($R\omega$) et la vitesse au sol ($v_{x}^w$).
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{align}
+    \kappa = \frac{R \omega - v_{x}}{|v_{x}| + \epsilon}
+\end{align}
+%%%%%%%%%%%%%%%%%%%%%%%%
+\end{definition}
+
+\note{Attention:}{Les définitions exactes des taux de glissement peuvent varier selon le contexte et selon les ouvrages, ce n'est pas universel. De plus, nous avons inclus un $epsilon$ au dénominateur dans les équations, ce qui est généralement inclus dans les méthodes numérique pour éviter les instabilités du modèle autour de vitesse nulles.}
 
 
+\subsubsection{Modèle Linéaire}
 
-\paragraph{Modèle Linéaire }
 Lorsque le glissement est modéré, une modèle linéaire peut faire des bonnes prédictions:
 %%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Modèle de pneus linéaire}{}
 \begin{align}
     F_{x} &= C_k \kappa \\
     F_{y} &= C_\alpha \alpha
 \end{align}
+\end{definition}
 %%%%%%%%%%%%%%%%%%%%%%%%
 
 Les paramètres $C$ sont souvent appelé les paramètres de rigidité des pneus, $C_\alpha$ est typiquement appelé \textit{cornering stiffness} et est un paramètre important pour les caractéristiques de maneuvrabilité d'un véhicule. Pour le modèle linéaire de base, les forces $x$ et $y$ sont indépendantes, toutefois il est courant d'ajouter une saturation sur ces forces basée sur le \textbf{"Cercle de Friction"}, pour limiter la force totale du pneu à une limite supérieur disponible $\mu F_z$ :
@@ -867,6 +924,8 @@ Les paramètres $C$ sont souvent appelé les paramètres de rigidité des pneus,
 
 \paragraph{Modèle de Pacejka}
 Surnommé dans le domaine \textbf{\textit{Magic Formula}}, ce modèle empirique capture le comportement non-linéaire et la saturation douce du pneu. La forme utilisée pour la force longitudinale ($F_x$) et latérale ($F_y$) est :
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Formule magique de Pacejka (modèle de pneu non-linéaire)}{}
 \begin{equation}
     F(x) = D \sin(C \arctan(B x - E(B x - \arctan(B x))))
 \end{equation}
@@ -877,6 +936,9 @@ Où $x$ est le glissement ($\alpha$ ou $\kappa$). Les coefficients contrôlent l
     \item $D$ (Peak) : Valeur maximale (relié à $\mu F_z$).
     \item $E$ (Curvature) : Courbure avant le pic.
 \end{itemize}
+\end{definition}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 

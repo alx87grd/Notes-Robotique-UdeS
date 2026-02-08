@@ -62,13 +62,16 @@ Premièrement, si un système est pleinement actionné, il est possible d'impos�
 H(\col{q}) \col{\ddot{q}} + C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q}) = B(\col{q}) \col{u} 
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%
-si on définie une loi de commande avec une accélération référence $\col{\ddot{q}}_r$:
-%%%%%%%%%%%%%%%%%%%%%%%
+\begin{definition}{Couple calculé: loi de commande}{}
+Le couple calculé est une loi de commande avec comme référence une accélération instantanée cible $\col{\ddot{q}}_r$:
 \begin{align}
 \col{u} = B(\col{q})^{-1} \left[  H(\col{q}) \col{\ddot{q}}_r + C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q}) \right]
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%
-qui assume ici que la matrice $B$ est inversible, donc que le système est pleinement actionné. Alors si on substitut la loi de commande dans l'équation de la dynamique on obtient:
+qui assume ici que la matrice $B$ est inversible, donc que le système est pleinement actionné. 
+\end{definition}
+
+Alors si on substitut la loi de commande dans l'équation de la dynamique on obtient:
 %%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 H(\col{q}) \col{\ddot{q}} + C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q}) &= B(\col{q}) B(\col{q})^{-1} \left[  H(\col{q}) \col{\ddot{q}}_r + C(\col{q},\col{\dot{q}}) \col{\dot{q}} + d(\col{q}, \col{\dot{q}}) + \col{g}(\col{q}) \right]  \\
@@ -95,7 +98,8 @@ Lorsqu'on désire qu'un robot suivre une certaine trajectoire, il est possible d
 \text{Trajectoire désirée: } \col{\ddot{q}}_d(t) \quad \col{\dot{q}}_d(t) \quad \col{q}_d(t)
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%
-alors si on définie la référence d'accélération par la loi de commande suivante:
+\begin{definition}{Couple calculé: accélération cible}{}
+Pour un suivi de tracjectoire, la référence d'accélération utilisée par la loi de commande du couple calculé est définit par:
 %%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \col{\ddot{q}}_r = \col{\ddot{q}}_d + 2 \zeta w 
@@ -104,7 +108,8 @@ alors si on définie la référence d'accélération par la loi de commande suiv
 \underbrace{\left( \col{q}_d - \col{q}\right)}_{ \col{q}_e}
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%
-puisqu'on obtient $\col{\ddot{q}} = \col{\ddot{q}}_r$ avec la méthode du couple calculé, en combinant cette définition pour $\col{\ddot{q}}_r$ on va obtenir:
+\end{definition}
+Puisqu'on obtient $\col{\ddot{q}} = \col{\ddot{q}}_r$ avec la méthode du couple calculé, en combinant cette définition pour $\col{\ddot{q}}_r$ on va obtenir:
 %%%%%%%%%%%%%%%%%%%%%%%
 \begin{align}
 \underbrace{\left( \col{\ddot{q}}_d - \col{\ddot{q}} \right)}_{ \col{\ddot{q}}_e}
@@ -619,7 +624,7 @@ p_1 &0&0 \\ 0& p_2 &0 \\ 0& 0& p_3
 
 \label{sec:robotstability}
 
-L'analyse de la stabilité des lois de commande pour les robots manipulateurs repose typiquement sur la \textbf{Méthode Directe de Lyapunov}, voir détails au chapitre \ref{chap:stability}. L'objectif est généralement de prouver que l'erreur de suivi de trajectoire converge vers zéro, c'est-à-dire de démontrer la \textbf{stabilité asymptotique globale} de l'origine de la dynamique de l'erreur. Pour y parvenir, on construit souvent une fonction candidate de Lyapunov $V(\mathbf{x})$ basée sur l'énergie totale du système (énergie cinétique + une énergie potentielle artificielle créée par les gains de commande). L'application de cette méthode est grandement facilitée par la structure  de l'équation dynamique des manipulateurs. 
+L'analyse de la stabilité des lois de commande pour les robots manipulateurs repose typiquement sur la \textbf{Méthode Directe de Lyapunov}, voir détails au chapitre \ref{chap:stability}. L'objectif est généralement de prouver que l'erreur de suivi de trajectoire converge vers zéro, c'est-à-dire de démontrer la \textbf{stabilité asymptotique globale} de l'origine de la dynamique de l'erreur. 
 
 La stratégie typique pour analyser la convergence d'un robot avec une loi de commande non-linéaire, est de définir une fonction candidate de Lyapunov qui consiste en la vrai énergie cinétique du robot, plus une énergie virtuelle potentielle $E_{vir}(\mathbf{q}_e)$ associée à l'erreur en position:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -659,7 +664,7 @@ On peut substituer dans l'équation pour obtenir:
     \dot{V} &=  -\dot{\mathbf{q}}^T \mathbf{d} \leq 0
 \end{align}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Ce qui permet généralement de prouver une convergence asymptotique vers $\mathbf{q}_e=0$
+Ce qui permet de prouver une convergence asymptotique vers $\mathbf{q}_e=0$
 
 
 
