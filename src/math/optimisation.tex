@@ -1,10 +1,251 @@
 \chapter{Optimisation}
 
-\section{Descente du gradient}
+
+% \begin{chapterintro}
+%     \introcontext{
+%         La plupart des problèmes de robotique moderne (planification, commande prédictive, identification) peuvent être formulés comme la recherche d'un minimum d'une fonction sous un ensemble de contraintes. Cette annexe fournit les outils nécessaires pour traduire un problème physique en un problème d'optimisation standard, ce qui est aussi appelé la programmation mathématique.
+%     }
+    
+%     \introobjectives{
+%         À la fin de cette annexe, vous serez capable de :
+%         \begin{itemize}
+%             \item Classifier un problème (LP, QP, NLP).
+%             \item Écrire le Lagrangien et vérifier les conditions d'optimalité (KKT).
+%             \item Choisir l'algorithme de résolution approprié.
+%         \end{itemize}
+%     }
+    
+%     \introprerequis{
+%         \begin{itemize}
+%             \item Algèbre linéaire (Calcul matriciel, valeurs propres).
+%             \item Calcul différentiel (Gradient, Hessienne, Taylor).
+%         \end{itemize}
+%     }
+% \end{chapterintro}
+
+\section{Formulation du problème}
+
+Tout problème d'optimisation peut être ramené à la forme canonique suivante :
+
+\begin{definition}{Formulation d'un problème d'optimisation}{opt_std}
+    Soit $\col{x} \in \mathbb{R}^n$ le vecteur des variables de décision. On cherche :
+    \begin{align*}
+        \min_{\col{x}} \quad & f(\col{x}) \\
+        \text{sujet à} \quad & \col{g}(\col{x}) \leq \col{0} \\
+        & \col{h}(\col{x}) = \col{0}
+    \end{align*}
+    Où $f(\col{x})$ est la fonction objectif, $\col{g}(\col{x})$ sont les contraintes d'inégalité et $\col{h}(\col{x})$ les contraintes d'égalité.
+\end{definition}
+
+Pour bien définir un problème, il est essentiel d'identifier ses cinq composantes :
+
+\begin{itemize}
+    \item \textbf{Variables de décision ($\col{x}$):} Les paramètres que l'algorithme a la liberté de modifier pour trouver la meilleure solution (ex: les gains d'un PID, les points de passage d'une trajectoire).
+    \item \textbf{Espace de recherche ($\col{x} \in \mathcal{X}$):} Le domaine mathématique dans lequel évolue $\col{x}$. 
+    \item \textbf{Fonction objectif ($f$):} Le critère de performance. Elle transforme un vecteur de décision en un scalaire unique permettant de comparer deux solutions.
+    \item \textbf{Contraintes d'inégalité ($\col{g}$):} Elles définissent les limites pour les variables décisions (ex: ne pas dépasser le couple maximal du moteur, éviter un obstacle).
+    \item \textbf{Contraintes d'égalité ($\col{h}$):} Elles imposent des relations strictes (ex: le robot doit terminer exactement sur la cible, respecter les lois de la physique $f=ma$).
+\end{itemize}
+
+\subsection{Coût minimum vs récompense maximum}
+
+Bien que la forme canonique soit présentée comme une \textbf{minimisation}, il est simple de transformer un problème de \textbf{maximisation} sous cette forme:
+
+\begin{theorem}{Max vs min}{max_min}
+    La solution $\col{x}^*$ qui maximise une fonction de récompense $V(\col{x})$ est la même solution qui minimise son opposé:
+    $$ \col{x}^* = \argmax_{\col{x}} V(\col{x}) = \argmin_{\col{x}} -V(\col{x}) $$
+\end{theorem}
+
+\subsection{Typologie des problèmes et situations possibles}
+
+La difficulté de résolution d'un problème d'optimisation dépend de plusieurs facteurs critiques :
+
+\begin{itemize}
+    \item \textbf{Connaissance de $f$ (Analytique vs Échantillonnage) :} 
+    Dans certains cas, on possède l'équation exacte de $f$. Dans d'autres, $f$ est une « boîte noire » dont on ne peut qu'échantillonner le résultat par des simulations ou des tests physiques coûteux.
+    
+    \item \textbf{Disponibilité des dérivées :} 
+    Les algorithmes les plus rapides utilisent le gradient ($\nabla f$) et la Hessienne ($\nabla^2 f$). Si ces dérivées sont inconnues ou impossibles à calculer, on doit se rabattre sur des méthodes « sans gradient », souvent beaucoup plus lentes.
+    
+    \item \textbf{Dimensionnalité ($\col{x} \in \mathbb{R}^n$) :} 
+    Un problème à basse dimension (ex. optimiser les gains d'une loi de commande: $n < 10$) est plus facile à résoudre qu'un problème à haute dimension (ex. entraîner les poids d'un réseau de neurones: $n > 1000000$)
+    
+    \item \textbf{Convexité :} 
+    C'est la distinction la plus importante. Si le problème est \textbf{convexe}, on a la garantie de trouver le minimum global rapidement, si le problème est \textbf{non-convexe}, on risque de rester bloqué dans un minimum local.
+    
+    \item \textbf{Propriétés des fonctions:}
+    \begin{itemize}
+        \item \textbf{Programmation Linéaire:} $f, g, h$ sont des droites. Très simple à résoudre.
+        \item \textbf{Programmation Quadratique:} $f$ est une parabole, $g, h$ sont linéaires. Souvent on approxime le problème pour retrouver cette forme et avoir des garanties de trouver des solutions rapidement. C'est le standard pour la commande prédictive (MPC).
+        \item \textbf{Programmation Non-linéaire:} Le cas général en robotique (à cause de la trigonométrie et de la dynamique), nécessitant des méthodes itératives complexes.
+    \end{itemize}
+\end{itemize}
+
+Finalement, la \textbf{programmation dynamique}, est une autre classe de problème d'optimisation de nature légèrement différente: on cherche à optimiser/choisir une fonction plutôt que des variables décisions. Ce chapitre de traite pas cette classe d'optimisation. On vous réfère à un recueil de notes dédié à ce sujet: \url{https://www.alexandregirard.com/teaching/dp/PDF/DP_Notes.pdf}
+
+\section{Définitions importantes}
+
+Avant de classifier les problèmes d'optimisation, nous devons définir des propriétés de l'espace dans lequel nous cherchons nos solutions, ainsi que des propriétés des fonctions $f$,$g$ et $h$.
 
 
-\section{Les multiplicateurs de Lagrange}
+\subsection{Solutions}
 
-À venir!
+On va souvent parlé de minimum local vs global, ce qui est défini par:
+
+\begin{definition}{Minimum local vs global}{def:min_loc_glob}
+    \begin{itemize}
+        \item \textbf{Minimum local :} $\col{x}^*$ est le meilleur point dans son voisinage immédiat.
+        \item \textbf{Minimum global :} $\col{x}^*$ est le meilleur point sur tout l'ensemble possible.
+    \end{itemize}
+\end{definition}
+
+
+\subsection{Propriété de l'espace des variables décisions}
+
+L’existence d'une solution, pour un problème d'optimisation, va dépendre d'une propriété pour l'espace des variable de décision appelée la compacité, i.e. est-ce que l'ensemble des $x$ qui respectent les contraintes est compacte.  
+
+\begin{definition}{Ensembles ouverts, fermés et bornés}{def:topologie}
+    Soit un ensemble $S \subset \mathbb{R}^n$ :
+    \begin{itemize}
+        \item \textbf{Ouvert :} $S$ ne contient pas sa frontière (ex: une contrainte de type $x < 5$).
+        \item \textbf{Fermé :} $S$ contient sa frontière (ex: une contrainte de type $x \leq 5$).
+        \item \textbf{Borné :} $S$ peut être contenu dans une sphère de rayon fini (il ne s'étend pas à l'infini).
+    \end{itemize}
+\end{definition}
+
+\begin{definition}{Ensemble compact}{def:compact}
+    Un ensemble est dit \textbf{compact} s'il est à la fois \textbf{fermé} et \textbf{borné}.
+\end{definition}
+
+\begin{example}{Intervalle compact vs non-compact}{}
+    Sur la droite réelle $\mathbb{R}$ :
+    \begin{itemize}
+        \item $[0, 10]$ est un ensemble \textbf{compact} (fermé et borné).
+        \item $[0, \infty[$ n'est pas compact (non borné).
+        \item $]0, 10[$ n'est pas compact (ouvert).
+    \end{itemize}
+\end{example}
+
+Ensuite, les garanties que la solution trouvée est globale ou locale va dépendre d'un propriété pour l'espace des variable de décision appelée la convexité. 
+
+\begin{definition}{Ensemble convexe dans $\mathbb{R}^n$}{def:ens_convexe_rn}
+    Un ensemble $C \subseteq \mathbb{R}^n$ est dit \textbf{convexe} si, pour tout couple de points $(\col{x}, \col{y}) \in C$, le segment les reliant est entièrement contenu dans $C$ :
+    $$\forall \alpha \in [0, 1], \quad \alpha \col{x} + (1-\alpha)\col{y} \in C$$
+\end{definition}
+
+\begin{example}{Géométrie de la convexité}{}
+    \begin{itemize}
+        \item \textbf{Convexe :} Un cercle plein, un carré, un hexagone.
+        \item \textbf{Non-convexe :} Une forme en "L", un anneau (le centre est vide), un croissant de lune.
+    \end{itemize}
+\end{example}
+
+\section{Classes de fonctions}
+
+La nature de la fonction de coût $f(\col{x})$ et des contraintes détermine la difficulté du problème. La propriété principale est la convexité d'une fonction.
+
+\begin{definition}{Fonction convexe sur $\mathbb{R}^n$}{def:fonc_convexe_rn}
+    Soit $f : C \to \mathbb{R}$ une fonction définie sur un ensemble convexe $C \subseteq \mathbb{R}^n$. La fonction $f$ est \textbf{convexe} si :
+    $$\forall (\col{x}, \col{y}) \in C, \forall \alpha \in [0, 1] : f(\alpha \col{x} + (1-\alpha)\col{y}) \leq \alpha f(\col{x}) + (1-\alpha)f(\col{y})$$
+    Autrement dit, la ligne sécante entre deux points sur la courbe de la fonction est toujours supérieure à la fonction.
+\end{definition}
+
+
+\begin{example}{Convexité vs Non-convexité}{}
+    \begin{itemize}
+        \item \textbf{Convexe :} $f(x) = x^2$, $f(x) = e^x$, $f(x) = |x|$.
+        \item \textbf{Non-convexe :} $f(x) = \sin(x)$, $f(x) = x^3$ (car elle change de courbure).
+    \end{itemize}
+\end{example}
+
+\begin{definition}{Fonctions linéaires et affines}{def:fonc_lin_aff}
+    Soit une fonction $f: \mathbb{R}^n \to \mathbb{R}$ :
+    \begin{itemize}
+        \item \textbf{Linéaire :} $f(\col{x}) = \col{c}^T \col{x}$. Elle satisfait les propriétés d'additivité et d'homogénéité ($f(\alpha \col{x} + \beta \col{y}) = \alpha f(\col{x}) + \beta f(\col{y})$).
+        \item \textbf{Affine :} $f(\col{x}) = \col{c}^T \col{x} + d$. C'est une fonction linéaire décalée par une constante $d$. Elle ne passe pas par l'origine si $d \neq 0$.
+    \end{itemize}
+\end{definition}
+
+\begin{definition}{Fonction quadratique}{def:fonc_quad_rn}
+    Une fonction $f: \mathbb{R}^n \to \mathbb{R}$ est dite \textbf{quadratique} si elle peut s'écrire sous la forme :
+    $$ f(\col{x}) = \frac{1}{2}\col{x}^T \col{Q} \col{x} + \col{c}^T \col{x} + r $$
+    où $\col{Q} \in \mathbb{R}^{n \times n}$ est la matrice Hessienne (généralement supposée symétrique), $\col{c} \in \mathbb{R}^n$ est le vecteur gradient linéaire et $r \in \mathbb{R}$ est une constante.
+\end{definition}
+
+\begin{definition}{Fonctions lisses ($C^k$)}{def:fonc_lisses}
+    Une fonction est dite de classe $C^k$ si ses dérivées jusqu'à l'ordre $k$ existent et sont continues.
+    \begin{itemize}
+        \item $C^0$ : Fonction continue.
+        \item $C^1$ : Dérivable, avec un gradient $\nabla f(\col{x})$ continu.
+        \item $C^2$ : Deux fois dérivable, avec une Hessienne $\nabla^2 f(\col{x})$ continue.
+    \end{itemize}
+\end{definition}
+
+
+
+\section{Optimalité}
+
+
+\begin{theorem}{Propriété fondamentale de la convexité}{theo:opt_convexe}
+    Si la fonction de coût $f(\col{x})$ est \textbf{convexe} et que l'ensemble des contraintes est \textbf{convexe}, alors tout \textbf{minimum local est un minimum global}.
+\end{theorem}
+
+Retenez qu'un problème "facile" combine une fonction de coût en forme de bol (convexe) et un espace de recherche sans "trous" (convexe).
+
+
+Pour les problèmes avec contraintes, on utilise le concept de multiplicateurs de Lagrange.
+
+\begin{definition}{Le Lagrangien}{def:lagrangien}
+    Le Lagrangien $\mathcal{L}$ associé au problème \ref{def:opt_std} est défini par :
+    $$ \mathcal{L}(\col{x}, \col{\lambda}, \col{\nu}) = f(\col{x}) + \col{\lambda}^T \col{g}(\col{x}) + \col{\nu}^T \col{h}(\col{x}) $$
+    où $\col{\lambda} \geq \col{0}$ et $\col{\nu}$ sont les vecteurs de multiplicateurs.
+\end{definition}
+
+\begin{theorem}{Conditions de Karush-Kuhn-Tucker (KKT)}{theo:kkt}
+    Pour qu'un point $\col{x}^*$ soit un minimum local, il doit exister $\col{\lambda}^*$ et $\col{\nu}^*$ tels que :
+    \begin{enumerate}
+        \item $\nabla_{\col{x}} \mathcal{L}(\col{x}^*, \col{\lambda}^*, \col{\nu}^*) = \col{0}$ (Stationnarité)
+        \item $\col{h}(\col{x}^*) = \col{0}$ et $\col{g}(\col{x}^*) \leq \col{0}$ (Primalité)
+        \item $\lambda_i^* g_i(\col{x}^*) = 0$ (Complémentarité)
+    \end{enumerate}
+\end{theorem}
+
+
+
+\section{Classes de problèmes}
+
+La complexité de résolution, et donc le type d'algorithme à utiliser, dépend de la forme des fonctions $f, \col{g}$ et $\col{h}$.
+
+\subsection{Programmation Linéaire (LP)}
+Si toutes les fonctions sont affines. Très efficace, utilisé pour la planification de flux ou certains problèmes de contact simple.
+
+\subsection{Programmation Quadratique (QP)}
+\begin{definition}{Programmation Quadratique}{def:qp}
+    Un problème est dit QP si le coût est quadratique et les contraintes sont affines :
+    $$ f(\col{x}) = \frac{1}{2}\col{x}^T Q \col{x} + \col{c}^T \col{x} $$
+\end{definition}
+\note{Importance en robotique}{C'est la forme utilisée par les solveurs de commande prédictive (MPC) et pour la résolution des redondances cinématiques en temps réel.}
+
+
+
+
+\section{Méthodes analytiques}
+
+
 
 \video{Multiplicateurs de Lagrange}{https://youtu.be/W7kzp927xXc}
+
+\section{Algorithmes de résolution}
+
+\subsection{Descente du gradient}
+
+\subsection{Méthodes sans contraintes}
+Pour minimiser $f(\col{x})$, on utilise souvent la méthode de Newton :
+$$ \col{x}_{k+1} = \col{x}_k - \alpha \left[ \nabla^2 f(\col{x}_k) \right]^{-1} \nabla f(\col{x}_k) $$
+
+\subsection{Programmation Quadratique Successive (SQP)}
+C'est l'algorithme standard pour l'optimisation de trajectoire non-linéaire. À chaque itération, on approxime le problème NLP par un problème QP local.
+
+\resume{
+    L'optimisation transforme une intention (coût) et des limites physiques (contraintes) en une solution mathématique unique. En robotique, le choix du solveur dépend de la convexité du problème et du temps de calcul alloué.
+}
