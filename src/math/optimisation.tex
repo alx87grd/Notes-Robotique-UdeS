@@ -49,7 +49,7 @@ Pour bien définir un problème, il est essentiel d'identifier ses cinq composan
 
 \subsection{Coût minimum vs récompense maximum}
 
-Bien que la forme canonique soit présentée comme une \textbf{minimisation}, il est simple de transformer un problème de \textbf{maximisation} sous cette forme:
+Bien que la forme canonique soit présentée comme une \textbf{minimisation}, il est simple de transformer un problème de \textbf{maximisation} sous cette forme canonique de minimisation:
 
 \begin{theorem}{Max vs min}{max_min}
     La solution $\col{x}^*$ qui maximise une fonction de récompense $V(\col{x})$ est la même solution qui minimise son opposé:
@@ -80,6 +80,8 @@ La difficulté de résolution d'un problème d'optimisation dépend de plusieurs
         \item \textbf{Programmation Non-linéaire:} Le cas général en robotique (à cause de la trigonométrie et de la dynamique), nécessitant des méthodes itératives complexes.
     \end{itemize}
 \end{itemize}
+
+Lorsque que la nature des variables décision est discrète, on appelle le problème la \textbf{programmation d'entiers}. La nature combinatoire complexifie beaucoup la résolution de ce type de problème. Cette annexe n'abordera pas cette catégorie d'optimisation, on va ce concentrer sur des variables décisions de nature continue.
 
 Finalement, la \textbf{programmation dynamique}, est une autre classe de problème d'optimisation de nature légèrement différente: on cherche à optimiser/choisir une fonction plutôt que des variables décisions. Ce chapitre de traite pas cette classe d'optimisation. On vous réfère à un recueil de notes dédié à ce sujet: \url{https://www.alexandregirard.com/teaching/dp/PDF/DP_Notes.pdf}
 
@@ -154,7 +156,7 @@ La nature de la fonction de coût $f(\col{x})$ et des contraintes détermine la 
 \begin{example}{Convexité vs Non-convexité}{}
     \begin{itemize}
         \item \textbf{Convexe :} $f(x) = x^2$, $f(x) = e^x$, $f(x) = |x|$.
-        \item \textbf{Non-convexe :} $f(x) = \sin(x)$, $f(x) = x^3$ (car elle change de courbure).
+        \item \textbf{Non-convexe :} $f(x) = \sin(x)$, $f(x) = x^3$.
     \end{itemize}
 \end{example}
 
@@ -181,19 +183,20 @@ La nature de la fonction de coût $f(\col{x})$ et des contraintes détermine la 
     \end{itemize}
 \end{definition}
 
+\begin{example}{Continuité d'une trajectoire}
+En robotique, si on on s'intéresse à une fonction qui donne la position en fonction du temps:
+\begin{itemize}
+    \item $C^0$ : Fonction continue (pas de téléportation du robot).
+    \item $C^1$ : Vitesse continue (pas de saut de vitesse, donc accélération finie).
+    \item $C^2$ : Accélération continue (pas de saut d'accélération, donc jerk fini).
+\end{itemize}
+\end{example}
 
 
+\newpage
 \section{Optimalité}
 
-
-\begin{theorem}{Propriété fondamentale de la convexité}{theo:opt_convexe}
-    Si la fonction de coût $f(\col{x})$ est \textbf{convexe} et que l'ensemble des contraintes est \textbf{convexe}, alors tout \textbf{minimum local est un minimum global}.
-\end{theorem}
-
-Retenez qu'un problème "facile" combine une fonction de coût en forme de bol (convexe) et un espace de recherche sans "trous" (convexe).
-
-
-Pour les problèmes avec contraintes, on utilise le concept de multiplicateurs de Lagrange.
+\subsection{Locale}
 
 \begin{definition}{Le Lagrangien}{def:lagrangien}
     Le Lagrangien $\mathcal{L}$ associé au problème \ref{def:opt_std} est défini par :
@@ -206,46 +209,270 @@ Pour les problèmes avec contraintes, on utilise le concept de multiplicateurs d
     \begin{enumerate}
         \item $\nabla_{\col{x}} \mathcal{L}(\col{x}^*, \col{\lambda}^*, \col{\nu}^*) = \col{0}$ (Stationnarité)
         \item $\col{h}(\col{x}^*) = \col{0}$ et $\col{g}(\col{x}^*) \leq \col{0}$ (Primalité)
-        \item $\lambda_i^* g_i(\col{x}^*) = 0$ (Complémentarité)
+        \item $(\col{\lambda}^*)^T g(\col{x}^*) = \col{0}$ (Complémentarité)
     \end{enumerate}
 \end{theorem}
 
 
+\subsection{Globale}
 
+\begin{theorem}{Propriété fondamentale de la convexité}{theo:opt_convexe}
+    Si la fonction de coût $f(\col{x})$ est \textbf{convexe} et que l'ensemble des contraintes est \textbf{convexe}, alors tout \textbf{minimum local est un minimum global}.
+\end{theorem}
+
+\subsection{Existence}
+
+Les conditions suivantes doivent être respectées pour avoir la garantie mathématique qu'une solution optimale existe. Concrètement, un algorithme numérique pourrait chercher indéfiniment sans jamais converger si l'une de ces conditions fait défaut.
+
+\begin{theorem}{Théorème de Weierstrass}{theo:weierstrass}
+    Soit $f: S \to \mathbb{R}$ une fonction définie sur un ensemble $S \subseteq \mathbb{R}^n$. Si les deux conditions suivantes sont satisfaites :
+    \begin{enumerate}
+        \item $f$ est une fonction \textbf{continue} sur $S$,
+        \item $S$ est un ensemble \textbf{compact} (à la fois fermé et borné),
+    \end{enumerate}
+    alors la fonction $f$ atteint son minimum global et son maximum global sur $S$. Autrement dit, il existe au moins un point $\col{x}^* \in S$ tel que $f(\col{x}^*) \leq f(\col{x})$ pour tout $\col{x} \in S$.
+\end{theorem}
+
+
+
+\newpage
 \section{Classes de problèmes}
 
-La complexité de résolution, et donc le type d'algorithme à utiliser, dépend de la forme des fonctions $f, \col{g}$ et $\col{h}$.
+La complexité de résolution, et donc le type d'algorithme à utiliser, dépend de la forme des fonctions $f$, $\col{g}$ et $\col{h}$. Voici les trois classes principales de problèmes qui dictent le choix de la méthode numérique.
 
 \subsection{Programmation Linéaire (LP)}
-Si toutes les fonctions sont affines. Très efficace, utilisé pour la planification de flux ou certains problèmes de contact simple.
+
+La programmation linéaire est la classe la plus simple et la plus robuste. Elle est caractérisée par une linéarité totale des relations.
+
+\begin{definition}{Programmation Linéaire (LP)}{def:lp}
+    Un problème est dit \textbf{LP} si la fonction objectif et toutes les contraintes sont des fonctions affines :
+    \begin{align*}
+        \min_{\col{x}} \quad & \col{c}^T \col{x} \\
+        \text{sujet à} \quad & \col{A}\col{x} \leq \col{b} \\
+        & \col{x} \geq \col{0}
+    \end{align*}
+\end{definition}
+
+Un problème LP est toujours convexe. La solution optimale se trouve nécessairement sur l'un des sommets (coins) du polyèdre formé par les contraintes.
 
 \subsection{Programmation Quadratique (QP)}
-\begin{definition}{Programmation Quadratique}{def:qp}
-    Un problème est dit QP si le coût est quadratique et les contraintes sont affines :
-    $$ f(\col{x}) = \frac{1}{2}\col{x}^T Q \col{x} + \col{c}^T \col{x} $$
+
+C'est la classe la plus utilisée en robotique et en commande optimale.
+
+\begin{definition}{Programmation Quadratique (QP)}{def:qp}
+    Un problème est dit \textbf{QP} si la fonction objectif est quadratique et les contraintes sont affines :
+    \begin{align*}
+        \min_{\col{x}} \quad & \frac{1}{2}\col{x}^T \col{Q} \col{x} + \col{c}^T \col{x} \\
+        \text{sujet à} \quad & \col{A}\col{x} \leq \col{b} 
+    \end{align*}
+    Avec la matrice $\col{Q}$ semi-définie positive ($\col{Q} \succeq 0$) pour un problème convexe.
 \end{definition}
-\note{Importance en robotique}{C'est la forme utilisée par les solveurs de commande prédictive (MPC) et pour la résolution des redondances cinématiques en temps réel.}
+
+
+
+\begin{itemize}
+    \item \textbf{Propriété :}  La solution est alors globale, unique et peut être trouvée très rapidement (souvent en quelques millisecondes).
+\end{itemize}
+
+\subsection{Programmation Non-Linéaire (NLP)}
+
+C'est la classe la plus générale. Elle regroupe tous les problèmes où les relations physiques ne peuvent pas être simplifiées en formes linéaires ou quadratiques.
+
+\begin{definition}{Programmation Non-Linéaire (NLP)}{def:nlp}
+    Un problème est dit \textbf{NLP} si au moins une des fonctions ($f, \col{g}$ ou $\col{h}$) est non-linéaire (présence de fonctions trigonométriques, de produits de variables, etc.) :
+    \begin{align*}
+        \min_{\col{x}} \quad & f(\col{x}) \\
+        \text{sujet à} \quad & \col{g}(\col{x}) \leq \col{0} \\
+        & \col{h}(\col{x}) = \col{0}
+    \end{align*}
+\end{definition}
 
 
 
 
-\section{Méthodes analytiques}
+\newpage
+\section{Solutions analytiques}
 
+Cette section présente les situations privilégiées où il existe une solution explicite à un problème d'optimisation, évitant ainsi le recours à des algorithmes itératifs.
 
-
+\subsection{Multiplicateurs de Lagrange}
 \video{Multiplicateurs de Lagrange}{https://youtu.be/W7kzp927xXc}
 
-\section{Algorithmes de résolution}
+\begin{definition}{Problème : Optimisation sous contraintes d'égalité}{}
+    On cherche à minimiser une fonction sous un ensemble de contraintes strictes :
+    \begin{align*}
+        \min_{\col{x}} \quad & f(\col{x}) \\
+        \text{sujet à} \quad & \col{h}(\col{x}) = \col{0}
+    \end{align*}
+\end{definition}
 
-\subsection{Descente du gradient}
+\begin{theorem}{Solution : Le Lagrangien}{}
+    On définit le Lagrangien $\mathcal{L}$ comme :
+    $$ \mathcal{L}(\col{x}, \col{\nu}) = f(\col{x}) + \col{\nu}^T \col{h}(\col{x}) $$
+    Les points candidats à l'optimum satisfont le système d'équations :
+    $$ \nabla_{\col{x}} \mathcal{L} = \col{0} \quad \text{et} \quad \nabla_{\col{\nu}} \mathcal{L} = \col{0} $$
+\end{theorem}
 
-\subsection{Méthodes sans contraintes}
-Pour minimiser $f(\col{x})$, on utilise souvent la méthode de Newton :
-$$ \col{x}_{k+1} = \col{x}_k - \alpha \left[ \nabla^2 f(\col{x}_k) \right]^{-1} \nabla f(\col{x}_k) $$
+\subsection{Objectif quadratique avec contraintes d'égalité}
 
-\subsection{Programmation Quadratique Successive (SQP)}
-C'est l'algorithme standard pour l'optimisation de trajectoire non-linéaire. À chaque itération, on approxime le problème NLP par un problème QP local.
+\begin{definition}{Problème : QP avec égalités}{}
+    \begin{align*}
+        \min_{\col{x}} \quad & \frac{1}{2}\col{x}^T \col{Q} \col{x} + \col{c}^T \col{x} \\
+        \text{sujet à} \quad & \col{A}\col{x} = \col{b}
+    \end{align*}
+\end{definition}
 
-\resume{
-    L'optimisation transforme une intention (coût) et des limites physiques (contraintes) en une solution mathématique unique. En robotique, le choix du solveur dépend de la convexité du problème et du temps de calcul alloué.
-}
+\begin{theorem}{Solution analytique directe}{theo:qp_explicit}
+    La solution optimale au problème QP avec égalité est :
+    $$ \col{x}^* = -\col{Q}^{-1}\col{c} + \col{Q}^{-1}\col{A}^T \left( \col{A} \col{Q}^{-1} \col{A}^T \right)^{-1} \left( \col{b} + \col{A} \col{Q}^{-1} \col{c} \right) $$
+\end{theorem}
+
+
+% \begin{proof}
+%     Définissons le Lagrangien associé au problème :
+%     $$ \mathcal{L}(\col{x}, \col{\nu}) = \frac{1}{2}\col{x}^T \col{Q} \col{x} + \col{c}^T \col{x} + \col{\nu}^T(\col{A}\col{x} - \col{b}) $$
+%     Les conditions d'optimalité du premier ordre sont :
+%     \begin{enumerate}
+%         \item $\nabla_{\col{x}} \mathcal{L} = \col{Q}\col{x} + \col{c} + \col{A}^T\col{\nu} = \col{0}$
+%         \item $\nabla_{\col{\nu}} \mathcal{L} = \col{A}\col{x} - \col{b} = \col{0}$
+%     \end{enumerate}
+    
+%     De l'équation (1), on isole $\col{x}$ :
+%     $$ \col{x} = -\col{Q}^{-1}(\col{c} + \col{A}^T\col{\nu}) $$
+    
+%     Substituons cette expression dans l'équation de contrainte (2) :
+%     $$ \col{A} \left[ -\col{Q}^{-1}(\col{c} + \col{A}^T\col{\nu}) \right] = \col{b} $$
+%     $$ -\col{A}\col{Q}^{-1}\col{c} - \col{A}\col{Q}^{-1}\col{A}^T\col{\nu} = \col{b} $$
+    
+%     En isolant le multiplicateur de Lagrange $\col{\nu}$, on obtient :
+%     $$ \col{\nu}^* = -(\col{A} \col{Q}^{-1} \col{A}^T)^{-1} (\col{b} + \col{A} \col{Q}^{-1} \col{c}) $$
+    
+%     Enfin, en réinjectant $\col{\nu}^*$ dans l'expression de $\col{x}$, on retrouve la formule du théorème :
+%     $$ \col{x}^* = -\col{Q}^{-1}\col{c} + \col{Q}^{-1}\col{A}^T \left( \col{A} \col{Q}^{-1} \col{A}^T \right)^{-1} \left( \col{b} + \col{A} \col{Q}^{-1} \col{c} \right) $$
+% \end{proof}
+
+\subsection{Moindres carrés}
+
+\begin{definition}{Problème : Moindres carrés}{}
+    On cherche à minimiser l'erreur quadratique d'un système surdéterminé :
+    $$ \min_{\col{x}} \quad f(\col{x}) = \frac{1}{2} \| \col{A}\col{x} - \col{b} \|^2 $$
+\end{definition}
+
+\begin{theorem}{Solution des moindres carrés}{}
+    La solution unique (si $\col{A}$ est de plein rang) est :
+    $$ \col{x}^* = (\col{A}^T \col{A})^{-1} \col{A}^T \col{b} $$
+\end{theorem}
+
+\subsection{Moindres carrés pondérés}
+
+\begin{definition}{Problème : Moindres carrés pondérés}{}
+    On accorde une importance différente à chaque mesure via une matrice de poids $\col{W} \succ 0$ :
+    $$ \min_{\col{x}} \quad f(\col{x}) = \frac{1}{2} (\col{A}\col{x} - \col{b})^T \col{W} (\col{A}\col{x} - \col{b}) $$
+\end{definition}
+
+\begin{theorem}{Solution analytique}{}
+    La solution intègre la matrice de pondération :
+    $$ \col{x}^* = (\col{A}^T \col{W} \col{A})^{-1} \col{A}^T \col{W} \col{b} $$
+\end{theorem}
+
+\subsection{Moindres carrés régularisés}
+
+\begin{definition}{Problème : Régularisation}{}
+    On cherche un compromis entre la précision et la norme de la solution :
+    $$ \min_{\col{x}} \quad f(\col{x}) = \frac{1}{2} \| \col{A}\col{x} - \col{b} \|^2 + \frac{\lambda}{2} \| \col{x} \|^2 $$
+\end{definition}
+
+\begin{theorem}{Solution : Inversion amortie}{}
+    $$ \col{x}^* = (\col{A}^T \col{A} + \lambda \col{I})^{-1} \col{A}^T \col{b} $$
+\end{theorem}
+
+\subsection{Solution de norme minimale (Redondance)}
+
+\begin{definition}{Problème : Norme Minimale}{}
+    Pour un système ayant plus de degrés de liberté que de contraintes, on cherche la solution avec la plus petite norme:
+    \begin{align*}
+        \min_{\col{x}} \quad & \frac{1}{2} \|\col{x}\|^2 \\
+        \text{sujet à} \quad & \col{A}\col{x} = \col{b}
+    \end{align*}
+\end{definition}
+
+\begin{theorem}{Solution : Pseudo-inverse droite}{}
+    Si $\col{A}$ est de plein rang ligne, la solution est :
+    $$ \col{x}^* = \col{A}^T (\col{A} \col{A}^T)^{-1} \col{b} $$
+\end{theorem}
+
+
+\newpage
+\section{Méthodes de résolution numériques}
+
+Lorsque le problème ne possède pas de solution analytique, on utilise des algorithmes itératifs. Le principe général est de générer une suite de points $\col{x}_{k+1} = \col{x}_k + \alpha \Delta\col{x}_k$ qui converge vers l'optimum, où $\Delta\col{x}_k$ est la direction de recherche et $\alpha$ est le pas de calcul.
+
+\subsection{Optimisation sans contraintes}
+
+La méthode de base est de suivre le gradient de la fonction:
+
+\begin{definition}{Descente de gradient (Ordre 1)}{algo:gradient}
+    La direction de recherche est l'opposé du gradient local, soit la direction de la plus forte pente descendante :
+    $$\col{x}_{k+1} = \col{x}_k - \alpha \nabla f(\col{x}_k)$$
+\end{definition}
+
+C'est très robuste et simple à implémenter, mais peut être très lent car il est dure d'avoir un paramètre $\alpha$ qui convient à toutes les situations. Une alternative est de calculer le pas en fonction de la dérivée seconde:
+
+\begin{definition}{Méthode de Newton (Ordre 2)}{algo:newton}
+    Cette méthode utilise la courbure locale (Hessienne) pour corriger la direction de descente et viser directement le minimum d'une approximation quadratique :
+    $$\col{x}_{k+1} = \col{x}_k - \alpha \left[ \nabla^2 f(\col{x}_k) \right]^{-1} \nabla f(\col{x}_k)$$
+\end{definition}
+
+Cette méthode a un convergence rapide (quadratique) près de l'optimum, mais nécessite le calcul et l'inversion de la Hessienne à chaque itération.
+
+\begin{definition}{Méthodes Quasi-Newton (BFGS)}{algo:quasi_newton}
+    Ces méthodes imitent le comportement de Newton sans calculer explicitement la Hessienne. On construit une approximation itérative $\col{B}_k \approx \nabla^2 f$ à partir des variations successives du gradient lors des itérations précédentes:
+    \begin{align}
+    \col{x}_{k+1} = \col{x}_k - \alpha B_k^{-1} \nabla f(\col{x}_k) \\
+    \text{avec} \quad B_k \approx \nabla^2 f
+    \end{align}
+\end{definition}
+
+C'est le standard quand le calcul analytique de la Hessienne est trop complexe ou coûteux.
+
+\subsection{Optimisation avec contraintes}
+
+Pour traiter les contraintes $\col{g}(\col{x}) \leq \col{0}$ et $\col{h}(\col{x}) = \col{0}$, on utilise des stratégies de transformation ou de sous-problèmes :
+
+\begin{definition}{Méthodes de Points Intérieurs (Barrière)}{algo:ipm}
+    On remplace les contraintes d'inégalité par des fonctions barrières (souvent logarithmiques) intégrées directement au coût :
+    $$\min_{\col{x}} \quad f(\col{x}) - \mu \sum_{i} \ln(-g_i(\col{x}))$$
+\end{definition}
+
+L'algorithme reste à l'intérieur de la zone admissible. Très efficace pour les problèmes de grande taille (ex: solveur \textbf{IPOPT}).
+
+
+\begin{definition}{Programmation Quadratique Successive (SQP)}{algo:sqp}
+    À chaque itération, l'algorithme résout un sous-problème de type \textbf{QP} (Quadratic Programming) en linéarisant les contraintes et en approximant le coût par une forme quadratique locale.
+\end{definition}
+
+Méthode de référence pour l'optimisation de trajectoires complexes en robotique nécessitant une grande précision sur les contraintes (ex: solveur \textbf{SNOPT}).
+
+\subsection{Méthodes de recherche globale}
+
+Lorsque le problème est fortement non-convexe, les méthodes de descente (ordre 1 ou 2) convergent vers le minimum local le plus proche du point initial. Les méthodes globales visent à explorer l'ensemble de l'espace pour trouver le véritable optimum global. Toutefois, contrairement aux méthodes locales qui convergent en quelques itérations, les méthodes globales nécessitent souvent des milliers, voire des millions d'évaluations de la fonction objectif. Elle sont donc significativement plus lente que les méthodes basées sur la descente d'un gradient.
+
+\begin{definition}{Méthodes Départs-Multiples}{algo:multistart}
+    C'est la stratégie la plus simple : on lance plusieurs optimisations locales (ex: Newton ou Gradient) à partir de points initiaux $\col{x}_0$ distribués aléatoirement dans l'espace de recherche. On conserve ensuite le meilleur résultat obtenu.
+    \textbf{Usage :} Très facile à paralléliser sur des processeurs multi-cœurs.
+\end{definition}
+
+\begin{definition}{Algorithmes Évolutionnaires }{algo:cmaes}
+    Ces méthodes s'inspirent de la sélection naturelle. Elles gèrent une population de points et utilisent des mécanismes de mutation et de sélection pour déplacer cette population vers les zones de bas coût.
+    \textbf{Usage :} Très efficace pour l'optimisation "boîte noire" (\textit{black-box}) où le gradient n'est pas disponible ou trop bruité.
+\end{definition}
+
+\begin{definition}{Recuit Simulé }{algo:recuit}
+    Inspirée de la métallurgie, cette méthode accepte parfois des mouvements "vers le haut" (augmentant le coût) pour s'extraire d'un minimum local. Cette probabilité diminue avec le temps (la "température").
+    \textbf{Usage :} Utile pour les problèmes d'optimisation combinatoire ou de grande dimension avec de nombreux creux locaux.
+\end{definition}
+
+
+
+
+
