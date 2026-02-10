@@ -1,13 +1,50 @@
 \chapter{Optimisation de trajectoires}
+\label{chap:trajopt}
+
+Sources utille:\\
+\url{https://arxiv.org/pdf/1707.00284}\\
+\url{https://underactuated.mit.edu/trajopt.html}
+
+Chapitre en construction!!
+
+\video{Introduction à la commande optimale}{https://youtu.be/3x6Vg-RRZ50}
+
+\colab{Démo d'introduction à l'optimisation de trajectoires}{https://colab.research.google.com/drive/1yq2GHAkvO6fTF2W-tRbACDBa9_scec2k?usp=sharing}
 
 
+\section{Formulation et principes de résolution}
 
-\section{Formulation du problème}
+L'optimisation de trajectoire consiste à trouver une trajectoire $\{x^{*}(t),u^{*}(t)\}$ qui minimise une fonction de coût tout en satisfaisant la dynamique du système et des contraintes du système. Contrairement à la programmation dynamique qui cherche une politique globale, cette approche produit une solution locale pour une condition initiale donnée, ce qui permet de traiter des systèmes de grande dimension.
+
+Une fois discrétisé, le problème est converti en un problème de \textbf{programmation non-linéaire (NLP)} sous la forme standard :
+\begin{align*}
+    \min_{z} \quad & J(z) \\
+    \text{sujet à} \quad & \col{l} \leq \col{c}(z) \leq \col{u}
+\end{align*}
+
+Pour résoudre ce NLP, on fait appel à des solveurs numériques spécialisés tels que \textbf{SNOPT} (algorithme SQP pour grandes échelles), \textbf{IPOPT} (méthode de points intérieurs robuste) ou \textbf{FMINCON}.
+
+\begin{definition}{Problème de commande optimale (Forme de Bolza)}{def:bolza}
+    Le problème consiste à minimiser le coût $J$ défini par :
+    $$ J = \phi(t_0, x_0, t_f, x_f) + \int_{t_0}^{t_f} g(t, x, u) dt $$
+    Sujet à :
+    \begin{itemize}
+        \item \textbf{Dynamique :} $\dot{x} = f(t, x, u)$
+        \item \textbf{Contraintes :} $c_{min} < c(t, x, u) < c_{max}$
+        \item \textbf{Conditions limites :} $b_{min} < b(t_0, x_0, t_f, x_f) < b_{max}$
+    \end{itemize}
+\end{definition}
 
 
 
 \section{Planéité différentielle}
-\label{sec:searchalgo}
+\label{sec:diff_flatness}
+
+La planéité différentielle (\textit{differential flatness}) est une propriété permettant de simplifier drastiquement la planification pour certains systèmes sous-actionnés (ex: drones, voitures).
+
+\begin{definition}{Planéité différentielle}{def:diff_flatness}
+    Un système est différentiellement plat s'il existe des sorties "plates" telles que tous les états et toutes les commandes peuvent être calculés uniquement à partir de ces sorties et de leurs dérivées temporelles.
+\end{definition}
 
 Le concept de planéité différentielle, en anglais \textit{differential flatness}, peut être très utile pour planifier des trajectoires pour des systèmes sous-actionnés. Le principe est le suivant: certains systèmes ont des variables sorties qui ont une propriété spéciale, i.e. nommée la planéité différentielle, qui est que tout les états et forces du système sont entièrement définis par ces variables et leurs dérivées supérieures. Par exemple, la position de l'effecteur pour un bras manipulateur, le centre de masse d'un drone quadcopter, le point milieu entre les deux roues arrières d'une voiture ont cette propriété. Pour une bras manipulateur pleinement actionné, les forces nécessaires aux joints sont reliés à l'accélération à l'effecteur. Pour un drone, les forces de propulsion sont reliés à la quatrième dérivée temporelle de la position du centre de masse, souvent appelé le \textit{snap}.
 
@@ -17,14 +54,39 @@ Ce concept peut être exploité pour générer plus facilement des trajectoires 
 
 
 
+Planifier une trajectoire fluide dans l'espace des sorties garantit la faisabilité dynamique. L'optimisation se réduit alors souvent à un problème de programmation quadratique (QP) sur les paramètres de courbes polynomiales, minimisant par exemple le \textit{snap} pour un quadrotor.
+
 \newpage
-\section{Algorithmes d'optimisation de trajectoires}
+\section{Méthodes de Transcription}
 
-\video{Introduction à la commande optimale}{https://youtu.be/3x6Vg-RRZ50}
+La transcription est le processus de conversion de la dynamique continue en contraintes algébriques pour un solveur NLP.
 
-\colab{Démo d'introduction à l'optimisation de trajectoires}{https://colab.research.google.com/drive/1yq2GHAkvO6fTF2W-tRbACDBa9_scec2k?usp=sharing}
+\subsection{Méthodes de Tir (\textit{Shooting})}
 
-À venir!
+\begin{definition}{Transcription par Tir}{def:shooting}
+    Ces méthodes imposent la dynamique via une simulation explicite (intégration numérique). Seules les commandes sont généralement des variables de décision.
+\end{definition}
 
-Mots clés: programmation quadratique, \textit{direct collocation}, \textit{shooting}
+\begin{itemize}
+    \item \textbf{Tir simple (\textit{Single Shooting}) :} On simule toute la trajectoire d'un coup. C'est simple mais numériquement instable car les erreurs d'intégration se propagent .
+    \item \textbf{Tir multiple (\textit{Multiple Shooting}) :} La trajectoire est découpée en segments avec leurs propres états initiaux. Des contraintes de \textbf{défaut} assurent la continuité, rendant le problème plus robuste et parallélisable.
+\end{itemize}
+
+
+
+\subsection{Transcription Simultanée (\textit{Collocation})}
+
+\begin{definition}{Collocation Directe}{def:collocation}
+    L'état et la commande sont tous deux des variables de décision. La dynamique est imposée comme une contrainte d'égalité à des points spécifiques nommés points de collocation.
+\end{definition}
+
+\begin{itemize}
+    \item \textbf{Transcription directe :} Utilise généralement la forme intégrale de la dynamique sur une grille fine.
+    \item \textbf{Collocation directe :} Représente l'état par des polynômes par morceaux. On force la pente du polynôme à correspondre à la dynamique $\dot{x} = f(x,u)$ aux points de collocation.
+    \item \textbf{Méthodes Pseudospectrales :} Utilisent des polynômes d'ordre élevé sur toute la trajectoire. La convergence est obtenue par l'ordre du polynôme (\textbf{méthode $p$}) ou le nombre de segments (\textbf{méthode $h$}).
+\end{itemize}
+
+
+
+
 
