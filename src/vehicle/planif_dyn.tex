@@ -7,85 +7,36 @@ Sources utille:\\
 
 Chapitre en construction!!
 
-\video{Introduction à la commande optimale}{https://youtu.be/3x6Vg-RRZ50}
-
 \colab{Démo d'introduction à l'optimisation de trajectoires}{https://colab.research.google.com/drive/1yq2GHAkvO6fTF2W-tRbACDBa9_scec2k?usp=sharing}
-
-
-\chapter{Optimisation de trajectoires}
-
-\begin{chapterintro}
-    \introcontext{
-        Dans le chapitre sur la \textbf{génération de trajectoires} (Chapitre 6), nous avons appris à interpoler des points de passage par des splines ou des profils de vitesse pour obtenir des mouvements géométriques fluides. Cependant, ces approches ignorent souvent la dynamique réelle du robot et ses limites d'actionnement. L'optimisation de trajectoire permet de franchir cette étape en cherchant des mouvements qui respectent non seulement la géométrie, mais aussi les équations du mouvement $\dot{\col{x}} = \col{f}(t, \col{x}, \col{u})$.
-    }
-    
-    \introobjectives{
-        À la fin de ce chapitre, vous serez capable de :
-        \begin{itemize}
-            \item Situer l'optimisation de trajectoire parmi les branches de la commande optimale.
-            \item Formuler mathématiquement un problème de commande optimale sous forme de Bolza.
-            \item Différencier et appliquer les techniques de transcription (tir vs simultané)[cite: 1, 2].
-            \item Exploiter la planéité différentielle pour simplifier la planification.
-        \end{itemize}
-    }
-    
-    \introprerequis{
-        \begin{itemize}
-            \item Dynamique des systèmes multicorps.
-            \item Méthodes numériques de résolution (Annexe Z).
-        \end{itemize}
-    }
-\end{chapterintro}
 
 \section{Introduction et contexte}
 
 L'optimisation de trajectoire est une branche des méthodes numériques pour résoudre des problèmes de \textbf{commande optimale}. Contrairement à la planification cinématique qui se limite souvent à l'espace des configurations $\col{q}(t)$, le cadre ici est générique et s'applique à la forme d'état générale $\dot{\col{x}} = \col{f}(\col{x}, \col{u})$, incluant les forces et couples d'actionnement $\col{u}$.
-
-On distingue traditionnellement trois approches pour résoudre un problème de commande optimale :
-\begin{itemize}
-    \item \textbf{Programmation Dynamique} : Résout l'équation de Hamilton-Jacobi-Bellman sur tout l'espace d'état pour obtenir une politique globale. Elle souffre toutefois de la "malédiction de la dimension"[cite: 1, 2].
-    \item \textbf{Méthodes Indirectes} : Reposent sur le principe du minimum de Pontryagin pour trouver les conditions d'optimalité analytiques (calcul des variations). Ces méthodes sont souvent instables numériquement et difficiles à initialiser.
-    \item \textbf{Méthodes Directes (Optimisation de trajectoire)} : Transcrivent le problème continu en un problème de programmation non-linéaire (NLP) de dimension finie pour trouver une trajectoire unique. C'est l'approche la plus répandue en robotique de haute dimension[cite: 1, 2].
-\end{itemize}
 
 \section{Formalisation mathématique}
 
 Le but est de trouver la trajectoire optimale $\{\col{x}^*(t), \col{u}^*(t)\}$ qui minimise un coût tout en satisfaisant des contraintes.
 
 \begin{definition}{Problème d'optimisation de trajectoire}{def:traj_opt}
-    On cherche à minimiser la fonctionnelle de coût $J$ (Forme de Bolza):
-    \begin{equation}
-        J = \phi(t_0, \col{x}_0, t_f, \col{x}_f) + \int_{t_0}^{t_f} g(t, \col{x}, \col{u}) dt
-    \end{equation}
-    Sujet à :
-    \begin{itemize}
-        \item \textbf{Dynamique du système} : $\dot{\col{x}} = f(t, \col{x}, \col{u})$ 
-        \item \textbf{Contraintes de chemin} : $\col{c}_{min} \leq \col{c}(t, \col{x}, \col{u}) \leq \col{c}_{max}$ 
-        \item \textbf{Conditions aux limites} : $\col{b}_{min} \leq \col{b}(t_0, \col{x}_0, t_f, \col{x}_f) \leq \col{b}_{max}$ 
-    \end{itemize}
+À venir!
 \end{definition}
 
-\note{Variable d'état vs commande}{
-    Une variable d'état $\col{x}$ est différenciée dans les équations dynamiques, tandis qu'une commande $\col{u}$ n'y apparaît qu'algébriquement.
-}
+
 
 \section{Techniques de transcription}
 
-La transcription convertit le problème continu en un programme non-linéaire (NLP) que des solveurs (comme SNOPT ou IPOPT) peuvent résoudre[cite: 1, 2].
+La transcription convertit le problème continu en un programme non-linéaire (NLP) que des solveurs (comme SNOPT ou IPOPT) peuvent résoudre.
 
 \subsection{Méthodes de Tir (\textit{Shooting})}
 L'idée est d'utiliser une simulation pour imposer la dynamique.
-\begin{itemize}
-    \item \textbf{Tir simple (\textit{Single Shooting})} : Seule la commande $\col{u}$ est une variable de décision. On simule le système vers l'avant. Très sensible aux conditions initiales (instable numériquement)[cite: 1, 2].
-    \item \textbf{Tir multiple (\textit{Multiple Shooting})} : On divise la trajectoire en segments. On ajoute des contraintes de \textbf{défaut} pour forcer la fin d'un segment à correspondre au début du suivant. C'est plus robuste et mieux conditionné numériquement[cite: 1, 2].
-\end{itemize}
+
+À venir!
 
 \subsection{Méthodes Simultanées (\textit{Collocation})}
 L'état et la commande sont représentés par des variables de décision à chaque point de la grille.
-\begin{itemize}
-    \item \textbf{Transcription directe} : Utilise la forme intégrale de la dynamique pour lier les points de la grille.
-    \item \textbf{Collocation directe} : Utilise des polynômes par morceaux. La dynamique est imposée comme une contrainte algébrique aux points de collocation (milieu des segments).
-\end{itemize}
+
+À venir!
+
 
 \section{Planéité différentielle (\textit{Differential Flatness})}
 
@@ -95,10 +46,6 @@ La planéité différentielle est un outil de planification puissant qui permet 
     Un système est différentiellement plat s'il existe un ensemble de sorties "plates" $\col{y}$ telles que tous les états $\col{x}$ et toutes les commandes $\col{u}$ peuvent être exprimés uniquement en fonction de $\col{y}$ et de ses dérivées temporelles.
 \end{definition}
 
-\note{Lien avec la génération de trajectoires}{
-    Pour un système plat (ex: drone quadrotor), on peut planifier une trajectoire fluide (spline) dans l'espace cartésien (Chapitre 6). La "planéité" garantit qu'il existe une commande $\col{u}(t)$ réalisable pour suivre exactement cette courbe sans avoir à résoudre un NLP complexe.
-}
+Pour un système plat (ex: drone quadrotor), on peut planifier une trajectoire fluide (spline) dans l'espace cartésien (Chapitre 6). La "planéité" garantit qu'il existe une commande $\col{u}(t)$ réalisable pour suivre exactement cette courbe sans avoir à résoudre un NLP complexe.
 
-\resume{
-    L'optimisation de trajectoire permet de générer des mouvements dynamiquement admissibles pour des systèmes génériques $\dot{\col{x}} = \col{f}(\col{x}, \col{u})$. Le choix de la transcription est crucial : le \textbf{tir multiple} et la \textbf{collocation} sont souvent préférés pour leur robustesse numérique par rapport au tir simple[cite: 1, 2].
-}
+

@@ -2,27 +2,29 @@
 
 \begin{chapterintro}
     \introcontext{
-        Jusqu'à présent, nous avons abordé la \textbf{génération de trajectoires} et la \textbf{planification de mouvement} pour résoudre l'aspect géométrique du problème : « comment aller d'un point A à un point B ». Cependant, ces approches ne garantissent pas que les capacités physiques des actionneurs permettent réellement d'exécuter le mouvement calculé. Du côté de la commande, bien que de nombreuses lois de commande assurent la convergence vers une position cible, elles ignorent souvent les contraintes de saturation et l'efficacité globale de la solution.
+        Jusqu'à présent, nous avons abordé la \textbf{génération de trajectoires} et la \textbf{planification de mouvement} pour résoudre l'aspect géométrique du problème : « comment aller d'un point A à un point B », mais sans vérifier si une séquence d'actions permette d’exécuter cette séquence. Du côté de la commande, plusieurs lois de commande ont été proposées qui donnent des garanties de convergence vers une position cible, mais typiquement sans tenir compte des contraintes, ni de l’efficacité de la solution.
         
-        La commande optimale fournit le cadre mathématique pour passer du simple mouvement admissible géométriquement au mouvement dynamique « idéal » (temps minimum, consommation d'énergie minimale, etc.). Ce chapitre introduit les fondements théoriques nécessaires pour traiter le système sous sa forme d'état générique $\dot{\col{x}} = \col{f}(\col{x}, \col{u})$.
+        La commande optimale nous offre le cadre mathématique pour passer du simple mouvement admissible géométriquement au mouvement dynamique « idéal » (temps minimum, consommation d'énergie minimale, etc.). Ce chapitre introduit les fondements théoriques nécessaires pour traiter le système sous sa forme d'état générique $\dot{\col{x}} = \col{f}(\col{x}, \col{u}, t)$.
     }
     
     \introobjectives{
         À la fin de ce chapitre, vous serez capable de :
         \begin{itemize}
             \item Formuler mathématiquement un problème de commande optimale.
-            \item Distinguer les grandes familles de résolution : programmation dynamique, méthodes indirectes et méthodes directes.
+            \item Identifier les critères de performance (coûts) appropriés pour différentes tâches robotiques.
         \end{itemize}
     }
     
     \introprerequis{
         \begin{itemize}
             \item Espace d'état et représentations vectorielles.
-            \item Notions de base en calcul différentiel et optimisation (Annexe Z).
-            \item Dynamique des systèmes multicorps (Lagrangien).
         \end{itemize}
     }
 \end{chapterintro}
+
+
+\video{Introduction à la commande optimale}{https://youtu.be/3x6Vg-RRZ50}
+
 
 
 \section{Formalisation mathématique}
@@ -30,7 +32,6 @@
 La plupart des méthodes de commande optimale sont conçues pour travailler avec la forme la plus générale des équations différentielles, permettant de traiter une vaste gamme de systèmes robotiques.
 
 \video{Exemple de loi de commande optimale pour un double intégrateur}{https://youtu.be/wKjEAXFvXlQ}
-\video{Exemple de loi de commande optimale pour un pendule}{https://youtu.be/iUlkKd\textunderscore ERK\textunderscore dU}
 
 
 \begin{definition}{Le problème de commande optimale}{def:formalisation_opt}
@@ -46,12 +47,12 @@ La plupart des méthodes de commande optimale sont conçues pour travailler avec
     \end{align}
     un objectif caractérisé par une fonction de coût $J$ à minimiser :
     \begin{equation}
-        J = \int_{t0}^{t_f} g(\col{x},\col{u} )dt + h( \col{x}({t_f}) )
+        J = \int_{t_0}^{t_f} g(\col{x},\col{u} )dt + h( \col{x}({t_f}) )
     \end{equation}
     et une (ou une distribution de) conditions initiales $\col{x}_0$.
 \end{definition}
 
-Dans cette formulation, $g(\col{x},\col{u})$ représente le coût instantané (ex: consommation d'énergie à chaque instant) et $h(\col{x}_f)$ représente le coût terminal (ex: précision de l'arrivée au point cible).
+Dans cette formulation, $g(\col{x},\col{u})$ représente le coût instantané (ex : consommation d'énergie à chaque instant) et $h(\col{x}_f)$ représente le coût terminal (ex : précision de l'arrivée au point cible).
 
 
 
@@ -103,9 +104,9 @@ Ces méthodes visent à trouver une loi de commande optimale $\pi^*$, capable de
     \end{equation}
 \end{definition}
 
-En apprentissage par renforcement (\textit{RL}), cette politique est apprise par essai-erreur, tandis qu'en programmation dynamique, elle est calculée avec des méthodes numériques itératives en utilisant les équations. Ces méthodes sont très génériques et potentiellement très puissantes, mais en pratique le problème est intractable (le temps de calcul est trop long) et on doit chercher des solutions très approximées. Les techniques d'apprentissage par renforcement ont connus des succès récents mais c'est typiquement un défis de les faire fonctionner et pas la norme en date d'aujourd'hui (2026). Détails à venir!!
+En apprentissage par renforcement (\textit{RL}), cette politique est apprise par essai-erreur, tandis qu'en programmation dynamique, elle est calculée avec des méthodes numériques itératives en utilisant les équations. Ces méthodes sont très génériques et potentiellement très puissantes, mais en pratique le problème est souvent \textit{intractable} (le temps de calcul est trop long) et on doit chercher des solutions très approximées. Les techniques d'apprentissage par renforcement ont connu de grands succès récents, mais c'est typiquement un défi de les faire fonctionner et ce n'est pas la norme en date d'aujourd'hui (2026). Le sujet ne sera pas abordé en détail dans ces notes, il est le sujet de notes dédié au sujet disponible ici: \url{https://www.alexandregirard.com/teaching/dp/PDF/DP_Notes.pdf}
 
-Alternativement, si on peut linéariser la dynamique du système, on peut utiliser une technique très pratique appelée la synthèse LQR, une technique couramment utilisé en commande.
+Alternativement, si on peut linéariser la dynamique du système, on peut utiliser une technique très pratique appelée la synthèse LQR, couramment utilisée en commande.
 
 \begin{definition}{Régulateur Quadratique Linéaire (LQR)}{def:lqr_formal}
     Cas particulier où la dynamique est linéaire et le coût quadratique :
@@ -121,8 +122,6 @@ Alternativement, si on peut linéariser la dynamique du système, on peut utilis
 
 Plutôt que de chercher une solution universelle, ces méthodes se concentrent sur la recherche d'une trajectoire $\{\col{x}^*(t), \col{u}^*(t)\}$ partant d'une condition initiale spécifique $\col{x}_0$. 
 
-La méthode la plus courante
-
 \begin{definition}{Optimisation de trajectoire (Méthodes directes)}{def:direct_traj_formal}
     On discrétise le problème continu en $N$ segments de temps pour transformer le problème en programmation non-linéaire (NLP) :
     \begin{align*}
@@ -132,7 +131,10 @@ La méthode la plus courante
     \end{align*}
 \end{definition}
 
-Il existe une autre famille de technique moins courantes:
+Cette technique est abordée en détail au chapitre \ref{chap:trajopt}.
+
+
+Il existe une autre famille de techniques moins courantes :
 
 \begin{definition}{Méthodes indirectes}{def:indirect_traj_formal}
     On cherche à satisfaire les conditions nécessaires d'optimalité analytiques le long d'une trajectoire unique. Cela revient à résoudre un problème aux limites basé sur le principe du maximum de Pontryagin.
@@ -150,14 +152,14 @@ En pratique, les approches basées sur une loi de commande et celles basées sur
         \item \textbf{Régulation (Temps réel) :} On linéarise la dynamique autour de cette trajectoire pour concevoir un régulateur LQR variant dans le temps. La loi de commande devient :
         $$\col{u}(t) = \col{u}^*(t) - \col{K}(t)(\col{x}(t) - \col{x}^*(t))$$
     \end{enumerate}
-    Le gain $\col{K}(t)$ permet de rejeter les perturbations et de maintenir le robot dans un "tube" de stabilité autour du plan initial.
+    Le gain $\col{K}(t)$ permet de rejeter les perturbations et de maintenir le robot dans un « tube » de stabilité autour du plan initial.
 \end{definition}
 
-Alternativement, une autre stratégie pour donner un mécanisme de rétro-action est de constanmment re-mesurer l'état actuel et ré-optimiser une trajectoire à partir de se nouveau point:
+Alternativement, une autre stratégie pour donner un mécanisme de rétroaction est de constamment remesurer l'état actuel et ré-optimiser une trajectoire à partir de ce nouveau point :
 
 
 \begin{definition}{Commande prédictive (MPC)}{def:mpc}
-    Le commande prédictive (\textit{Model Predictive Control} ou MPC) consiste à résoudre un problème d'optimisation de trajectoire en temps réel sur un horizon de temps glissant :
+    La commande prédictive (\textit{Model Predictive Control} ou MPC) consiste à résoudre un problème d'optimisation de trajectoire en temps réel sur un horizon de temps glissant :
     \begin{itemize}
         \item À chaque instant $t$, on résout une optimisation sur un horizon court à partir de l'état actuel mesuré $\col{x}(t)$.
         \item On n'applique que la première commande $\col{u}_0$ de la séquence calculée.
@@ -167,5 +169,3 @@ Alternativement, une autre stratégie pour donner un mécanisme de rétro-action
 
 
 Bien que le MPC repose mathématiquement sur l'optimisation de trajectoire, le fait de ré-optimiser à chaque pas de temps à partir de l'état réel transforme cette méthode en une \textbf{politique de rétroaction} implicite $\col{u} = \pi(\col{x})$. C'est l'un des outils les plus puissants pour gérer simultanément la dynamique et les contraintes $\mathcal{X}_{ok}$ et $\mathcal{U}_{ok}$.
-
-
