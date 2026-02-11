@@ -1,0 +1,171 @@
+\chapter{Introduction à la commande optimale}
+
+\begin{chapterintro}
+    \introcontext{
+        Jusqu'à présent, nous avons abordé la \textbf{génération de trajectoires} et la \textbf{planification de mouvement} pour résoudre l'aspect géométrique du problème : « comment aller d'un point A à un point B ». Cependant, ces approches ne garantissent pas que les capacités physiques des actionneurs permettent réellement d'exécuter le mouvement calculé. Du côté de la commande, bien que de nombreuses lois de commande assurent la convergence vers une position cible, elles ignorent souvent les contraintes de saturation et l'efficacité globale de la solution.
+        
+        La commande optimale fournit le cadre mathématique pour passer du simple mouvement admissible géométriquement au mouvement dynamique « idéal » (temps minimum, consommation d'énergie minimale, etc.). Ce chapitre introduit les fondements théoriques nécessaires pour traiter le système sous sa forme d'état générique $\dot{\col{x}} = \col{f}(\col{x}, \col{u})$.
+    }
+    
+    \introobjectives{
+        À la fin de ce chapitre, vous serez capable de :
+        \begin{itemize}
+            \item Formuler mathématiquement un problème de commande optimale.
+            \item Distinguer les grandes familles de résolution : programmation dynamique, méthodes indirectes et méthodes directes.
+        \end{itemize}
+    }
+    
+    \introprerequis{
+        \begin{itemize}
+            \item Espace d'état et représentations vectorielles.
+            \item Notions de base en calcul différentiel et optimisation (Annexe Z).
+            \item Dynamique des systèmes multicorps (Lagrangien).
+        \end{itemize}
+    }
+\end{chapterintro}
+
+
+\section{Formalisation mathématique}
+
+La plupart des méthodes de commande optimale sont conçues pour travailler avec la forme la plus générale des équations différentielles, permettant de traiter une vaste gamme de systèmes robotiques.
+
+\video{Exemple de loi de commande optimale pour un double intégrateur}{https://youtu.be/wKjEAXFvXlQ}
+\video{Exemple de loi de commande optimale pour un pendule}{https://youtu.be/iUlkKd\textunderscore ERK\textunderscore dU}
+
+
+\begin{definition}{Le problème de commande optimale}{def:formalisation_opt}
+    Le problème de commande optimale est défini par 
+    une dynamique :
+    \begin{equation}
+        \dot{\col{x}} = f( \col{x}, \col{u}, t)
+    \end{equation}
+    des contraintes sur les états et les actions (limites d'actionnement, butées) :
+    \begin{align}
+        \col{x} \in \mathcal{X}_{ok} \\
+        \col{u} \in \mathcal{U}_{ok}
+    \end{align}
+    un objectif caractérisé par une fonction de coût $J$ à minimiser :
+    \begin{equation}
+        J = \int_{t0}^{t_f} g(\col{x},\col{u} )dt + h( \col{x}({t_f}) )
+    \end{equation}
+    et une (ou une distribution de) conditions initiales $\col{x}_0$.
+\end{definition}
+
+Dans cette formulation, $g(\col{x},\col{u})$ représente le coût instantané (ex: consommation d'énergie à chaque instant) et $h(\col{x}_f)$ représente le coût terminal (ex: précision de l'arrivée au point cible).
+
+
+
+\section{Théorie de la commande optimale}
+
+L'analyse théorique repose sur deux piliers : l'un traitant le problème de manière globale (HJB) et l'autre de manière locale (PMP).
+
+\subsection{L'équation de Hamilton-Jacobi-Bellman (HJB)}
+
+L'approche par programmation dynamique utilise le principe d'optimalité de Bellman pour définir la fonction de valeur optimale $J^*(\col{x}, t) = \min_{\col{u}} J$.
+
+\begin{definition}{Équation de Hamilton-Jacobi-Bellman}{def:hjb_formal}
+    La fonction de valeur $J^*$ doit satisfaire l'équation aux dérivées partielles :
+    \begin{equation}
+        -\frac{\partial J^*}{\partial t} = \min_{\col{u} \in \mathcal{U}_{ok}} \left[ g(\col{x}, \col{u}) + \left( \frac{\partial J^*}{\partial \col{x}} \right)^T f(\col{x}, \col{u}, t) \right]
+    \end{equation}
+    avec la condition terminale $J^*(\col{x}, t_f) = h(\col{x}(t_f))$.
+\end{definition}
+
+\subsection{Le Principe du Maximum de Pontryagin (PMP)}
+
+Le PMP définit les conditions nécessaires pour qu'une trajectoire soit optimale en introduisant un vecteur de variables adjointes $\col{\lambda}$ (co-états).
+
+\begin{definition}{Le Hamiltonien et le PMP}{def:pmp_formal}
+    On définit le Hamiltonien $H$ comme :
+    \begin{equation}
+        H(\col{x}, \col{u}, \col{\lambda}, t) = g(\col{x}, \col{u}) + \col{\lambda}^T f(\col{x}, \col{u}, t)
+    \end{equation}
+    Une trajectoire optimale doit satisfaire :
+    \begin{enumerate}
+        \item \textbf{Équation du co-état :} $\dot{\col{\lambda}} = -\frac{\partial H}{\partial \col{x}}$
+        \item \textbf{Équation d'état :} $\dot{\col{x}} = \frac{\partial H}{\partial \col{\lambda}}$
+        \item \textbf{Stationnarité :} $\col{u}^* = \arg \min_{\col{u} \in \mathcal{U}_{ok}} H(\col{x}, \col{u}, \col{\lambda}, t)$
+    \end{enumerate}
+\end{definition}
+
+\section{Grandes familles de méthodes}
+
+Pour résoudre un problème de commande optimale, le choix fondamental réside dans la définition de l'\textbf{espace de décision}. On distingue deux philosophies majeures selon que l'on cherche une solution globale (une loi de commande) ou une solution locale (une trajectoire spécifique).
+
+\subsection{Approches basées sur la loi de commande}
+
+Ces méthodes visent à trouver une loi de commande optimale $\pi^*$, capable de définir l'action optimale pour n'importe quel état $\col{x}$ rencontré.
+
+\begin{definition}{Programmation dynamique et apprentissage par renforcement}{def:dp_rl_formal}
+    On cherche une politique $\col{u} = \pi(\col{x}, t)$ qui minimise le coût $J$ pour tout l'espace d'état $\mathcal{X}_{ok}$ :
+    \begin{equation}
+        \pi(\col{x}, t) = \arg \min_{\col{u} \in \mathcal{U}_{ok}} J(\col{x}, t)
+    \end{equation}
+\end{definition}
+
+En apprentissage par renforcement (\textit{RL}), cette politique est apprise par essai-erreur, tandis qu'en programmation dynamique, elle est calculée avec des méthodes numériques itératives en utilisant les équations. Ces méthodes sont très génériques et potentiellement très puissantes, mais en pratique le problème est intractable (le temps de calcul est trop long) et on doit chercher des solutions très approximées. Les techniques d'apprentissage par renforcement ont connus des succès récents mais c'est typiquement un défis de les faire fonctionner et pas la norme en date d'aujourd'hui (2026). Détails à venir!!
+
+Alternativement, si on peut linéariser la dynamique du système, on peut utiliser une technique très pratique appelée la synthèse LQR, une technique couramment utilisé en commande.
+
+\begin{definition}{Régulateur Quadratique Linéaire (LQR)}{def:lqr_formal}
+    Cas particulier où la dynamique est linéaire et le coût quadratique :
+    \begin{align}
+        f(\col{x}, \col{u}, t) &= \col{A}\col{x} + \col{B}\col{u} \\
+        g(\col{x}, \col{u}) &= \col{x}^T \col{Q} \col{x} + \col{u}^T \col{R} \col{u} \\
+        h(\col{x}(t_f)) &= \col{x}(t_f)^T \col{Q}_f \col{x}(t_f)
+    \end{align}
+    La solution se trouve analytiquement et est une politique linéaire optimale de la forme $\col{u} = -\col{K}\col{x}$.
+\end{definition}
+
+\subsection{Approches basées sur la trajectoire}
+
+Plutôt que de chercher une solution universelle, ces méthodes se concentrent sur la recherche d'une trajectoire $\{\col{x}^*(t), \col{u}^*(t)\}$ partant d'une condition initiale spécifique $\col{x}_0$. 
+
+La méthode la plus courante
+
+\begin{definition}{Optimisation de trajectoire (Méthodes directes)}{def:direct_traj_formal}
+    On discrétise le problème continu en $N$ segments de temps pour transformer le problème en programmation non-linéaire (NLP) :
+    \begin{align*}
+        \min_{\col{u}_0, \dots, \col{u}_{N-1}} \quad & \sum_{k=0}^{N-1} g_d(\col{x}_k, \col{u}_k) \Delta t + h(\col{x}_N) \\
+        \text{s.c.} \quad & \col{x}_{k+1} = f_d(\col{x}_k, \col{u}_k) \\
+        & \col{x}_k \in \mathcal{X}_{ok}, \quad \col{u}_k \in \mathcal{U}_{ok}
+    \end{align*}
+\end{definition}
+
+Il existe une autre famille de technique moins courantes:
+
+\begin{definition}{Méthodes indirectes}{def:indirect_traj_formal}
+    On cherche à satisfaire les conditions nécessaires d'optimalité analytiques le long d'une trajectoire unique. Cela revient à résoudre un problème aux limites basé sur le principe du maximum de Pontryagin.
+\end{definition}
+
+
+\subsection{Hybrides}
+
+En pratique, les approches basées sur une loi de commande et celles basées sur la trajectoire ne sont pas mutuellement exclusives. Elles sont souvent combinées pour bénéficier à la fois de la précision de la planification et de la robustesse des boucles fermées.
+
+\begin{definition}{Optimisation de trajectoire + LQR}{def:traj_lqr}
+    Cette approche hybride sépare la planification de la régulation en deux étapes distinctes :
+    \begin{enumerate}
+        \item \textbf{Planification (Hors-ligne/basse fréquence) :} On utilise l'optimisation de trajectoire pour trouver une trajectoire nominale optimale $\{\col{x}^*(t), \col{u}^*(t)\}$.
+        \item \textbf{Régulation (Temps réel) :} On linéarise la dynamique autour de cette trajectoire pour concevoir un régulateur LQR variant dans le temps. La loi de commande devient :
+        $$\col{u}(t) = \col{u}^*(t) - \col{K}(t)(\col{x}(t) - \col{x}^*(t))$$
+    \end{enumerate}
+    Le gain $\col{K}(t)$ permet de rejeter les perturbations et de maintenir le robot dans un "tube" de stabilité autour du plan initial.
+\end{definition}
+
+Alternativement, une autre stratégie pour donner un mécanisme de rétro-action est de constanmment re-mesurer l'état actuel et ré-optimiser une trajectoire à partir de se nouveau point:
+
+
+\begin{definition}{Commande prédictive (MPC)}{def:mpc}
+    Le commande prédictive (\textit{Model Predictive Control} ou MPC) consiste à résoudre un problème d'optimisation de trajectoire en temps réel sur un horizon de temps glissant :
+    \begin{itemize}
+        \item À chaque instant $t$, on résout une optimisation sur un horizon court à partir de l'état actuel mesuré $\col{x}(t)$.
+        \item On n'applique que la première commande $\col{u}_0$ de la séquence calculée.
+        \item Au pas de temps suivant, on décale l'horizon et on recommence l'optimisation avec la nouvelle mesure de l'état.
+    \end{itemize}
+\end{definition}
+
+
+Bien que le MPC repose mathématiquement sur l'optimisation de trajectoire, le fait de ré-optimiser à chaque pas de temps à partir de l'état réel transforme cette méthode en une \textbf{politique de rétroaction} implicite $\col{u} = \pi(\col{x})$. C'est l'un des outils les plus puissants pour gérer simultanément la dynamique et les contraintes $\mathcal{X}_{ok}$ et $\mathcal{U}_{ok}$.
+
+
