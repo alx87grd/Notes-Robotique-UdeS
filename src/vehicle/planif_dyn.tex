@@ -17,26 +17,90 @@ L'optimisation de trajectoire est une branche des méthodes numériques pour ré
 
 Le but est de trouver la trajectoire optimale $\{\col{x}^*(t), \col{u}^*(t)\}$ qui minimise un coût tout en satisfaisant des contraintes.
 
-\begin{definition}{Problème d'optimisation de trajectoire}{def:traj_opt}
-À venir!
+\begin{definition}{Le problème d'optimisation de trajectoire}{def:traj_opt_formal}
+    On cherche à déterminer les trajectoires optimales de l'état $\col{x}(t)$ et de la commande $\col{u}(t)$ qui minimisent la fonctionnelle de coût :
+    \begin{equation}
+        \min_{\col{x}(t), \col{u}(t)} J = \int_{t_0}^{t_f} g(\col{x}(t), \col{u}(t), t) dt + h(\col{x}(t_f))
+    \end{equation}
+    Sujet aux contraintes suivantes :
+    \begin{itemize}
+        \item \textbf{Contraintes d'égalité (Physique et limites) :}
+        \begin{align}
+            \dot{\col{x}}(t) - f(\col{x}(t), \col{u}(t), t) &= \col{0} \quad \text{(Dynamique du système)} \\
+            \col{x}(t_0) - \col{x}_{init} &= \col{0} \quad \text{(État initial imposé)}
+        \end{align}
+        \item \textbf{Contraintes d'inégalité (Limites opérationnelles) :}
+        \begin{align}
+            \col{x}_{min} \leq \col{x}(t) \leq \col{x}_{max} \quad \text{(Enveloppe d'état)} \\
+            \col{u}_{min} \leq \col{u}(t) \leq \col{u}_{max} \quad \text{(Saturation des actionneurs)}
+        \end{align}
+    \end{itemize}
 \end{definition}
 
 
 
-\section{Techniques de transcription}
+\section{Méthodes de transcription discrète}
 
-La transcription convertit le problème continu en un programme non-linéaire (NLP) que des solveurs (comme SNOPT ou IPOPT) peuvent résoudre.
+La transcription convertit le problème de commande optimale en un programme mathématique avec un nombre de variable fini. Le vecteur $z$ regroupe l'ensemble des variables de décision du problème.
 
-\subsection{Méthodes de Tir (\textit{Shooting})}
-L'idée est d'utiliser une simulation pour imposer la dynamique.
+\subsection{Tir simple (\textit{Direct Shooting})}
 
-À venir!
+Dans cette approche, seules les entrées de commande sont optimisées. L'état est une fonction implicite calculée par simulation.
 
-\subsection{Méthodes Simultanées (\textit{Collocation})}
-L'état et la commande sont représentés par des variables de décision à chaque point de la grille.
 
-À venir!
+\begin{definition}{Transcription par Tir Simple}{def:single_shooting}
 
+La transcription par tir simple simple, consiste formuler le problème d'optimisation avec comme variables décisions seulement $n$ points d'une trajectoire d'action $\col{u}$ discrétisée, i.e. $\col{u}_0, \dots, \col{u}_{n-1}$. On cherche donc la séquence d'action qui minimise le fonction de coût, qui est ici une version approximé en temps discret:
+    \begin{align*}
+        \min_{\col{u}_0, \dots, \col{u}_{n-1}} \quad & J = h(\col{x}_n) + \sum_{i=0}^{n-1} g(\col{x}_i, \col{u}_i) \Delta t \\
+        \text{sujet à} \quad &  \\
+        & \col{u}_{min} \leq \col{u}_i \leq \col{u}_{max}
+    \end{align*}
+
+avec la trajectoire (les $\col{x}_i$) obtenues par intégration aux temps discrétisé:
+    \begin{align*} 
+        & \col{x}_0 = \col{x}_{init}
+        \quad \text{et} \quad 
+        \col{x}_{i+1} = f_d(\col{x}_i, \col{u}_i), \quad \forall i \in \{0, \dots, n-1\} 
+    \end{align*}    
+
+qui est calculée avec un schéma d'intégration numérique:
+    \begin{align*} 
+        \col{x}_{i+1} &= f_d(\col{x}_i, \col{u}_i) \\
+        \col{x}(t_{i+1}) &= \col{x}(t_{i}) + 
+        \int_{t_i}^{t_{i+1}}f(\col{x}, \col{u})dt
+    \end{align*}  
+    
+\end{definition}
+
+\subsection{Transcription directe (\textit{Direct Transcription})}
+
+Aussi appelée tir multiple, cette méthode inclut les états dans les variables de décision pour améliorer la robustesse numérique et la sparsité.
+
+\begin{definition}{Transcription Directe}{def:direct_transcription}
+    \begin{align*}
+        \min_{z} \quad & J(z) = \ell_f(\col{x}[N]) + \sum_{n=0}^{N-1} \ell(\col{x}[n], \col{u}[n]) \Delta t \\
+        \text{sujet à} \quad & z = \begin{bmatrix} \col{x}[0] \\ \col{u}[0] \\ \vdots \\ \col{x}[N] \end{bmatrix} \\
+        & f_d(\col{x}[n], \col{u}[n]) - \col{x}[n+1] = \col{0}, \quad \forall n \in \{0, \dots, N-1\} \\
+        & \col{x}_{min} \leq \col{x}[n] \leq \col{x}_{max} \\
+        & \col{u}_{min} \leq \col{u}[n] \leq \col{u}_{max}
+    \end{align*}
+\end{definition}
+
+\subsection{Collocation directe (\textit{Direct Collocation})}
+
+Cette méthode simultanée impose la dynamique via la dérivée d'un polynôme interpolateur à des points de collocation intermédiaires.
+
+\begin{definition}{Collocation Directe (Hermite-Simpson)}{def:direct_collocation}
+    \begin{align*}
+        \min_{z} \quad & J(z) = \ell_f(\col{x}[N]) + \sum_{n=0}^{N-1} \ell(\col{x}[n], \col{u}[n]) \Delta t \\
+        \text{sujet à} \quad & z = \begin{bmatrix} \col{x}[0] \\ \col{u}[0] \\ \vdots \\ \col{x}[N] \\ \col{u}[N] \end{bmatrix} \\
+        & \dot{\col{p}}(t_{n+0.5}) - f(\col{x}_{n+0.5}, \col{u}_{n+0.5}) = \col{0}, \quad \forall n \in \{0, \dots, N-1\} \\
+        & \col{x}_{min} \leq \col{x}[n] \leq \col{x}_{max} \\
+        & \col{u}_{min} \leq \col{u}[n] \leq \col{u}_{max}
+    \end{align*}
+    Où $\col{x}_{n+0.5}$ et $\dot{\col{p}}(t_{n+0.5})$ représentent respectivement l'état et sa dérivée au point milieu d'un segment, calculés par l'interpolation d'un polynôme cubique d'Hermite sur l'intervalle $[n, n+1]$.
+\end{definition}
 
 \section{Planéité différentielle (\textit{Differential Flatness})}
 
