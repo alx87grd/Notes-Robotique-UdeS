@@ -1,11 +1,13 @@
 \chapter{Optimisation de trajectoires}
 \label{chap:trajopt}
 
-Sources utille:\\
+
+
+Chapitre en construction!! \\
+
+Sources externes utilles:\\
 \url{https://arxiv.org/pdf/1707.00284}\\
 \url{https://underactuated.mit.edu/trajopt.html}
-
-Chapitre en construction!!
 
 
 \section{Introduction et contexte}
@@ -18,7 +20,7 @@ Trouver une loi de commande optimale pour un système non-linéaire avec des con
 
 \section{Formalisation mathématique}
 
-Pour l'optimisation de trajectoire, le but est de trouver une fonction temporelle pour les états et les actions $\{\col{x}^*(t), \col{u}^*(t)\}$, i.e. une trajectoire, qui minimise un coût tout en satisfaisant des contraintes.
+Pour l'optimisation de trajectoire, le but générale est de trouver une fonction temporelle pour les états et les actions $\{\col{x}^*(t), \col{u}^*(t)\}$, i.e. une trajectoire, qui minimise un coût tout en satisfaisant des contraintes.
 
 \begin{definition}{Le problème d'optimisation de trajectoire}{def:traj_opt_formal}
     On cherche à déterminer les trajectoires optimales de l'état $\col{x}(t)$ et de la commande $\col{u}(t)$ qui minimisent la fonctionnelle de coût :
@@ -38,32 +40,67 @@ Pour l'optimisation de trajectoire, le but est de trouver une fonction temporell
     et possiblement des contraintes d'inégalités supplémentaires qui illustre des limites opérationnelles plus complexes, comme des obstacles. 
 \end{definition}
 
+Ce problème peut ce traduire en un programme mathématique, voir section \ref{sec:transcription}, qui est typiquement non-convexe et non-linéaire. Donc sans garantie de converger sur une solution, de plus typiquement si le programme converge c'est une un optimum local. 
+
+Parfois, on désire seulement trouver une solution qui fonctionne, certains algorithme vont plutôt tenter résoudre un problème de recherche de trajectoire:
+
+\begin{definition}{Le problème de recherche de trajectoire}{def:traj_search_formal}
+    On cherche à déterminer une trajectoire réalisable $\col{x}(t)$ et une commande $\col{u}(t)$ qui débutent sur un état initial et terminent sur un état cible :
+    \begin{equation}
+        \text{trouver} \quad \col{x}(t), \col{u}(t)
+    \end{equation}
+    Sujet aux contraintes d'égalités suivantes :
+        \begin{align}
+            \dot{\col{x}}(t) - f(\col{x}(t), \col{u}(t), t) &= \col{0} \quad \text{(Dynamique du système)} \\
+            \col{x}(t_0) - \col{x}_{init} &= \col{0} \quad \text{(État initial imposé)} \\
+            \col{x}(t_f) - \col{x}_{cible} &= \col{0} \quad \text{(État cible atteint)}
+        \end{align}
+     aux contraintes d'inégalités suivantes :
+        \begin{align}
+            \col{x}_{min} &\leq \col{x}(t) \leq \col{x}_{max} \quad \text{(Enveloppe d'état)} \\
+            \col{u}_{min} &\leq \col{u}(t) \leq \col{u}_{max} \quad \text{(Enveloppe des actions)}
+        \end{align}
+    et possiblement des contraintes d'inégalités supplémentaires qui illustrent des limites opérationnelles plus complexes, comme l'évitement d'obstacles. 
+\end{definition}
+
+Alternativement, bien que le problème d'optimisation de trajectoire général soit non-linéaire et non-convexe, il existe une classe de problèmes fondamentaux bénéficiant d'une structure mathématique privilégiée : les \textbf{Programmes Quadratiques (QP)}. Ces problèmes sont caractérisés par une solution unique globale et des algorithmes de résolution extrêmement performants. Il est possible de retrouver cette forme si on utilise une approximation linéaire pour la dynamique et une fonction de coût quadratique:
+
+
+\begin{definition}{Problème d'optimisation de trajectoire Linéaire-Quadratique}{def:traj_opt_qp}
+    On cherche à déterminer les trajectoires optimales $\col{x}(t)$ et $\col{u}(t)$ qui minimisent une fonction de coût \textbf{quadratique} :
+    \begin{equation}
+        \min_{\col{x}(t), \col{u}(t)} J = \frac{1}{2} \col{x}(t_f)^T \col{Q}_f \col{x}(t_f) + \int_{t_0}^{t_f} \left( \frac{1}{2} \col{x}(t)^T \col{Q} \col{x}(t) + \frac{1}{2} \col{u}(t)^T \col{R} \col{u}(t) \right) dt
+    \end{equation}
+    Sujet à une dynamique \textbf{linéaire} (contraintes d'égalité) :
+    \begin{align}
+        \dot{\col{x}}(t) - \col{A}\col{x}(t) - \col{B}\col{u}(t) &= \col{0} \\
+        \col{x}(t_0) - \col{x}_{init} &= \col{0}
+    \end{align}
+    et à des contraintes d'\textbf{inégalité linéaires} :
+    \begin{align}
+        \col{x}_{min} \leq \col{x}(t) \leq \col{x}_{max} \\
+        \col{u}_{min} \leq \col{u}(t) \leq \col{u}_{max}
+    \end{align}
+    qui peuvent inclure des contraintes polyédriques additionnelles ($\col{C}\col{x} + \col{D}\col{u} \leq \col{e}$).
+\end{definition}
+
+Cette approximation du vrai problème d'optimisation non-linéaire va mener à des programmes quadratiques qui ont le grand avantage de garantir une convergence en temps fini vers le minimum global. 
 
 
 
-\section{Méthodes de transcription}
+\section{Méthodes de transcription en programme mathématique}
+\label{sec:transcription}
 
-La transcription convertit le problème de commande optimale en un programme mathématique avec un nombre de variable fini, sous un format standard de programme mathématique (voir chapitre \ref{chap:optim}). Avec ces méthodes, on peut généralement espérer trouver un minimum local de trajectoire optimale, avec des algorithmes basés sur une descente du gradient. Il est donc a noter que la performance de ces méthodes est donc très sensible à un point de départ, une solution estimée initiale sur laquelle débutera la descente du gradient. 
+La transcription convertit le problème d'optimisation de trajectoire (général \ref{def:def:traj_opt_formal} ou linéaire-quadratique \ref{def:def:traj_opt_qp} en un programme mathématique avec un nombre de variable fini, sous un format standard de programme mathématique (voir chapitre \ref{chap:optim}). Avec ces méthodes, on peut généralement espérer trouver un minimum local de trajectoire optimale, avec des algorithmes basés sur une descente du gradient. Il est donc a noter que la performance de ces méthodes est donc très sensible à un point de départ, une solution estimée initiale sur laquelle débutera la descente du gradient. 
 
 
-La première étape est de discrétiser le temps en $n$ intervalles:
+La première étape est de discrétiser le temps en $n$ intervalles et les fonctions continues $\col{x}(t)$ et $\col{u}(t)$ par une séquence de points à ces instants précis:
 \begin{align}
-    t_0, \dots, t_i, \dots t_n 
+    t \Rightarrow \; & t_0, \dots, t_i, \dots, t_{n-1}, t_n  \\
+    \col{x}(t) \Rightarrow \; &\col{x}_0, \dots , \col{x}_i, \dots , \col{x}_{n-1}, \col{x}_n \\
+    \col{u}(t) \Rightarrow \; &\col{u}_0, \dots , \col{u}_i, \dots , \col{u}_{n-1}
 \end{align}
-Les fonctions continues $\col{x}(t)$ et $\col{u}(t)$, deviennent donc approximés par une liste de points à ces instants précis:
-\begin{align}
-    \col{x}(t) &\Rightarrow \col{x}_0, \dots , \col{x}_i, \dots , \col{x}_{n-1}, \col{x}_n \\
-    \col{u}(t) &\Rightarrow \col{u}_0, \dots , \col{u}_i, \dots , \col{u}_{n-1}
-\end{align}
-avec comme notation:
-\begin{align}
-    \col{x}_i = \col{x}(t_i) \\
-    \col{u}_i = \col{u}(t_i) \\
-\end{align}
-
-\note{Note sur le temps}{Pour alléger la notation dans les prochaines définitions la dépendance au temps ne sera pas explicitement noté, mais la fonction de coût, la dynamique et les contraintes peuvent tous dépendre explicitement du temps sans problèmes.}
-
-\note{Note sur les contraintes d'inégalités}{Pour alléger la notation dans les prochaines définitions, le cas le plus commun et simple d'avoir seulement une enveloppe min/max sera noté, mais des contraintes plus compliquées pourrait être incluses.}
+avec comme notation $\col{x}_i = \col{x}(t_i)$ et $\col{u}_i = \col{u}(t_i)$. 
 
 
 \subsection{Tir simple (\textit{Direct Shooting})}
@@ -112,9 +149,28 @@ Le schéma d'intégration peut être un simulateur \textit{boîte noire}, on doi
     \end{align*}   
 \end{definition}
 
+Si on approxime la dynamique linéaire et utilise un coût quadratique, le programme est quadratique:
+\begin{definition}{Transcription Directe Linéaire-Quadratique}{def:qp_trajectory}
+    Ici l'objectif est une fonction quadratique et les contraintes sont linéaires. On cherche à minimiser :
+    \begin{align*}
+        \min_{\substack{\col{x}_0, \dots, \col{x}_n \\ \col{u}_0, \dots, \col{u}_{n-1}}} \quad & J = \col{x}_n^T \col{Q}_f \col{x}_n + \sum_{i=0}^{n-1} (\col{x}_i^T \col{Q} \col{x}_i + \col{u}_i^T \col{R} \col{u}_i) \Delta t \\
+        \text{sujet à} \quad &  \\
+        & \col{x}_{i+1} = \col{A}_i \col{x}_i + \col{B}_i \col{u}_i, \quad \forall i \in \{0, \dots, n-1\} \\
+        & \col{x}_{min} \leq \col{x}_i \leq \col{x}_{max} \\
+        & \col{u}_{min} \leq \col{u}_i \leq \col{u}_{max}
+    \end{align*}
+    
+    Pour ce type de problème, si les matrices de poids $\col{Q}$ et $\col{R}$ sont semi-définies positives, le problème est \textbf{convexe}. Cela garantit que toute solution locale trouvée par le solveur est l'\textbf{optimum global}.
+\end{definition}
+
 \subsection{Collocation directe (\textit{Direct Collocation})}
 
 Cette méthode est similaire à la transcription directe, toutefois les contraintes d'égalité qui impose la dynamique sont plutôt imposées à des points de collocations, qui sont calculé en assumant que les trajectoires sont des polynômes d'un certain dégrée. Ces méthodes visent donc à être plus précise pour un certain niveau de discrétisation, similairement à un schéma d'intégration Runge-Kutta vs utiliser l'intégration Euler. Typiquement les états sont approximés par des polynomes d'ordre deux et les actions par un polynomes d'ordre un. 
+
+\colab{Exemple d'optimisation par collocation directe pour un pendule}{https://colab.research.google.com/drive/1NcyB1aoFiM9ok7KiMIhSDx3bpfB-YWKG?usp=sharing}
+
+\colab{Exemple d'optimisation par collocation directe pour un système charriot-pendule}{https://colab.research.google.com/drive/1Wyc5j3oXn_JD0XJmCWfXaDlZ5lHdUHpJ?usp=sharing}
+
 
 \begin{definition}{Collocation Directe}{def:direct_collocation}
     La collocation directe consiste à utiliser comme variables décisions à la fois l'état $\col{x}$ et l'action $\col{u}$ aux $n$ points de la trajectoire:
@@ -151,8 +207,6 @@ Il est a noté que la méthode de transcription directe, peut être interprété
 
 
 
-
-
 \subsection{Tir multiple (multiple-shooting)}
 \begin{definition}{Transcription par Tir Multiple }{def:multiple_shooting}
 
@@ -176,8 +230,69 @@ Le problème d'optimisation se formule ainsi :
 Les $m-1$ \textbf{contraintes d'égalité} (contraintes de défaut) assurent la continuité de la trajectoire globale. 
 \end{definition}
 
+\subsection{Notes sur les définitions précédentes}
+
+\begin{enumerate}
+    \item Il est possible d'inclure les temps $t_i$ comme des variables décisions dans l'optimisation. Ce qui peut être utile si on ne connaît pas la durée prévue d'une manœuvre.  
+    \item Pour alléger la notation dans les définitions la dépendance au temps n'est pas explicitement noté, mais la fonction de coût, la dynamique et les contraintes peuvent tous dépendre explicitement du temps sans problèmes.
+    \item Pour alléger les définitions, le cas le plus commun et simple d'avoir seulement des contraintes min/max est noté, mais des contraintes plus compliquées peuvent être incluses.
+\end{enumerate}
 
 
+
+
+
+
+
+
+
+
+
+\newpage
+\section{Méthodes de recherche globale}
+
+
+
+\subsection{RRT dans l'espace d'état (Espace Dynamique)}
+
+L'algorithme de RRT, souvent utiliser pour la planification purement géométrique, peuvent aussi être utiliser pour faire une recherche directement dans l'espace d'état $\mathcal{X}$, une approche souvent appelée \textbf{RRT Kinodynamique}.
+
+\begin{definition}{RRT dans l'espace d'état}{def:rrt_dynamic}
+    Le RRT dynamique construit un arbre de trajectoires réalisables en propageant la dynamique du système. Contrairement au cas géométrique, les nœuds sont reliés par des segments de trajectoires qui satisfont $\dot{\col{x}} = f(\col{x}, \col{u})$.
+    
+    L'algorithme suit les étapes suivantes :
+    \begin{enumerate}
+        \item \textbf{Échantillonnage :} Tirer un état cible aléatoire $\col{x}_{rand} \in \mathcal{X}_{ok}$.
+        \item \textbf{Sélection :} Trouver le nœud $\col{x}_{near}$ de l'arbre le plus « proche » de $\col{x}_{rand}$, selon une métrique de distance.
+        \item \textbf{Propagation avec pilotage :} Trouver une commande $\col{u} \in \mathcal{U}_{ok}$ qui, appliquée pendant un temps $\Delta t$, mène de $\col{x}_{near}$ vers un nouvel état $\col{x}_{new}$ en direction de $\col{x}_{rand}$ :
+        \begin{equation}
+            \col{x}_{new} = \col{x}_{near} + \int_{t}^{t+\Delta t} f(\col{x}, \col{u}) dt
+        \end{equation}
+        \item \textbf{Validation :} Si le segment $[\col{x}_{near}, \col{x}_{new}]$ respecte les contraintes d'état (obstacles) et d'action, $\col{x}_{new}$ est ajouté à l'arbre.
+    \end{enumerate}
+\end{definition}
+
+
+
+\subsubsection{La fonction de pilotage}
+
+Dans le RRT géométrique, connecter deux points se fait via une ligne droite. Dans l'espace dynamique, connecter exactement $\col{x}_{near}$ à $\col{x}_{rand}$ est un problème de recherche de trajectoire locale. Il y a deux familles de méthodes:
+
+\begin{itemize}
+    \item \textbf{Échantillonnage d'action :} On teste plusieurs commandes aléatoires à partir de $\col{x}_{near}$ et on conserve celle qui minimise la distance à $\col{x}_{rand}$.
+    \item \textbf{Utilisation de solveurs locaux :} Pour les systèmes linéaires, on peut résoudre analytiquement. Sinon typiquement on peut essayer de résoudre un problème d'optimisation local simplifié. 
+\end{itemize}
+
+\subsubsection{La métrique de distance}
+Contrairement à un problème géométrique, la distance euclidienne $||\col{x}_{rand} - \col{x}_{near}||$ est souvent une mauvaise mesure de proximité dans l'espace d'état. Par exemple, pour un véhicule ayant une vitesse initiale élevée, un point situé derrière lui est géométriquement proche mais "très loin" en termes de dynamique, car il nécessite une manœuvre complexe pour être atteint. La meilleur métrique serait donc d'utiliser une fonction de coût et de calculer le coût minimum possible entre ces deux points, ce qui revient à utiliser un solveur locale d'optimisation de trajectoire. En pratique, il y a un compromis à faire entre avoir une mauvaise métrique de distance qui est rapide à calculer, et une bonne métrique de distance qui est très longue à calculer.
+
+
+
+\note{Note}{
+    Le RRT dynamique est particulièrement efficace pour trouver une première solution admissible dans des environnements complexes. Cette solution peut ensuite servir ensuite d'\textbf{estimation initiale} (\textit{initial guess}) pour un algorithme d'optimisation (comme la collocation directe) afin de lisser la trajectoire et minimiser un coût de performance.
+}
+
+\colab{Demo RRT + optimisation de trajectoire}{https://colab.research.google.com/drive/1yq2GHAkvO6fTF2W-tRbACDBa9_scec2k?usp=sharing}
 
 
 \newpage
