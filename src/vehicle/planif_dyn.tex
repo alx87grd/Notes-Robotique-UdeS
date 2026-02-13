@@ -7,101 +7,180 @@ Sources utille:\\
 
 Chapitre en construction!!
 
-\colab{Démo d'introduction à l'optimisation de trajectoires}{https://colab.research.google.com/drive/1yq2GHAkvO6fTF2W-tRbACDBa9_scec2k?usp=sharing}
 
 \section{Introduction et contexte}
 
-L'optimisation de trajectoire est une branche des méthodes numériques pour résoudre des problèmes de \textbf{commande optimale}. Contrairement à la planification cinématique qui se limite souvent à l'espace des configurations $\col{q}(t)$, le cadre ici est générique et s'applique à la forme d'état générale $\dot{\col{x}} = \col{f}(\col{x}, \col{u})$, incluant les forces et couples d'actionnement $\col{u}$.
+Trouver une loi de commande optimale pour un système non-linéaire avec des contraintes est typiquement impossible sans faire des approximations. Toutefois, résoudre le problème plus simple de trouver une trajectoire optimale à partir d'un seul état est possible numériquement avec des algorithmes d'optimisations, typiquement un programme quadratique ou non-linéaire (voir chapitre \ref{chap:optim}). Contrairement à la planification cinématique qui se limite souvent à l'espace des configurations $\col{q}(t)$, le cadre ici est générique et s'applique à la forme d'état générale $\dot{\col{x}} = \col{f}(\col{x}, \col{u})$.
+
+\colab{Démo d'introduction à l'optimisation de trajectoires}{https://colab.research.google.com/drive/1yq2GHAkvO6fTF2W-tRbACDBa9_scec2k?usp=sharing}
+
+
 
 \section{Formalisation mathématique}
 
-Le but est de trouver la trajectoire optimale $\{\col{x}^*(t), \col{u}^*(t)\}$ qui minimise un coût tout en satisfaisant des contraintes.
+Pour l'optimisation de trajectoire, le but est de trouver une fonction temporelle pour les états et les actions $\{\col{x}^*(t), \col{u}^*(t)\}$, i.e. une trajectoire, qui minimise un coût tout en satisfaisant des contraintes.
 
 \begin{definition}{Le problème d'optimisation de trajectoire}{def:traj_opt_formal}
     On cherche à déterminer les trajectoires optimales de l'état $\col{x}(t)$ et de la commande $\col{u}(t)$ qui minimisent la fonctionnelle de coût :
     \begin{equation}
         \min_{\col{x}(t), \col{u}(t)} J = \int_{t_0}^{t_f} g(\col{x}(t), \col{u}(t), t) dt + h(\col{x}(t_f))
     \end{equation}
-    Sujet aux contraintes suivantes :
-    \begin{itemize}
-        \item \textbf{Contraintes d'égalité (Physique et limites) :}
+    Sujet aux contraintes d'égalités suivantes :
         \begin{align}
             \dot{\col{x}}(t) - f(\col{x}(t), \col{u}(t), t) &= \col{0} \quad \text{(Dynamique du système)} \\
             \col{x}(t_0) - \col{x}_{init} &= \col{0} \quad \text{(État initial imposé)}
         \end{align}
-        \item \textbf{Contraintes d'inégalité (Limites opérationnelles) :}
+     aux contraintes d'inégalités suivantes :
         \begin{align}
-            \col{x}_{min} \leq \col{x}(t) \leq \col{x}_{max} \quad \text{(Enveloppe d'état)} \\
-            \col{u}_{min} \leq \col{u}(t) \leq \col{u}_{max} \quad \text{(Saturation des actionneurs)}
+            \col{x}_{min} &\leq \col{x}(t) \leq \col{x}_{max} \quad \text{(Enveloppe d'état)} \\
+            \col{u}_{min} &\leq \col{u}(t) \leq \col{u}_{max} \quad \text{(Enveloppe des actions)}
         \end{align}
-    \end{itemize}
+    et possiblement des contraintes d'inégalités supplémentaires qui illustre des limites opérationnelles plus complexes, comme des obstacles. 
 \end{definition}
 
 
 
-\section{Méthodes de transcription discrète}
 
-La transcription convertit le problème de commande optimale en un programme mathématique avec un nombre de variable fini. Le vecteur $z$ regroupe l'ensemble des variables de décision du problème.
+\section{Méthodes de transcription}
+
+La transcription convertit le problème de commande optimale en un programme mathématique avec un nombre de variable fini, sous un format standard de programme mathématique (voir chapitre \ref{chap:optim}). Avec ces méthodes, on peut généralement espérer trouver un minimum local de trajectoire optimale, avec des algorithmes basés sur une descente du gradient. Il est donc a noter que la performance de ces méthodes est donc très sensible à un point de départ, une solution estimée initiale sur laquelle débutera la descente du gradient. 
+
+
+La première étape est de discrétiser le temps en $n$ intervalles:
+\begin{align}
+    t_0, \dots, t_i, \dots t_n 
+\end{align}
+Les fonctions continues $\col{x}(t)$ et $\col{u}(t)$, deviennent donc approximés par une liste de points à ces instants précis:
+\begin{align}
+    \col{x}(t) &\Rightarrow \col{x}_0, \dots , \col{x}_i, \dots , \col{x}_{n-1}, \col{x}_n \\
+    \col{u}(t) &\Rightarrow \col{u}_0, \dots , \col{u}_i, \dots , \col{u}_{n-1}
+\end{align}
+avec comme notation:
+\begin{align}
+    \col{x}_i = \col{x}(t_i) \\
+    \col{u}_i = \col{u}(t_i) \\
+\end{align}
+
+\note{Note sur le temps}{Pour alléger la notation dans les prochaines définitions la dépendance au temps ne sera pas explicitement noté, mais la fonction de coût, la dynamique et les contraintes peuvent tous dépendre explicitement du temps sans problèmes.}
+
+\note{Note sur les contraintes d'inégalités}{Pour alléger la notation dans les prochaines définitions, le cas le plus commun et simple d'avoir seulement une enveloppe min/max sera noté, mais des contraintes plus compliquées pourrait être incluses.}
+
 
 \subsection{Tir simple (\textit{Direct Shooting})}
 
 Dans cette approche, seules les entrées de commande sont optimisées. L'état est une fonction implicite calculée par simulation.
 
-
 \begin{definition}{Transcription par Tir Simple}{def:single_shooting}
 
-La transcription par tir simple simple, consiste formuler le problème d'optimisation avec comme variables décisions seulement $n$ points d'une trajectoire d'action $\col{u}$ discrétisée, i.e. $\col{u}_0, \dots, \col{u}_{n-1}$. On cherche donc la séquence d'action qui minimise le fonction de coût, qui est ici une version approximé en temps discret:
+La transcription par tir simple simple, consiste formuler le problème d'optimisation avec comme variables décisions $n$ points d'une trajectoire d'action $\col{u}$ discrétisée, i.e. $\col{u}_0, \dots, \col{u}_{n-1}$. On cherche donc la séquence d'action qui minimise le fonction de coût, qui est ici une version approximé en temps discret:
     \begin{align*}
         \min_{\col{u}_0, \dots, \col{u}_{n-1}} \quad & J = h(\col{x}_n) + \sum_{i=0}^{n-1} g(\col{x}_i, \col{u}_i) \Delta t \\
         \text{sujet à} \quad &  \\
         & \col{u}_{min} \leq \col{u}_i \leq \col{u}_{max}
     \end{align*}
 
-avec la trajectoire (les $\col{x}_i$) obtenues par intégration aux temps discrétisé:
+avec la trajectoire (les $\col{x}_i$) obtenues par intégration aux temps discrétisés:
     \begin{align*} 
         & \col{x}_0 = \col{x}_{init}
         \quad \text{et} \quad 
-        \col{x}_{i+1} = f_d(\col{x}_i, \col{u}_i), \quad \forall i \in \{0, \dots, n-1\} 
+        \col{x}_{i+1} = \col{x}_i + 
+        \int_{t_i}^{t_{i+1}}f(\col{x}, \col{u})dt, \quad \forall i \in \{0, \dots, n-1\} 
     \end{align*}    
-
-qui est calculée avec un schéma d'intégration numérique:
-    \begin{align*} 
-        \col{x}_{i+1} &= f_d(\col{x}_i, \col{u}_i) \\
-        \col{x}(t_{i+1}) &= \col{x}(t_{i}) + 
-        \int_{t_i}^{t_{i+1}}f(\col{x}, \col{u})dt
-    \end{align*}  
-    
+Le schéma d'intégration peut être un simulateur \textit{boîte noire}, on doit juste pouvoir obtenir la séquence des états, en réponse à une condition initiale et une séquence d'actions.
 \end{definition}
 
 \subsection{Transcription directe (\textit{Direct Transcription})}
 
-Aussi appelée tir multiple, cette méthode inclut les états dans les variables de décision pour améliorer la robustesse numérique et la sparsité.
+ Contrairement aux méthodes de tir, avec la transcription directe, les états $\col{x}_i$ sont ici des variables de décision indépendantes pour le solveur, et la dynamique est imposée via des contraintes d'égalité algébriques :
 
 \begin{definition}{Transcription Directe}{def:direct_transcription}
+    La transcription directe consiste à utiliser comme variables décisions à la fois l'état $\col{x}$ et l'action $\col{u}$ aux $n$ points de la trajectoire.
     \begin{align*}
-        \min_{z} \quad & J(z) = \ell_f(\col{x}[N]) + \sum_{n=0}^{N-1} \ell(\col{x}[n], \col{u}[n]) \Delta t \\
-        \text{sujet à} \quad & z = \begin{bmatrix} \col{x}[0] \\ \col{u}[0] \\ \vdots \\ \col{x}[N] \end{bmatrix} \\
-        & f_d(\col{x}[n], \col{u}[n]) - \col{x}[n+1] = \col{0}, \quad \forall n \in \{0, \dots, N-1\} \\
-        & \col{x}_{min} \leq \col{x}[n] \leq \col{x}_{max} \\
-        & \col{u}_{min} \leq \col{u}[n] \leq \col{u}_{max}
+        \min_{\substack{\col{x}_0, \dots, \col{x}_n \\ \col{u}_0, \dots, \col{u}_{n-1}}} \quad & J = h(\col{x}_n) + \sum_{i=0}^{n-1} g(\col{x}_i, \col{u}_i) \Delta t \\
+        \text{sujet à} \quad &  \\
+        & \col{x}_{min} \leq \col{x}_i \leq \col{x}_{max} \\
+        & \col{u}_{min} \leq \col{u}_i \leq \col{u}_{max}
     \end{align*}
+    avec la dynamique imposée comme contrainte d'égalité:
+    \begin{align*} 
+        & \col{x}_0 = \col{x}_{init} \\
+        & \col{x}_{i+1} - f_d(\col{x}_i, \col{u}_i) = \col{0}, \quad \forall i \in \{0, \dots, n-1\} 
+    \end{align*} 
+    Le schéma d'intégration $f_d$ est typiquement une approximation discrète comme la méthode d'Euler :
+    \begin{align*} 
+        f_d(\col{x}_i, \col{u}_i) = \col{x}_i + \Delta t f(\col{x}_i, \col{u}_i)
+    \end{align*}   
 \end{definition}
 
 \subsection{Collocation directe (\textit{Direct Collocation})}
 
-Cette méthode simultanée impose la dynamique via la dérivée d'un polynôme interpolateur à des points de collocation intermédiaires.
+Cette méthode est similaire à la transcription directe, toutefois les contraintes d'égalité qui impose la dynamique sont plutôt imposées à des points de collocations, qui sont calculé en assumant que les trajectoires sont des polynômes d'un certain dégrée. Ces méthodes visent donc à être plus précise pour un certain niveau de discrétisation, similairement à un schéma d'intégration Runge-Kutta vs utiliser l'intégration Euler. Typiquement les états sont approximés par des polynomes d'ordre deux et les actions par un polynomes d'ordre un. 
 
-\begin{definition}{Collocation Directe (Hermite-Simpson)}{def:direct_collocation}
+\begin{definition}{Collocation Directe}{def:direct_collocation}
+    La collocation directe consiste à utiliser comme variables décisions à la fois l'état $\col{x}$ et l'action $\col{u}$ aux $n$ points de la trajectoire:
     \begin{align*}
-        \min_{z} \quad & J(z) = \ell_f(\col{x}[N]) + \sum_{n=0}^{N-1} \ell(\col{x}[n], \col{u}[n]) \Delta t \\
-        \text{sujet à} \quad & z = \begin{bmatrix} \col{x}[0] \\ \col{u}[0] \\ \vdots \\ \col{x}[N] \\ \col{u}[N] \end{bmatrix} \\
-        & \dot{\col{p}}(t_{n+0.5}) - f(\col{x}_{n+0.5}, \col{u}_{n+0.5}) = \col{0}, \quad \forall n \in \{0, \dots, N-1\} \\
-        & \col{x}_{min} \leq \col{x}[n] \leq \col{x}_{max} \\
-        & \col{u}_{min} \leq \col{u}[n] \leq \col{u}_{max}
+        \min_{\substack{\col{x}_0, \dots, \col{x}_n \\ \col{u}_0, \dots, \col{u}_{n-1}}} \quad & J = h(\col{x}_n) + \sum_{i=0}^{n-1} g(\col{x}_i, \col{u}_i) \Delta t \\
+        \text{sujet à} \quad &  \\
+        & \col{x}_{min} \leq \col{x}_i \leq \col{x}_{max} \\
+        & \col{u}_{min} \leq \col{u}_i \leq \col{u}_{max}
     \end{align*}
-    Où $\col{x}_{n+0.5}$ et $\dot{\col{p}}(t_{n+0.5})$ représentent respectivement l'état et sa dérivée au point milieu d'un segment, calculés par l'interpolation d'un polynôme cubique d'Hermite sur l'intervalle $[n, n+1]$.
+    avec la dynamique imposée comme contrainte d'égalité, à des points de collocations:
+    \begin{align*} 
+        & \col{x}_0 = \col{x}_{init} \\
+        & \dot{\col{x}}_{c,i} = f(\col{x}_{c,i}, \col{u}_{c,i}), \quad \forall i \in \{0, \dots, n-1\} 
+    \end{align*} 
+    L'état interpolé au point milieu $\col{x}_{c,i}$ et sa dérivée $\dot{\col{x}}_{c,i}$ sont calculés à partir des états et des actions aux nœuds $i$ et $i+1$. Pour la méthode Hermite-Simpson on a :
+    \begin{align*}
+        \col{u}_{c,i} &= \frac{\col{u}_i + \col{u}_{i+1}}{2}  %\quad \quad \text{interpolation linéaire}
+        \\
+        \col{x}_{c,i} &= \frac{1}{2}(\col{x}_i + \col{x}_{i+1}) + \frac{\Delta t}{8} \left( f(\col{x}_i, \col{u}_i) - f(\col{x}_{i+1}, \col{u}_{i+1}) \right)  %\quad \quad \text{interpolation quadratique}
+        \\
+        \dot{\col{x}}_{c,i} &= \frac{3}{2 \Delta t}(\col{x}_{i+1} - \col{x}_i) - \frac{1}{4} \left( f(\col{x}_i, \col{u}_i) + f(\col{x}_{i+1}, \col{u}_{i+1}) \right)  %\text{interpolation quadratique}
+    \end{align*}
 \end{definition}
 
+Il est a noté que la méthode de transcription directe, peut être interprétée comme une méthode de collocation directe, avec comme point de collocation $\col{x}_{c,i}= \col{x}_i$ et une approximation d'ordre zéro (zero-order hold) pour les actions et d'ordre un pour les états: 
+
+\begin{align*}
+        \col{u}_{c,i} &= \col{u}_i   %\quad \quad \text{interpolation linéaire}
+        \\
+        \col{x}_{c,i} &= \col{x}_i
+        \\
+        \dot{\col{x}}_{c,i} &= \frac{1}{ \Delta t}(\col{x}_{i+1} - \col{x}_i) 
+\end{align*}
+
+
+
+
+
+\subsection{Tir multiple (multiple-shooting)}
+\begin{definition}{Transcription par Tir Multiple }{def:multiple_shooting}
+
+La transcription par tir multiple divise l'horizon de temps en $m$ segments de simulation, tout en conservant une discrétisation fine de l'action sur $n$ points ($n > m$). 
+
+Les variables de décision incluent :
+\begin{enumerate}
+    \item \textbf{Actions ($n-1$) :} La séquence complète $\col{u}_0, \dots, \col{u}_{n-1}$.
+    \item \textbf{États intiaux sur les segments ($m-1$) :} Les conditions initiales des segments intermédiaires $\col{x}_{s,1}, \dots, \col{x}_{s,m-1}$ (l'état initial $\col{x}_{s,0} = \col{x}_{0}$ étant fixé).
+\end{enumerate}
+
+Le problème d'optimisation se formule ainsi :
+    \begin{align*}
+        \min_{\substack{\col{u}_0, \dots, \col{u}_{n-1} \\ \col{x}_{s,1}, \dots, \col{x}_{s,m-1}}} \quad & J = h(\col{x}_n) + \sum_{i=0}^{n-1} g(\col{x}_i, \col{u}_i) \Delta t \\
+        \text{sujet à} \quad &  \\
+        & \col{x}_{s,j} + 
+        \int_{t_j}^{t_{j+1}}f(\col{x}, \col{u})dt - \col{x}_{s,j+1} = \col{0}, \quad \forall j \in \{0, \dots, m-2\} \\
+        & \col{u}_{min} \leq \col{u}_i \leq \col{u}_{max} 
+    \end{align*}
+
+Les $m-1$ \textbf{contraintes d'égalité} (contraintes de défaut) assurent la continuité de la trajectoire globale. 
+\end{definition}
+
+
+
+
+
+\newpage
 \section{Planéité différentielle (\textit{Differential Flatness})}
 
 La planéité différentielle est un outil de planification puissant qui permet d'éviter l'intégration numérique de la dynamique.
